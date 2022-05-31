@@ -14,15 +14,17 @@ const formatGameLog = (arrayOfGameEvents: string[]): any => {
     const doesEventNeedToBeShown = i > rangeOfGameEventIndexesToShow;
     return doesEventNeedToBeShown;
   });
-  const formattedEventString = (<>
-    {latestEventRecords.map(x =>
-      <>
-        <span>{x}</span>
-        <br />
-      </>
-    )}
-  </>);
-  // console.warn(formattedEventString);
+  const formattedEventString = (
+    <>
+      {
+        latestEventRecords.map(x =>
+          <>
+            <span>{x} </span>
+            < br />
+          </>
+        )
+      }
+    </>);
   return formattedEventString;
 }
 
@@ -72,13 +74,13 @@ class Store {
   }
 
   /* players */
-  initializeGame() {
-    // this.isInitialGame = true;
-    this.startGame();
-    // this.gameLog = [];
-  }
+  // initializeGame() {
+  // this.isInitialGame = true;
+  // this.startGame();
+  // this.gameLog = [];
+  // }
 
-  async startGame() { // start the game
+  startGame() { // start the game
     /* reset some things */
     console.log('game start');
     this.sumOfBets = 0;
@@ -104,23 +106,18 @@ class Store {
       // player.
     });
 
-
     switch (activeRound) {
       case POKER_ROUNDS.BLIND_CALL: {
         return this.startRound_Flop();
-        break;
       }
       case POKER_ROUNDS.FLOP: {
         return this.startRound_Turn();
-        break;
       }
       case POKER_ROUNDS.TURN: {
         return this.startRound_River();
-        break;
       }
       case POKER_ROUNDS.RIVER: {
         return this.determineWinners();
-        break;
       }
       default: {
         console.error("Unhandled activeRound: ", activeRound);
@@ -234,7 +231,6 @@ class Store {
     const eventTime = getDateForGameEvent(new Date());
     const gameEvent = `${eventTime}: ${event}`;
     this.gameLog.push(gameEvent);
-    // console.log("logged ", gameEvent);
   }
   get formattedGameLog() {
     return formatGameLog(this.gameLog);

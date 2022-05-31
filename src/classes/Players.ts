@@ -5,6 +5,7 @@ import { Deck } from "./Deck";
 import { Card } from "./Card";
 import { Player } from "./Player";
 import StoreVal from "../Store";
+import { makeAutoObservable } from "mobx";
 
 export class Players implements PlayersType {
   /* player could have folded in this level, but will play in the next! */
@@ -32,6 +33,8 @@ export class Players implements PlayersType {
     this.bigBlindPlayer = playerList[0];
     this.smallBlindPlayer = playerList[1];
     this.activePlayer = this.smallBlindPlayer;
+
+    makeAutoObservable(this);
   }
 
   //!!! handle having players which can not react to bets
@@ -49,14 +52,11 @@ export class Players implements PlayersType {
     this.updatePlayerAbilities(store);
     const areThereAnyPlayersToReact = this.playersLeftToReact.length > 0;
     if (!areThereAnyPlayersToReact) {
-      // const activeRound = store.activeRound;
-      // store.startNextRound(activeRound);
       store.startNextRound();
       return;
     }
 
     this.activePlayer = this.playersLeftToReact[0];
-    console.warn("active: ", this.activePlayer.name)
     /* if there is only one player left (everyone else can not continue), he wins! */
     // if (this.playerList.length === 1) {
 
@@ -108,43 +108,7 @@ export class Players implements PlayersType {
       player.canSupportBet = canSupportBet;
       player.betToPayToContinue = betToPayToContinue;
     });
-
   }
-
-  //!!! add handling so they react sequentially
-  // async waitForEveryoneToReact(betToSupport: number, store: typeof StoreVal, pokerRound: pokerRounds) {
-  //   if (pokerRound === pokerRounds.BLIND_CALL) {
-  //     const playersLeftToReact = this.playerList.filter(player => player !== this.bigBlindPlayer);
-  //     for (const player of playersLeftToReact) {
-  //       this.activePlayer = player;
-  //       console.log("activePlayer", this.activePlayer);
-  //       await player.waitToReact(pokerRound, betToSupport, store);
-  //     }
-
-  //   }
-  //   console.warn('ALL PLAYERS REACTED!');
-
-  //   // const bigBlindPlayer = playerList[1];
-  //   // const smallBlindPlayer = playerList[2];
-  //   // // playerList[1]===bigBlindPlayer;//?
-  //   // // const playersWithoutBigBlind = playerList.filter(player=>player!==bigBlindPlayer);
-  //   // const indexOfSmallBlindPlayer = playerList.indexOf(smallBlindPlayer);
-  //   // const maxPlayerIndex = playerList.length - 1;
-  //   // let playerIndexInTheList = indexOfSmallBlindPlayer;
-  //   // for (let i = 0; i <= maxPlayerIndex; i++) {
-  //   //   const player = playerList[playerIndexInTheList];
-  //   //   const valueToBet = targetBetAmount - player.betAmount;
-  //   //   player.betAmount += valueToBet;
-  //   //   console.log(`player ${player.id} bets ${valueToBet}`);
-  //   //   const potentialIndexOfNextPlayer = playerIndexInTheList + 1;
-
-  //   //   playerIndexInTheList = potentialIndexOfNextPlayer > maxPlayerIndex ? potentialIndexOfNextPlayer - maxPlayerIndex : potentialIndexOfNextPlayer;
-  //   //   // const playerIndexInTheList = indexOfSmallBlindPlayer;
-  //   //   // const index
-  //   // }
-
-
-  // }
 
   getWinners(sumOfBets: number) {
     const playersAtCombinations: PlayersAtCombinations = {

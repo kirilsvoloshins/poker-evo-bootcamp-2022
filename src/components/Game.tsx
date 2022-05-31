@@ -11,7 +11,7 @@ import BetControls from './BetControls';
 
 const GameScreen: React.FC<GameScreenProps> = observer(() => {
   useEffect(() => {
-    store.initializeGame();
+    store.startGame();
   }, []);
 
   return (

@@ -1,11 +1,10 @@
+import { makeAutoObservable } from "mobx";
 import { ComponentNames, SuitSymbol, CardNameSymbol, PlayerType, GameState } from "../types";
 import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck } from "../utils";
-
 import { Card } from "./Card";
 
 export class Deck {
   cards: Card[] // 54 cards!
-
 
   constructor() {
     const cards: Card[] = [];
@@ -16,6 +15,8 @@ export class Deck {
       });
     });
     this.cards = cards;
+
+    makeAutoObservable(this);
   }
 
   shuffle() {
@@ -29,7 +30,6 @@ export class Deck {
       unshuffledIndexes = unshuffledIndexes.filter(id => id !== randomCardIndex);
     }
     const shuffledDeck = shuffledIndexes.map(id => cards[id]);
-    // console.log({ shuffledDeck });
     this.cards = shuffledDeck;
   }
 

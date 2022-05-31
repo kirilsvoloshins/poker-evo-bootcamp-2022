@@ -10,7 +10,6 @@ const NavButton: React.FC<NavButtonProps> = ({ btnText, screenToOpen, isBackButt
   }, []);
 
   const classNames = `btn${isBackButton ? " backButton" : ""}`
-  // console.log({ isBackButton })
 
   return (
     <div className={classNames} onClick={handleClick}>

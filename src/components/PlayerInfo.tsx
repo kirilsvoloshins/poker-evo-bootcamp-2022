@@ -7,8 +7,6 @@ import { observer } from 'mobx-react';
 import store from "../Store";
 
 const PlayerInfo: FC<PlayerInfoProps> = observer(({ playerId }) => {
-  console.log(`playerinfo ${playerId} rerender!`);
-
   const { playerList } = store.players;
   const hasGameBeenInitialized = typeof playerList !== "undefined";
   if (!hasGameBeenInitialized) return <></>;
@@ -20,7 +18,6 @@ const PlayerInfo: FC<PlayerInfoProps> = observer(({ playerId }) => {
   const cards = playerAtThisSlot.cards;
   const card1 = cards[0], card2 = cards[1];
 
-  // console.log(store.players.activePlayer)
 
   return (
     <div className="playerDiv" >

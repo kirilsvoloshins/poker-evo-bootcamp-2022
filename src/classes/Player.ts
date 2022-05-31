@@ -5,6 +5,7 @@ import { Card } from "./Card";
 import { Players } from "./Players";
 import StoreVal from "../Store";
 import store from "../Store";
+import { makeAutoObservable } from "mobx";
 
 interface PlayerType {
   name: string,
@@ -60,6 +61,8 @@ export class Player implements PlayerType {
     this.moneyLeft = moneyLeft;
     this.cards = cards;
     this.betAmount = 0;
+
+    makeAutoObservable(this);
   }
 
   getListOfCombinations(cardsOnTheDesk: Card[], players: Players) {
@@ -79,7 +82,6 @@ export class Player implements PlayerType {
     const cardsToCheck = [...cardsOnTheDesk, ...this.cards];
     const sortedCardsToCheck = cardsToCheck.sort(getSortedArrayofCards);
     const suitsOfCardsToCheck = cardsToCheck.map(({ suitSymbol }) => suitSymbol);
-    // console.log({ sortedCardsToCheckForCombos });
     const uniqueCardCosts = [...new Set(cardsToCheck.map(({ cardCost }) => cardCost))];
     const cardsWithPairs = uniqueCardCosts
       .map(uniqueCardCost => cardsToCheck.filter(({ cardCost }) => cardCost === uniqueCardCost))
@@ -161,7 +163,6 @@ export class Player implements PlayerType {
       const flushSuit = uniqueSuitSymbols.filter(uniqueSuitSymbol => {
         return cardsToCheck.filter(({ suitSymbol }) => suitSymbol === uniqueSuitSymbol).length >= 5;
       })[0];
-      console.log(flushSuit);
 
       const sortedCardsOfFlushSuit: Card[] = sortedCardsToCheck.filter(({ suitSymbol }) => suitSymbol === flushSuit);
       const isTheHighestCardAce = cardsToCheck[0].cardCost === cardCosts["ace"];
@@ -220,8 +221,6 @@ export class Player implements PlayerType {
     store.addToSumOfBets(betAmount);
     this.betAmount += betAmount;
     this.moneyLeft -= betAmount;
-
-    console.log(this.moneyLeft);
 
     const gameEventText = getGameEventText({ name, betAmount, betAction });
     store.logGameEvent(gameEventText);
