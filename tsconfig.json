@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    // "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "module": "ESNext",
+    "target": "ES6",
+    "allowJs": true,
+    // "preserveJSX": true,
+    // "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    // "jsxImportSource": "preact",
+    "moduleResolution": "node"
+  },
+  "files": [
+    "src/index.tsx"
+  ]
+}

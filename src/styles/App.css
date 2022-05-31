@@ -1,0 +1,442 @@
+body {
+  padding: 0;
+  margin: 0;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+:root {
+  --btn-blue-base: #22507a;
+  --btn-blue-hover: #1b4266;
+  --btn-red-base: #702424;
+  --btn-red-hover: #571c1c;
+  --btn-green-base: #276627;
+  --btn-green-hover: #368536;
+  --bg-darkgreen: #1a341a;
+  --bg-green: rgb(22, 75, 22);
+  --transparent: #ffffff00;
+}
+
+.bg {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-green);
+}
+
+#storeString {
+  position: absolute;
+  bottom: 0;
+  text-align: left;
+  width: 100%;
+}
+
+#topBar {
+  /* position: absolute;
+  top: 0; */
+  text-align: center;
+  width: 100%;
+  padding-top: 10px;
+  flex: 0;
+}
+
+.menuDiv {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 3%;
+  gap: 20px;
+  align-items: center;
+}
+
+
+.creditsDiv {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 3%;
+  gap: 20px;
+  align-items: center;
+}
+
+.gameDiv {
+  flex: 1;
+  /* display: flex;
+  flex-direction: column; */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 250px 300px 250px;
+  padding-top: 3%;
+  gap: 20px;
+  align-items: center;
+}
+
+.gameDiv div {
+  /* border: 1px solid red; */
+}
+
+
+.flex-in-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.btn {
+  width: 150px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  height: 20px;
+  background-color: var(--btn-green-base);
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: var(--btn-green-hover);
+
+}
+
+.backButton {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+
+.betDiv {
+  font-size: 1.2em;
+  background-color: var(--bg-darkgreen);
+  padding: 15px;
+  border-radius: 10px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttonsDiv {
+  display: grid;
+  grid-template-columns: repeat(4, 100px);
+  gap: 10px;
+  grid-auto-rows: 20px 40px 100px;
+}
+
+
+.raiseDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+.raiseDiv div,
+.raiseDiv div div {
+  width: 100px;
+}
+
+.noSelect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.raiseBtns {
+  padding: 15px 10px;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+}
+
+#raiseBtn {
+  background-color: var(--btn-blue-base);
+  box-sizing: border-box;
+  height: 100%;
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#allInBtn {
+  background-color: var(--btn-blue-base);
+  box-sizing: border-box;
+  height: 100%;
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#raiseBtn:hover {
+  background-color: var(--btn-blue-hover);
+}
+
+#betAmountInput {
+  box-sizing: border-box;
+  padding: 5px;
+  text-align: center;
+  font-size: 1.3em;
+  color: white;
+  font-weight: 600;
+  background-color: var(--transparent);
+  border: none;
+}
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+#betCheckBtn {
+  background-color: var(--btn-blue-base);
+
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100px;
+  justify-content: center;
+}
+
+#betCheckBtn:hover,
+#allInBtn:hover {
+  background-color: var(--btn-blue-hover);
+}
+
+#foldBtn {
+  background-color: var(--btn-red-base);
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+}
+
+#foldBtn:hover {
+  background-color: var(--btn-red-hover);
+
+}
+
+
+#betAmountInput {
+  width: 100px;
+}
+
+.activePlayerInfo {
+  background-color: rgb(223, 191, 15);
+  color: black;
+}
+
+.playerInfo {
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.playerInfoBody {
+  background-color: var(--bg-darkgreen);
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.playerDiv {
+  width: 200px;
+}
+
+.playerCards {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.card {
+  width: 71.4px;
+  height: 100px;
+  border-radius: 12px;
+  background-color: #c5c5c5;
+  padding: 7px 9px;
+  display: flex;
+  flex-direction: column;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.cardValueDiv {
+  text-align: left;
+  font-size: 1.8em;
+  z-index: 900;
+  font-weight: 600;
+}
+
+.cardSuitDiv {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 4.5em;
+  margin-top: -20px;
+}
+
+.playerInfoText {
+  text-align: center;
+}
+
+.playerName {
+  font-size: 1.5em;
+  margin: 10px 10px 7px 10px;
+  text-align: center;
+  color: white;
+}
+
+.playerBet {
+  font-size: 2em;
+  text-align: center;
+}
+
+
+.settingsPage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 3%;
+  gap: 20px;
+  align-items: center;
+}
+
+.settingsTable {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-gap: 10px;
+  align-items: center;
+}
+
+.playerCountCircle {
+  color: white;
+  font-weight: 600;
+  display: flex;
+  width: 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 7px;
+  background-color: #1D431D;
+  border-radius: 100px;
+  cursor: pointer;
+}
+
+.settingsDiv {
+  background-color: var(--bg-darkgreen);
+  border-radius: 5px;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 20px;
+}
+
+.playerCountSelector {
+  display: flex;
+  gap: 5px;
+}
+
+.selectedPlayerCount {
+  background-color: #0E5C0E;
+}
+
+#startingMoneyInput {
+  width: 100px;
+  font-size: 1.5em;
+  background: var(--transparent);
+  border: none;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  padding: 5px;
+}
+
+.gameTable {
+  width: 700px;
+  height: 300px;
+  border-radius: 500px;
+  padding: 70px 100px;
+  box-sizing: border-box;
+
+
+  background-color: var(--bg-darkgreen);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.tableCardsContainer {
+  display: flex;
+  justify-content: center;
+
+  gap: 10px;
+
+}
+
+.allInDiv {
+  background-color: red !important;
+}
+
+.sliderDiv {
+  grid-column: 1 / span 3;
+}
+
+#betSlider {
+  width: 100%;
+
+  height: 30px;
+  transition: opacity .2s;
+}
+
+.red {
+  color: rgb(141, 20, 20);
+}
+
+.black {
+  color: black;
+}
+
+.gameLogDiv {
+  background-color: var(--bg-darkgreen);
+  color: white;
+  width: 520px;
+  height: 260px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.tableSumOfBets {
+  font-size: 1.5em;
+}
