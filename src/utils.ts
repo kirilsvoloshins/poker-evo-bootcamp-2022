@@ -32,7 +32,7 @@ export const cardCosts = {
   "ace": 14
 }
 export const aiPlayerNames: string[] = ["Bot1", "Bot2", "Bot3"];
-export const humanPlayerNames: string[] = ["player-1", "player-2", "player-3"];
+export const humanPlayerNames: string[] = ["player-1", "player-2", "player-3", "player-4"];
 export const amountOfCardsInTheDeck = 36;
 
 // export { suits, suitSymbols, cardNames, cardNameSymbols, playerNames, humanPlayerName, amountOfCardsInTheDeck };

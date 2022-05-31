@@ -15,8 +15,11 @@ const Settings: React.FC<GameMenuProps> = observer(() => {
   const updateStartingMoney = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     const sNewValue = target.value;
-    setStartingMoney(sNewValue);
+    const numericValue = Number(sNewValue);
     const newValue = parseInt(sNewValue);
+    if (newValue !== numericValue) return;
+
+    setStartingMoney(sNewValue);
     const isNewMoneySettingValid = newValue >= store.minimumBet * 2;
     setAreSettingsValid(isNewMoneySettingValid);
     setSettingsInfo(isNewMoneySettingValid ? "good to go!" : "place a bigger starting money!");
@@ -29,11 +32,12 @@ const Settings: React.FC<GameMenuProps> = observer(() => {
     <div className="settingsPage">
       <div className="settingsDiv">
         <div className="settingsTable">
-          <div>AI player count:</div>
+          <div>Player count:</div>
           <div className='playerCountSelector'>
-            <PlayerCountCircle amountOfPlayersToSet={1} />
+            {/* <PlayerCountCircle amountOfPlayersToSet={1} /> */}
             <PlayerCountCircle amountOfPlayersToSet={2} />
             <PlayerCountCircle amountOfPlayersToSet={3} />
+            <PlayerCountCircle amountOfPlayersToSet={4} />
           </div>
           <div>Starting money:</div>
           <div>

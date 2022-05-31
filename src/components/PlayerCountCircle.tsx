@@ -12,14 +12,14 @@ interface PlayerCountCircleProps {
 };
 
 const PlayerCountCircle: React.FC<PlayerCountCircleProps> = observer(({ amountOfPlayersToSet }) => {
-  // const setAmountOfAIPlayers = useCallback(() => {
-  //   store.setAmountOfAIPlayers(amountOfPlayersToSet);
-  //   // console.warn({ store });
-  // }, []);
+  const setAmountOfHumanPlayers = useCallback(() => {
+    store.setAmountOfHumanPlayers(amountOfPlayersToSet);
+  }, []);
 
   return (
-    // <div className={`playerCountCircle noSelect ${store.amountOfAiPlayers === amountOfPlayersToSet ? "selectedPlayerCount" : ""}`} onClick={setAmountOfAIPlayers}>{amountOfPlayersToSet}</div>
-    <></>
+    <>
+      <div className={`playerCountCircle noSelect ${store.amountOfHumanPlayers === amountOfPlayersToSet ? "selectedPlayerCount" : ""}`} onClick={setAmountOfHumanPlayers}>{amountOfPlayersToSet}</div>
+    </>
   )
 });
 export default PlayerCountCircle;

@@ -7,7 +7,7 @@ import { Players } from "./classes/Players";
 import { Deck } from "./classes/Deck";
 
 const formatGameLog = (arrayOfGameEvents: string[]): any => {
-  const amountOfLatestEventsToShow = 10;
+  const amountOfLatestEventsToShow = 14;
   const latestGameEventIndex = arrayOfGameEvents.length - 1;
   const rangeOfGameEventIndexesToShow = latestGameEventIndex - amountOfLatestEventsToShow;
   const latestEventRecords = arrayOfGameEvents.filter((gameEvent, i) => {
@@ -95,6 +95,10 @@ class Store {
 
     // const betToSupport_BLIND_CALL = this.blinds.bigBlind;
     // await players.waitForEveryoneToReact(betToSupport_BLIND_CALL, this, pokerRounds.BLIND_CALL);
+  }
+
+  setAmountOfHumanPlayers(amountOfPlayersToSet: number) {
+    this.amountOfHumanPlayers = amountOfPlayersToSet;
   }
 
   startNextRound() {
