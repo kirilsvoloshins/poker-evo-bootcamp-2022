@@ -35,9 +35,10 @@ const PlayerInfo: FC<PlayerInfoProps> = observer(({ playerId }) => {
           <div className="playerName">
             {playerAtThisSlot?.name}
           </div>
+          <div className="playerMoneyLeft">{playerAtThisSlot?.moneyLeft} €</div>
         </div>
       </div>
-      <div className="playerBet">{playerAtThisSlot?.moneyLeft} €</div>
+      <div className="playerBet">{playerAtThisSlot?.sumOfPersonalBetsInThisRound} €</div>
     </div>
   )
 });

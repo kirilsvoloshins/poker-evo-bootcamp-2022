@@ -1,6 +1,6 @@
 // import { ComponentNames, Card, SuitSymbol, CardNameSymbol, GameState } from "../types";
-import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck, POKER_ROUNDS, cardCosts } from "../utils";
-import { StoreType, SuitSymbol } from "../types";
+import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck, POKER_ROUNDS, cardCosts, COMBINATIONS } from "../utils";
+import { StoreType, SuitSymbol, Winner } from "../types";
 import { Deck } from "./Deck";
 // import { Card } from "./Card";
 import { Player } from "./Player";
@@ -89,148 +89,171 @@ export class Players implements PlayersType {
     return nextPlayer;
   }
 
-  getListOfCombinations(cardsOnTheDesk: Card[]) {
-    const players = this.playersStillInThisRound;
-    const combinations = {
-      hasRoyalFlush: false,       //todo  1.combo
-      hasStraightFlush: false,    //  2.combo
-      hasFourOfKind: false,       //  3.combo
-      hasFullHouse: false,        //!  4.combo
-      hasFlush: false,            //  5.combo
-      hasStraight: false,         //  6.combo
-      hasThreeOfKind: false,      //  7.combo
-      hasTwoPairs: false,         //  8.combo
-      hasPair: false,             //  9.combo
-      hasHighCard: false,         // 10.combo
-    };
 
-    //!!! quick fix
-    const playerCards = this.playersStillInThisRound[0].cards;
-    const cardsToCheck = [...cardsOnTheDesk, ...playerCards];
-    const sortedCardsToCheck = cardsToCheck.sort(getSortedArrayofCards);
-    const suitsOfCardsToCheck = cardsToCheck.map(({ suitSymbol }) => suitSymbol);
-    const uniqueCardCosts = [...new Set(cardsToCheck.map(({ cardCost }) => cardCost))];
-    const cardsWithPairs = uniqueCardCosts
-      .map(uniqueCardCost => cardsToCheck.filter(({ cardCost }) => cardCost === uniqueCardCost))
-      .filter(cardsWithMatchingCosts => cardsWithMatchingCosts.length === 2);
-    const cardsWithThreeOfKinds = uniqueCardCosts
-      .map(uniqueCardCost => cardsToCheck.filter(({ cardCost }) => cardCost === uniqueCardCost))
-      .filter(cardsWithMatchingCosts => cardsWithMatchingCosts.length === 3);
-    const cardsWithFourOfKinds = uniqueCardCosts
-      .map(uniqueCardCost => cardsToCheck.filter(({ cardCost }) => cardCost === uniqueCardCost))
-      .filter(cardsWithMatchingCosts => cardsWithMatchingCosts.length === 4);
 
-    //* hasHighCard
-    const highestCardOfThisPlayer = playerCards.sort(getSortedArrayofCards)[0];
-    //todo: handle multiple highest cards (in all player cards)
-    const highestCardOfAllPlayers = this.playersStillInThisRound
-      .map(({ cards }) => cards.sort(getSortedArrayofCards)[0])
-      .sort(getSortedArrayofCards)[0];
-    const doesThisPlayerHaveTheHighestCard = highestCardOfAllPlayers.cardCost === highestCardOfThisPlayer.cardCost;
-    combinations.hasHighCard = doesThisPlayerHaveTheHighestCard;
 
-    //* hasPair
-    const hasPair = cardsWithPairs.length === 1;
-    combinations.hasPair = hasPair;
-
-    //* hasTwoPairs
-    const hasTwoPairs = cardsWithPairs.length === 2;
-    combinations.hasTwoPairs = hasTwoPairs;
-
-    //* hasThreeOfKind
-    const hasThreeOfKind = cardsWithThreeOfKinds.length > 0;
-    combinations.hasThreeOfKind = hasThreeOfKind;
-
-    //* hasStraight
-    const checkForStraight = (cardsToCheck: Card[]): boolean => {
-      let amountOfCardsInPotentialStraight = 1, previousCardCost = 0;
-      for (const { cardCost } of cardsToCheck) {
-        const areCardsConsecutive = cardCost === previousCardCost - 1;
-        amountOfCardsInPotentialStraight = areCardsConsecutive ? amountOfCardsInPotentialStraight + 1 : 1;
-        previousCardCost = cardCost;
-      }
-      return amountOfCardsInPotentialStraight >= 5;
+  getWinners({ sumOfBets, store }: { sumOfBets: number, store: StoreType }) {
+    //todo: handle a lot of things...
+    const { playersStillInThisRound } = this;
+    // if there is only one player left, he is the winner
+    if (playersStillInThisRound.length === 1) {
+      const winnerObject: Winner = {} as Winner;
+      store.winners = []
+      return playersStillInThisRound[0];
     }
-    combinations.hasStraight = checkForStraight(cardsToCheck);
 
-    //* hasFlush
+    // HIGH_CARD
+    const highestCardCostAmongstAllPlayers = Math.max(...playersStillInThisRound.map(({ cards }) => cards.map(({ cardCost }) => cardCost)).flat());
+    const playersWithHighestCards = playersStillInThisRound.filter(player => player.cards.map(({ cardCost }) => cardCost).includes(highestCardCostAmongstAllPlayers));
+
     const uniqueSuitSymbols = Object.keys(suitSymbols) as SuitSymbol[];
-    const hasFlush = uniqueSuitSymbols.map(uniqueSuitSymbol => {
-      return cardsToCheck.filter(({ suitSymbol }) => suitSymbol === uniqueSuitSymbol).length >= 5;
-    }).length > 0;
-    combinations.hasFlush = hasFlush;
+    const playersWithOnePair: Player[] = [], playersWithTwoPairs: Player[] = [], playersWithThreeOfKind: Player[] = [], playersWithFourOfKind: Player[] = [], playersWithFlush: Player[] = [], playersWithStraight: Player[] = [], playersWithRoyalFlush: Player[] = [], playersWithFullHouse: Player[] = [], playersWithStraightFlush: Player[] = [];
+    playersStillInThisRound.forEach(player => {
+      const highestCard = player.cards.sort(getDescSortedArrayofCards)[0];
+      player.highestCard = highestCard;
 
-    //!!! hasFullHouse - we need to disable pairs and three-of-kinds if has full house
-    const hasFullHouse = hasPair && hasThreeOfKind;
-    combinations.hasFullHouse = hasFullHouse;
-
-    //* hasFourOfKind
-    const hasFourOfKind = cardsWithFourOfKinds.length === 1;
-    combinations.hasFourOfKind = hasFourOfKind;
-
-    //!!! todo: hasStraightFlush - we need to disable straight and flush
-    const checkForStraightFlush = (cardsToCheck: Card[]): boolean => {
-      let amountOfCardsInPotentialStraightFlush = 1, previousCardCost = 0, previousCardSuit = "";
-      for (const { cardCost, suitSymbol } of cardsToCheck) {
-        const areCardsPotentionallyInStraightFlush = cardCost === previousCardCost - 1 && suitSymbol === previousCardSuit;
-        amountOfCardsInPotentialStraightFlush = areCardsPotentionallyInStraightFlush ? amountOfCardsInPotentialStraightFlush + 1 : 1;
-        previousCardCost = cardCost;
+      const cardsToCheckForCombinations = [...store.cardsOnTheDesk, ...player.cards].sort(getDescSortedArrayofCards);
+      const cardCostsToCheckForCombinations = cardsToCheckForCombinations.map(({ cardCost }) => cardCost);
+      const uniqueCardCosts = [...new Set(cardCostsToCheckForCombinations)];
+      // const costsOfUniqueCardCosts = uniqueCardCosts.map(uniqueCardCost => cardCostsToCheckForCombinations.filter(cardCost => cardCost === uniqueCardCost));
+      const cardsOfUniqueCardCosts = uniqueCardCosts.map(uniqueCardCost => cardsToCheckForCombinations.filter(({ cardCost }) => cardCost === uniqueCardCost));
+      // const cardsWithPairs = costsOfUniqueCardCosts.filter(cardsWithMatchingCosts => cardsWithMatchingCosts.length === 2);
+      const cardsWithPairs = cardsOfUniqueCardCosts.filter(cardsWithMatchingCosts => cardsWithMatchingCosts.length === 2);
+      if (cardsWithPairs.length === 1) {
+        // PAIR
+        playersWithOnePair.push(player);
+        player.cardsAtCombination[COMBINATIONS.PAIR] = cardsWithPairs[0];
+      } else if (cardsWithPairs.length >= 2) {
+        // TWO PAIRS
+        playersWithTwoPairs.push(player);
+        player.cardsAtCombination[COMBINATIONS.TWO_PAIRS] = [...cardsWithPairs[0], ...cardsWithPairs[1]];
       }
-      return amountOfCardsInPotentialStraightFlush >= 5;
-    }
-    const hasStraightFlush = checkForStraightFlush(cardsToCheck);
-    combinations.hasStraightFlush = hasStraightFlush;
-
-    //* hasRoyalFlush
-    const checkForRoyalFlush = (cardsToCheck: Card[]): boolean => {
-      if (!combinations.hasFlush) {
-        return false;
+      // THREE_OF_KIND
+      const cardsWithThreeOfKinds = cardsOfUniqueCardCosts.filter(cardsWithMatchingCosts => cardsWithMatchingCosts.length === 3);
+      if (cardsWithThreeOfKinds.length) {
+        playersWithThreeOfKind.push(player);
+        player.cardsAtCombination[COMBINATIONS.THREE_OF_KIND] = cardsWithThreeOfKinds[0];
+      }
+      // FOUR_OF_KIND
+      const cardsWithFourOfKinds = cardsOfUniqueCardCosts.filter(cardsWithMatchingCosts => cardsWithMatchingCosts.length === 4);
+      if (cardsWithFourOfKinds.length) {
+        playersWithFourOfKind.push(player);
+        player.cardsAtCombination[COMBINATIONS.FOUR_OF_KIND] = cardsWithFourOfKinds[0];
+      }
+      // FLUSH
+      const cardsWithFlush = getCardsInFlushIfThereIsAny({ cardsToCheck: cardsToCheckForCombinations, uniqueSuitSymbols });
+      if (cardsWithFlush.length) {
+        playersWithFlush.push(player);
+        player.cardsAtCombination[COMBINATIONS.FLUSH] = cardsWithFlush;
+      }
+      // STRAIGHT
+      const cardsInStraight = getCardsInStraightIfThereIsAny(cardsToCheckForCombinations);
+      if (cardsInStraight.length) {
+        playersWithStraight.push(player);
+        player.cardsAtCombination[COMBINATIONS.STRAIGHT] = cardsInStraight;
+      }
+      // STRAIGHT_FLUSH
+      const cardsInStraightFlush = getCardsInFlushIfThereIsAny({ cardsToCheck: cardsInStraight, uniqueSuitSymbols });
+      if (cardsInStraightFlush.length) {
+        playersWithStraightFlush.push(player);
+        player.cardsAtCombination[COMBINATIONS.STRAIGHT_FLUSH] = cardsInStraightFlush;
       }
 
-      const flushSuit = uniqueSuitSymbols.filter(uniqueSuitSymbol => {
-        return cardsToCheck.filter(({ suitSymbol }) => suitSymbol === uniqueSuitSymbol).length >= 5;
-      })[0];
-
-      const sortedCardsOfFlushSuit: Card[] = sortedCardsToCheck.filter(({ suitSymbol }) => suitSymbol === flushSuit);
-      const isTheHighestCardAce = cardsToCheck[0].cardCost === cardCosts["ace"];
-      if (!isTheHighestCardAce) {
-        return false;
+      //!!! handle ignoring a pair if there is full house
+      // FULL_HOUSE
+      if (cardsWithPairs.length && cardsWithThreeOfKinds.length) {
+        playersWithFullHouse.push(player);
+        player.cardsAtCombination[COMBINATIONS.FULL_HOUSE] = [...cardsWithPairs[0], ...cardsWithThreeOfKinds[0]];
       }
-
-      let amountOfCardsInPotentialRoyalFlush = 1, previousCardCost = 0, previousCardSuit = "";
-      for (const { cardCost, suitSymbol } of sortedCardsOfFlushSuit) {
-        const areCardsPotentionallyInRoyalFlush = cardCost === previousCardCost - 1 && suitSymbol === previousCardSuit;
-        if (!areCardsPotentionallyInRoyalFlush) {
-          return false;
+      // ROYAL FLUSH
+      if (cardsInStraightFlush.length) {
+        if (cardsInStraightFlush[0].cardCost === cardCosts["ace"]) {
+          //!!! there can only be one player with royal flash
+          playersWithRoyalFlush.push(player);
+          player.cardsAtCombination[COMBINATIONS.STRAIGHT_FLUSH] = cardsInStraightFlush;
         }
-
-        amountOfCardsInPotentialRoyalFlush++;
-        previousCardCost = cardCost;
       }
-      return amountOfCardsInPotentialRoyalFlush >= 5;
-    }
-    const hasRoyalFlush = checkForRoyalFlush(cardsToCheck);
-    combinations.hasStraightFlush = hasRoyalFlush;
-  }
+    });
 
-
-  getWinners(sumOfBets: number) {
-    const playersAtCombinations: PlayersAtCombinations = {
-
+    const playersAtCombination: PlayersAtCombinations = {
+      [COMBINATIONS.ROYAL_FLUSH]: playersWithRoyalFlush,
+      [COMBINATIONS.STRAIGHT_FLUSH]: playersWithStraightFlush,
+      [COMBINATIONS.FOUR_OF_KIND]: playersWithFourOfKind,
+      [COMBINATIONS.FULL_HOUSE]: playersWithFullHouse,
+      [COMBINATIONS.FLUSH]: playersWithFlush,
+      [COMBINATIONS.STRAIGHT]: playersWithStraight,
+      [COMBINATIONS.THREE_OF_KIND]: playersWithThreeOfKind,
+      [COMBINATIONS.TWO_PAIRS]: playersWithTwoPairs,
+      [COMBINATIONS.PAIR]: playersWithOnePair,
+      [COMBINATIONS.HIGH_CARD]: playersWithHighestCards,
     };
+    console.warn(playersAtCombination);
+
+    // getting the winner 
+    // todo: handle splitting the win if the first winner went did not bet enough to take everything
+    const combinations = [COMBINATIONS.ROYAL_FLUSH, COMBINATIONS.STRAIGHT_FLUSH, COMBINATIONS.FOUR_OF_KIND, COMBINATIONS.FULL_HOUSE, COMBINATIONS.FLUSH, COMBINATIONS.STRAIGHT, COMBINATIONS.THREE_OF_KIND, COMBINATIONS.TWO_PAIRS, COMBINATIONS.PAIR, COMBINATIONS.HIGH_CARD];
+    let winMoneyLeft = sumOfBets;
+    // let isThereAnyWinMoneyLeft = true;
+    for (const combinationName of combinations) {
+      const playersWithThisCombination = playersAtCombination[combinationName];
+      const amountOfPlayersWithThisCombination = playersWithThisCombination.length;
+      if (amountOfPlayersWithThisCombination) {
+        if (amountOfPlayersWithThisCombination === 1) {
+          const player = playersWithThisCombination[0];
+          if (player.isAllIn) {
+
+          }
+        }
+      }
+    }
   }
 }
 
-const getSortedArrayofCards = (cardA: Card, cardB: Card): any => {
+const getDescSortedArrayofCards = (cardA: Card, cardB: Card): any => {
   const { cardCost: cardCost_1 } = cardA;
   const { cardCost: cardCost_2 } = cardB;
   return cardCost_2 - cardCost_1;
 }
 
+const getCardsInFlushIfThereIsAny = ({ cardsToCheck, uniqueSuitSymbols }: { cardsToCheck: Card[], uniqueSuitSymbols: SuitSymbol[] }): Card[] => {
+  const cardsWithFlush = uniqueSuitSymbols.map(uniqueSuitSymbol => {
+    return cardsToCheck.filter(({ suitSymbol }) => suitSymbol === uniqueSuitSymbol);
+  }).filter(cardsOfSameSuit => cardsOfSameSuit.length >= 5);
+  if (cardsWithFlush.length) {
+    return cardsWithFlush[0];
+  }
+  return [];
+}
 
-interface PlayersAtCombinations {
-  [index: string]: Player[]
-};
+const getCardsInStraightIfThereIsAny = (cardsToCheck: Card[]): Card[] => {
+  let amountOfCardsInPotentialStraight = 1, previousCardCost = 0, cardsInStraight: Card[] = [cardsToCheck[0]];
+  // for (const [cardIndex, card] of Object.entries(cardsToCheck)) {
+  for (const card of cardsToCheck) {
+    const areCardsConsecutive = card.cardCost === previousCardCost - 1;
+    if (areCardsConsecutive) {
+      amountOfCardsInPotentialStraight++;
+      cardsInStraight.push(card);
+    } else {
+      amountOfCardsInPotentialStraight = 1;
+      cardsInStraight = [card];
+      // no way there is a street from 4 cards
+      if (cardsToCheck.indexOf(card) >= 3) {
+        break;
+      }
+    }
+    // amountOfCardsInPotentialStraight = areCardsConsecutive ? amountOfCardsInPotentialStraight + 1 : 1;
+    previousCardCost = card.cardCost;
+  }
+  if (amountOfCardsInPotentialStraight < 5) {
+    return [];
+  }
+  cardsInStraight = cardsInStraight.filter((_, i) => i <= 4); // return only 5 cards (starting from the highest so as not to miss flash royale)
+  return cardsInStraight;
+}
+
+
+
+type PlayersAtCombinations = Partial<Record<COMBINATIONS, any>>;
 
 interface PlayersType {
 

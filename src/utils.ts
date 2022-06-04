@@ -107,3 +107,29 @@ export function getGameEventText({ name, betAmount, betAction }: { name: string,
 
 
 }
+
+export enum COMBINATIONS {
+  HIGH_CARD = "HIGH_CARD",
+  PAIR = "PAIR",
+  TWO_PAIRS = "TWO_PAIRS",
+  THREE_OF_KIND = "THREE_OF_KIND",
+  STRAIGHT = "STRAIGHT",
+  FLUSH = "FLUSH",
+  FULL_HOUSE = "FULL_HOUSE",
+  FOUR_OF_KIND = "FOUR_OF_KIND",
+  STRAIGHT_FLUSH = "STRAIGHT_FLUSH",
+  ROYAL_FLUSH = "ROYAL_FLUSH"
+}
+
+export enum COMBINATION_NAMES_HUMAN {
+  HIGH_CARD = "high card",
+  PAIR = "pair",
+  TWO_PAIRS = "two pairs",
+  THREE_OF_KIND = "three of kind",
+  STRAIGHT = "straight",
+  FLUSH = "flush",
+  FULL_HOUSE = "full house",
+  FOUR_OF_KIND = "four of kind",
+  STRAIGHT_FLUSH = "straight flush",
+  ROYAL_FLUSH = "royal flush",
+}

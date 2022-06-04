@@ -57,7 +57,7 @@ const BetControls: React.FC = observer(() => {
 
 
   return (
-    <div className='betDiv'>
+    store.isGameActive && <div className='betDiv'>
       <div>{store.players.activePlayer?.name}</div>
       <div className="buttonsDiv">
         <div className="bet-c-min-text">min</div>

@@ -1,6 +1,7 @@
+import { Card } from "./classes/Card";
 import { Player } from "./classes/Player";
 import StoreVal from "./Store";
-import { BET_ACTION } from "./utils";
+import { BET_ACTION, COMBINATION_NAMES_HUMAN } from "./utils";
 
 export type StoreType = typeof StoreVal;
 export type ComponentNames = "Menu" | "Game" | "Settings" | "Credits";
@@ -59,3 +60,10 @@ export interface PlaceBetArguments {
 }
 
 export type PlayerT = typeof Player;
+
+export interface Winner {
+  cards: Card[],
+  combinationName: COMBINATION_NAMES_HUMAN,
+  winAmount: number,
+  playerName: string,
+}

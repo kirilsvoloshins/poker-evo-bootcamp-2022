@@ -70,9 +70,9 @@ body {
   align-items: center;
 }
 
-.gameDiv div {
-  /* border: 1px solid red; */
-}
+/* .gameDiv div {
+  border: 1px solid red;
+} */
 
 
 .flex-in-col {
@@ -246,6 +246,7 @@ input[type=number] {
 .activePlayerInfo {
   background-color: rgb(223, 191, 15);
   color: black;
+  margin-bottom: 8px;
 }
 
 .playerInfo {
@@ -304,6 +305,7 @@ input[type=number] {
 
 .playerInfoText {
   text-align: center;
+  margin-bottom: 4px;
 }
 
 .playerName {
@@ -314,7 +316,16 @@ input[type=number] {
 }
 
 .playerBet {
-  font-size: 2em;
+  font-size: 1.8em;
+  text-align: center;
+  color: white;
+}
+
+.playerMoneyLeft {
+  font-size: 1.4em;
+  margin-bottom: 2px;
+  text-align: center;
+  color: white;
   text-align: center;
 }
 
@@ -394,6 +405,8 @@ input[type=number] {
   align-items: center;
   flex-direction: column;
   gap: 30px;
+
+  margin: auto;
 }
 
 .tableCardsContainer {
@@ -435,10 +448,12 @@ input[type=number] {
   position: absolute;
   right: 0;
   top: 0;
+  text-align: left;
 }
 
 .tableSumOfBets {
-  font-size: 1.5em;
+  font-size: 1.8em;
+  font-weight: 600;
 }
 
 .bet-c-min-text {
@@ -458,4 +473,39 @@ input[type=number] {
 .bet-active-player-name {
   text-align: center;
   font-weight: 600;
+}
+
+.gameResultWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameResultOfPlayerWrapper {
+  border-radius: 10px;
+  border: 2px solid white;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.combinationCards {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.combinationName {
+  text-align: center;
+  font-style: italic;
+}
+
+.gameResultButtonsDiv {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }

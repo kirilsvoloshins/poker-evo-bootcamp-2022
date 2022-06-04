@@ -1,6 +1,6 @@
 import { makeAutoObservable, makeObservable } from "mobx";
-import { ComponentNames, PlayerType, SuitSymbol, CardNameSymbol, CardType, GameState, GameEvent } from "./types";
-import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck, cardCosts, POKER_ROUNDS, getDateForGameEvent, BET_ACTION } from "./utils";
+import { ComponentNames, PlayerType, SuitSymbol, CardNameSymbol, CardType, GameState, GameEvent, Winner } from "./types";
+import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck, cardCosts, POKER_ROUNDS, getDateForGameEvent, BET_ACTION, COMBINATION_NAMES_HUMAN } from "./utils";
 import { Card } from "./classes/Card";
 import { Player } from "./classes/Player";
 import { Players } from "./classes/Players";
@@ -30,6 +30,8 @@ const formatGameLog = (arrayOfGameEvents: string[]): any => {
 
 // type RoundName = ""
 
+
+
 class Store {
   currentPage: ComponentNames = "Game"; // the page to show
   amountOfHumanPlayers: number = 3; // value for game init
@@ -44,7 +46,8 @@ class Store {
   isGameActive: boolean = false; // game state, set false on end and true on start
   // gameState: GameState = ""; // ???
   activeRound: POKER_ROUNDS;
-  winner: Player | null = null; // if the game ends, show the winner
+  // winner: Player | null = null; // if the game ends, show the winner
+  winners: Winner[];
 
   maxSumOfIndividualBets = 0; // maxmimum amount of bets of one person in this round
   sumOfBets: number = 0; // the sum to split between winners of the round
@@ -55,11 +58,16 @@ class Store {
   }
 
   resetGameSettingsBeforeStart() {
+    this.players = {} as Players;
+    this.deck = {} as Deck;
+    this.cardsOnTheDesk = [];
+    this.gameLog = [];
+
     this.isGameActive = true;
+    this.winners = [];
+
     this.maxSumOfIndividualBets = 0;
     this.sumOfBets = 0;
-    this.gameLog = [];
-    this.cardsOnTheDesk = [];
   }
 
   startGame() {
@@ -81,6 +89,7 @@ class Store {
       player.canSupportBet = true;
       player.canRaise = true;
       player.hasReacted = false;
+      player.isAllIn = false;
     });
 
     // this.players.activePlayer = this.players.getNextActivePlayer();
@@ -96,6 +105,7 @@ class Store {
         return this.startRound_River();
       }
       case POKER_ROUNDS.RIVER: {
+        alert("game end!");
         this.isGameActive = false;
         return this.determineWinners();
       }
@@ -223,6 +233,7 @@ class Store {
   }
 
   determineWinners() {
+    this.players.getWinners({ sumOfBets: this.sumOfBets, store: this });
     // const playerList = this.players.playerList;
     // if (playerList.length === 1) {
     //   /* there is only one player left, so he is the winner :) */

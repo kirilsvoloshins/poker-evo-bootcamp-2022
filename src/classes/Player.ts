@@ -1,6 +1,6 @@
 // import { ComponentNames, Card, SuitSymbol, CardNameSymbol, GameState } from "../types";
 import { SuitSymbol, StoreType, PlaceBetArguments } from "../types";
-import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck, cardCosts, POKER_ROUNDS, getGameEventText, BET_ACTION } from "../utils";
+import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck, cardCosts, POKER_ROUNDS, getGameEventText, BET_ACTION, COMBINATIONS } from "../utils";
 import { Card } from "./Card";
 import { Players } from "./Players";
 import StoreVal from "../Store";
@@ -10,11 +10,15 @@ import { makeAutoObservable } from "mobx";
 interface PlayerType {
   name: string,
   id: number,
+  cards: [Card, Card] | Card[], //! fixing:  Type '[Card, Card]' is not assignable to type 'null'.ts(2322)
+  highestCard: Card;
+  cardsAtCombination: Partial<Record<COMBINATIONS, Card[]>>
+  // cardsInTheBestCombination: Card[];
+
   moneyLeft: number, // amount of money left
   sumOfPersonalBetsInThisRound: number, // money bet in this round
   betToPayToContinue: number, // money left to bet to continue playing
   sumToWinIfPlayerGoesAllIn: number, // if player goes all in, he gets all money in the round + his bet + equivalent bets of other players
-  cards: [Card, Card] | Card[], //! fixing:  Type '[Card, Card]' is not assignable to type 'null'.ts(2322)
 
   hasReacted: boolean,
   isAllIn: boolean,
@@ -37,6 +41,20 @@ export class Player implements PlayerType {
   name = ""; // player name
   id = 0; // player id (used in getting the next player) 
   cards: [Card, Card] | Card[];
+  highestCard: Card;
+  // cardsInTheBestCombination: Card[];
+  cardsAtCombination = {
+    [COMBINATIONS.ROYAL_FLUSH]: [] as Card[],
+    [COMBINATIONS.STRAIGHT_FLUSH]: [] as Card[],
+    [COMBINATIONS.FOUR_OF_KIND]: [] as Card[],
+    [COMBINATIONS.FULL_HOUSE]: [] as Card[],
+    [COMBINATIONS.FLUSH]: [] as Card[],
+    [COMBINATIONS.STRAIGHT]: [] as Card[],
+    [COMBINATIONS.THREE_OF_KIND]: [] as Card[],
+    [COMBINATIONS.TWO_PAIRS]: [] as Card[],
+    [COMBINATIONS.PAIR]: [] as Card[],
+    [COMBINATIONS.HIGH_CARD]: [] as Card[],
+  };
 
   moneyLeft = 0; // money left
   sumOfPersonalBetsInThisRound = 0; // sum of money the player has bet in this round
@@ -55,6 +73,8 @@ export class Player implements PlayerType {
     this.name = name;
     this.id = id;
     this.cards = cards;
+    this.highestCard = cards.sort((card1, card2) => card1.cardCost - card2.cardCost)[0];
+    // this.cardsInTheBestCombination = [];
 
     this.moneyLeft = moneyLeft;
     this.sumOfPersonalBetsInThisRound = 0;
@@ -102,6 +122,7 @@ export class Player implements PlayerType {
 
   allIn(store: StoreType) {
     const { moneyLeft } = this;
+    this.isAllIn = true;
     this.placeBet({ betAmount: moneyLeft, store, betAction: BET_ACTION.ALL_IN });
   }
 
