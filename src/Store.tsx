@@ -19,7 +19,7 @@ const formatGameLog = (arrayOfGameEvents: string[]): any => {
       {
         latestEventRecords.map(x =>
           <>
-            <span>{x} </span>
+            <span >{x} </span>
             <br />
           </>
         )
@@ -37,8 +37,6 @@ class Store {
   initialDeposit: number = 500; // value for game init
 
   players: Players = {} as Players; // ???
-  // initialPlayers: Player[] = []; // ??? list of players who started playing
-
   deck: Deck = new Deck; // array of cards to pick from
   cardsOnTheDesk: Card[] = [];
   gameLog: string[] = [];

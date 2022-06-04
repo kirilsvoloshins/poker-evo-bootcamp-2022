@@ -1,11 +1,12 @@
 // import { ComponentNames, Card, SuitSymbol, CardNameSymbol, GameState } from "../types";
-import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck, POKER_ROUNDS } from "../utils";
-import { StoreType } from "../types";
+import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck, POKER_ROUNDS, cardCosts } from "../utils";
+import { StoreType, SuitSymbol } from "../types";
 import { Deck } from "./Deck";
 // import { Card } from "./Card";
 import { Player } from "./Player";
 // import StoreVal from "../Store";
 import { makeAutoObservable } from "mobx";
+import { Card } from "./Card";
 
 export class Players implements PlayersType {
   /* player could have folded in this level, but will play in the next! */
@@ -88,11 +89,142 @@ export class Players implements PlayersType {
     return nextPlayer;
   }
 
+  getListOfCombinations(cardsOnTheDesk: Card[]) {
+    const players = this.playersStillInThisRound;
+    const combinations = {
+      hasRoyalFlush: false,       //todo  1.combo
+      hasStraightFlush: false,    //  2.combo
+      hasFourOfKind: false,       //  3.combo
+      hasFullHouse: false,        //!  4.combo
+      hasFlush: false,            //  5.combo
+      hasStraight: false,         //  6.combo
+      hasThreeOfKind: false,      //  7.combo
+      hasTwoPairs: false,         //  8.combo
+      hasPair: false,             //  9.combo
+      hasHighCard: false,         // 10.combo
+    };
+
+    //!!! quick fix
+    const playerCards = this.playersStillInThisRound[0].cards;
+    const cardsToCheck = [...cardsOnTheDesk, ...playerCards];
+    const sortedCardsToCheck = cardsToCheck.sort(getSortedArrayofCards);
+    const suitsOfCardsToCheck = cardsToCheck.map(({ suitSymbol }) => suitSymbol);
+    const uniqueCardCosts = [...new Set(cardsToCheck.map(({ cardCost }) => cardCost))];
+    const cardsWithPairs = uniqueCardCosts
+      .map(uniqueCardCost => cardsToCheck.filter(({ cardCost }) => cardCost === uniqueCardCost))
+      .filter(cardsWithMatchingCosts => cardsWithMatchingCosts.length === 2);
+    const cardsWithThreeOfKinds = uniqueCardCosts
+      .map(uniqueCardCost => cardsToCheck.filter(({ cardCost }) => cardCost === uniqueCardCost))
+      .filter(cardsWithMatchingCosts => cardsWithMatchingCosts.length === 3);
+    const cardsWithFourOfKinds = uniqueCardCosts
+      .map(uniqueCardCost => cardsToCheck.filter(({ cardCost }) => cardCost === uniqueCardCost))
+      .filter(cardsWithMatchingCosts => cardsWithMatchingCosts.length === 4);
+
+    //* hasHighCard
+    const highestCardOfThisPlayer = playerCards.sort(getSortedArrayofCards)[0];
+    //todo: handle multiple highest cards (in all player cards)
+    const highestCardOfAllPlayers = this.playersStillInThisRound
+      .map(({ cards }) => cards.sort(getSortedArrayofCards)[0])
+      .sort(getSortedArrayofCards)[0];
+    const doesThisPlayerHaveTheHighestCard = highestCardOfAllPlayers.cardCost === highestCardOfThisPlayer.cardCost;
+    combinations.hasHighCard = doesThisPlayerHaveTheHighestCard;
+
+    //* hasPair
+    const hasPair = cardsWithPairs.length === 1;
+    combinations.hasPair = hasPair;
+
+    //* hasTwoPairs
+    const hasTwoPairs = cardsWithPairs.length === 2;
+    combinations.hasTwoPairs = hasTwoPairs;
+
+    //* hasThreeOfKind
+    const hasThreeOfKind = cardsWithThreeOfKinds.length > 0;
+    combinations.hasThreeOfKind = hasThreeOfKind;
+
+    //* hasStraight
+    const checkForStraight = (cardsToCheck: Card[]): boolean => {
+      let amountOfCardsInPotentialStraight = 1, previousCardCost = 0;
+      for (const { cardCost } of cardsToCheck) {
+        const areCardsConsecutive = cardCost === previousCardCost - 1;
+        amountOfCardsInPotentialStraight = areCardsConsecutive ? amountOfCardsInPotentialStraight + 1 : 1;
+        previousCardCost = cardCost;
+      }
+      return amountOfCardsInPotentialStraight >= 5;
+    }
+    combinations.hasStraight = checkForStraight(cardsToCheck);
+
+    //* hasFlush
+    const uniqueSuitSymbols = Object.keys(suitSymbols) as SuitSymbol[];
+    const hasFlush = uniqueSuitSymbols.map(uniqueSuitSymbol => {
+      return cardsToCheck.filter(({ suitSymbol }) => suitSymbol === uniqueSuitSymbol).length >= 5;
+    }).length > 0;
+    combinations.hasFlush = hasFlush;
+
+    //!!! hasFullHouse - we need to disable pairs and three-of-kinds if has full house
+    const hasFullHouse = hasPair && hasThreeOfKind;
+    combinations.hasFullHouse = hasFullHouse;
+
+    //* hasFourOfKind
+    const hasFourOfKind = cardsWithFourOfKinds.length === 1;
+    combinations.hasFourOfKind = hasFourOfKind;
+
+    //!!! todo: hasStraightFlush - we need to disable straight and flush
+    const checkForStraightFlush = (cardsToCheck: Card[]): boolean => {
+      let amountOfCardsInPotentialStraightFlush = 1, previousCardCost = 0, previousCardSuit = "";
+      for (const { cardCost, suitSymbol } of cardsToCheck) {
+        const areCardsPotentionallyInStraightFlush = cardCost === previousCardCost - 1 && suitSymbol === previousCardSuit;
+        amountOfCardsInPotentialStraightFlush = areCardsPotentionallyInStraightFlush ? amountOfCardsInPotentialStraightFlush + 1 : 1;
+        previousCardCost = cardCost;
+      }
+      return amountOfCardsInPotentialStraightFlush >= 5;
+    }
+    const hasStraightFlush = checkForStraightFlush(cardsToCheck);
+    combinations.hasStraightFlush = hasStraightFlush;
+
+    //* hasRoyalFlush
+    const checkForRoyalFlush = (cardsToCheck: Card[]): boolean => {
+      if (!combinations.hasFlush) {
+        return false;
+      }
+
+      const flushSuit = uniqueSuitSymbols.filter(uniqueSuitSymbol => {
+        return cardsToCheck.filter(({ suitSymbol }) => suitSymbol === uniqueSuitSymbol).length >= 5;
+      })[0];
+
+      const sortedCardsOfFlushSuit: Card[] = sortedCardsToCheck.filter(({ suitSymbol }) => suitSymbol === flushSuit);
+      const isTheHighestCardAce = cardsToCheck[0].cardCost === cardCosts["ace"];
+      if (!isTheHighestCardAce) {
+        return false;
+      }
+
+      let amountOfCardsInPotentialRoyalFlush = 1, previousCardCost = 0, previousCardSuit = "";
+      for (const { cardCost, suitSymbol } of sortedCardsOfFlushSuit) {
+        const areCardsPotentionallyInRoyalFlush = cardCost === previousCardCost - 1 && suitSymbol === previousCardSuit;
+        if (!areCardsPotentionallyInRoyalFlush) {
+          return false;
+        }
+
+        amountOfCardsInPotentialRoyalFlush++;
+        previousCardCost = cardCost;
+      }
+      return amountOfCardsInPotentialRoyalFlush >= 5;
+    }
+    const hasRoyalFlush = checkForRoyalFlush(cardsToCheck);
+    combinations.hasStraightFlush = hasRoyalFlush;
+  }
+
+
   getWinners(sumOfBets: number) {
     const playersAtCombinations: PlayersAtCombinations = {
 
     };
   }
+}
+
+const getSortedArrayofCards = (cardA: Card, cardB: Card): any => {
+  const { cardCost: cardCost_1 } = cardA;
+  const { cardCost: cardCost_2 } = cardB;
+  return cardCost_2 - cardCost_1;
 }
 
 
