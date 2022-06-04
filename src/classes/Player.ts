@@ -49,6 +49,7 @@ export class Player implements PlayerType {
   betToPayToContinue = 0; // money left to bet to continue playing
   sumToWinIfPlayerGoesAllIn = 0; // if player goes all in, he gets all money in the round + his bet + equivalent bets of other players
 
+  hasReacted = false;
   isAllIn = false;
   hasFolded = false;
   /* player state */
@@ -77,6 +78,7 @@ export class Player implements PlayerType {
     // this.sumToWinIfGoesAllIn = 0;
     this.sumToWinIfPlayerGoesAllIn = 0;
 
+    this.hasReacted = false;
     this.isAllIn = false;
     this.hasFolded = false;
 
@@ -219,17 +221,28 @@ export class Player implements PlayerType {
 
   check(store: StoreType) {
     // this.hasChecked = true;
+    this.hasReacted = true;
     store.logGameEvent(`${this.name}: checks`);
     store.players.passMove(store);
   }
 
   supportBet(store: StoreType) {
+    this.hasReacted = true;
     const { betToPayToContinue } = this;
     this.placeBet({ betAmount: betToPayToContinue, store, betAction: BET_ACTION.SUPPORT });
   }
 
-  allIn(store: StoreType) {
+  raise({ store, bet }: { store: StoreType, bet: number }) {
+    this.placeBet({ betAmount: bet, store, betAction: BET_ACTION.RAISE });
+    store.players.playersLeftToReact.forEach(player => {
+      // everyone still playing has to react to the bet raise
+      player.hasReacted = false;
+    });
+  }
 
+  allIn(store: StoreType) {
+    const { moneyLeft } = this;
+    this.placeBet({ betAmount: moneyLeft, store, betAction: BET_ACTION.ALL_IN });
   }
 
   // isRaiseBet = false, isSupportBet = false, isAllIn = false, isBigBlind = false, isSmallBlind = false 
@@ -243,11 +256,15 @@ export class Player implements PlayerType {
       return alert(`Player "${name}" can not bet ${betAmount}!`);
     }
 
+    if (![BET_ACTION.SMALL_BLIND, BET_ACTION.BIG_BLIND].includes(betAction)) {
+      this.hasReacted = true;
+    }
     this.moneyLeft -= betAmount;
     this.sumOfPersonalBetsInThisRound += betAmount;
+    store.sumOfBets += betAmount;
     // store.addToSumOfBets(betAmount);
-    if (this.sumOfPersonalBetsInThisRound > store.sumOfBets) {
-      store.sumOfBets = this.sumOfPersonalBetsInThisRound;
+    if (this.sumOfPersonalBetsInThisRound > store.maxSumOfIndividualBets) {
+      store.maxSumOfIndividualBets = this.sumOfPersonalBetsInThisRound;
     }
 
     const gameEventText = getGameEventText({ name, betAmount, betAction });
@@ -259,8 +276,4 @@ export class Player implements PlayerType {
   pickCard(cardToTake: Card) {
     this.cards.push(cardToTake);
   }
-
-  // isAbleToContinuePlaying(store: StoreType) {
-  //   return this.moneyLeft > store.minimumBet;
-  // }
 }

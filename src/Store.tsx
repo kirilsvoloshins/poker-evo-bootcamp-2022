@@ -37,62 +37,56 @@ class Store {
   initialDeposit: number = 500; // value for game init
 
   players: Players = {} as Players; // ???
-  initialPlayers: Player[] = []; // ??? list of players who started playing
+  // initialPlayers: Player[] = []; // ??? list of players who started playing
 
   deck: Deck = new Deck; // array of cards to pick from
   cardsOnTheDesk: Card[] = [];
   gameLog: string[] = [];
 
   isGameActive: boolean = false; // game state, set false on end and true on start
-  gameState: GameState = ""; // ???
+  // gameState: GameState = ""; // ???
   activeRound: POKER_ROUNDS;
   winner: Player | null = null; // if the game ends, show the winner
 
+  maxSumOfIndividualBets = 0; // maxmimum amount of bets of one person in this round
   sumOfBets: number = 0; // the sum to split between winners of the round
-  betToSupport: number = this.blinds.bigBlind;
-  currentBetToMatch: number = 0; // maximum bet in this round
+
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  startGame() {
-    /* reset some things */
-    console.log('game start');
+  resetGameSettingsBeforeStart() {
+    this.isGameActive = true;
+    this.maxSumOfIndividualBets = 0;
     this.sumOfBets = 0;
     this.gameLog = [];
     this.cardsOnTheDesk = [];
+  }
 
-    /* if it is not the first level, delete players who do not have enough money */
-    // if (this.players.playerList) {
-    //   //todo: handle if player has not enough money to support the blind.
-    //   this.players.playerList = this.players.playerList.filter(player => player.moneyLeft > 0);
-    //   this.players.playerList.forEach(player => {
-    //     player.hasFolded = false;
-
-    //     player.canSupportBet = true;
-    //     player.canCheck = true;
-    //     player.canRaise = true;
-    //   });
-    // }
-
+  startGame() {
+    this.resetGameSettingsBeforeStart();
     this.logGameEvent("<<< GAME START >>>");
     this.startRound_BlindCall();
   }
 
-
+  restartGame() {
+    this.resetGameSettingsBeforeStart();
+    this.logGameEvent("<<< GAME START >>>");
+    this.startRound_BlindCall();
+  }
 
   startNextRound() {
-    const activeRound = this.activeRound;
     /* cleanup before the round */
     this.players.playersStillInThisRound.forEach(player => {
       player.canCheck = true;
       player.canSupportBet = true;
       player.canRaise = true;
+      player.hasReacted = false;
     });
 
     // this.players.activePlayer = this.players.getNextActivePlayer();
-
+    const activeRound = this.activeRound;
     switch (activeRound) {
       case POKER_ROUNDS.BLIND_CALL: {
         return this.startRound_Flop();
@@ -104,6 +98,7 @@ class Store {
         return this.startRound_River();
       }
       case POKER_ROUNDS.RIVER: {
+        this.isGameActive = false;
         return this.determineWinners();
       }
       default: {
@@ -144,7 +139,6 @@ class Store {
     }
 
     /* players decide whether to continue playing with these cards or fold (starting from the small blind player) */
-    this.betToSupport = bigBlind;
     this.players.updatePlayerAbilities(this);
     this.players.activePlayer = players.smallBlindPlayer;
   }
@@ -167,6 +161,7 @@ class Store {
   startRound_Turn() {
     this.activeRound = POKER_ROUNDS.TURN;
     this.logGameEvent("< TURN >");
+    this.players.updatePlayerAbilities(this);
 
     const randomCard = this.deck.pickRandomCard();
     this.cardsOnTheDesk.push(randomCard);
@@ -178,6 +173,7 @@ class Store {
   startRound_River() {
     this.activeRound = POKER_ROUNDS.RIVER;
     this.logGameEvent("< RIVER >");
+    this.players.updatePlayerAbilities(this);
 
     const randomCard = this.deck.pickRandomCard();
     this.cardsOnTheDesk.push(randomCard);

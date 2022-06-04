@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
-import { GameScreenProps, PlayerT } from '../types';
+// import { GameScreenProps, PlayerT } from '../types';
 import { observer } from 'mobx-react';
 import store from "../Store";
 import "../styles/App.css"
-import { BET_ACTION } from '../utils';
+// import { BET_ACTION } from '../utils';
 // import PlayerT from "../classes/Player";
 
 const BetControls: React.FC = observer(() => {
@@ -44,16 +44,14 @@ const BetControls: React.FC = observer(() => {
   const handleRaise = useCallback(() => {
     const { moneyLeft } = store.players.activePlayer;
     if (betValue === moneyLeft) {
-      /* it is basically all in! */
       return handleAllIn();
     }
 
-    store.players.activePlayer.placeBet({ betAmount: betValue, store, betAction: BET_ACTION.RAISE });
-  }, [store.players.activePlayer]);
+    store.players.activePlayer.raise({ store, bet: betValue });
+  }, [store.players.activePlayer, betValue]);
 
   const handleAllIn = useCallback(() => {
-    const { moneyLeft } = store.players.activePlayer;
-    store.players.activePlayer.placeBet({ betAmount: moneyLeft, store, betAction: BET_ACTION.ALL_IN });
+    store.players.activePlayer.allIn(store);
   }, [store.players.activePlayer]);
 
 
