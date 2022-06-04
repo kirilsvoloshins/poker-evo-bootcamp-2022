@@ -19,20 +19,6 @@ export class Deck {
     makeAutoObservable(this);
   }
 
-  shuffle() {
-    const { cards } = this;
-    const amountOfCardsLeft = cards.length;
-    let unshuffledIndexes = Array.from({ length: amountOfCardsLeft }, (_, i) => i);
-    const shuffledIndexes = [];
-    for (let i = 0; i < amountOfCardsLeft; i++) {
-      const randomCardIndex = Math.floor(Math.random() * unshuffledIndexes.length);
-      shuffledIndexes.push(randomCardIndex);
-      unshuffledIndexes = unshuffledIndexes.filter(id => id !== randomCardIndex);
-    }
-    const shuffledDeck = shuffledIndexes.map(id => cards[id]);
-    this.cards = shuffledDeck;
-  }
-
   pickRandomCard(): Card {
     const allCards = this.cards;
     const amountOfFreeCards = allCards.length;

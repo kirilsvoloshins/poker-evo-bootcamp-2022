@@ -10,9 +10,18 @@ import { makeAutoObservable } from "mobx";
 interface PlayerType {
   name: string,
   id: number,
-  hasFolded: boolean, // if is not playing, show the cards!
   moneyLeft: number, // amount of money left
-  cards: [Card, Card] | Card[]
+  sumOfPersonalBetsInThisRound: number, // money bet in this round
+  betToPayToContinue: number, // money left to bet to continue playing
+  sumToWinIfPlayerGoesAllIn: number, // if player goes all in, he gets all money in the round + his bet + equivalent bets of other players
+  cards: [Card, Card] | Card[], //! fixing:  Type '[Card, Card]' is not assignable to type 'null'.ts(2322)
+
+  isAllIn: boolean,
+  hasFolded: boolean, // 
+  /* player state */
+  canSupportBet: boolean,
+  canCheck: boolean,
+  // canReact: boolean, // cant react if you folded or broke
 }
 
 interface PlayerConstructorArgs {
@@ -31,39 +40,53 @@ const getSortedArrayofCards = (cardA: Card, cardB: Card): any => {
 
 export class Player implements PlayerType {
   name = ""; // player name
-  id = 0; //??? player id 
-  isAllIn: boolean = false;
+  id = 0; // player id (used in getting the next player) 
+  cards: [Card, Card] | Card[];
+
   moneyLeft = 0; // money left
-  betAmount = 0; // money bet in this round
+  // betAmount = 0; // money bet in this round
+  sumOfPersonalBetsInThisRound = 0; // sum of money the player has bet in this round
   betToPayToContinue = 0; // money left to bet to continue playing
+  sumToWinIfPlayerGoesAllIn = 0; // if player goes all in, he gets all money in the round + his bet + equivalent bets of other players
 
-  hasToReact: boolean = true;
-  cards: [Card, Card] | Card[]; //! fixing:  Type '[Card, Card]' is not assignable to type 'null'.ts(2322)
+  isAllIn = false;
+  hasFolded = false;
+  /* player state */
+  canCheck = false;
+  canSupportBet = false;
+  canRaise = false;
+
+  // canReact = true; // cant react if you folded or broke
+
+  // hasToReact: boolean = true;
   // isAbleToContinuePlaying: boolean = true;
-
-  isAbleToContinuePlaying(store: StoreType) {
-    return this.moneyLeft > store.minimumBet;
-  }
-
   // hasActiveTurn = false; // it's turn of this player
   /* player history */
-  hasChecked: boolean = false;
-  hasFolded = false; // 
-  hasReacted = false;
-  /* player state */
-  canCheck: boolean = false;
-  canSupportBet: boolean = false;
+  // hasReacted = false;
+  // hasChecked: boolean = false;
 
   constructor({ name, id, moneyLeft, cards }: PlayerConstructorArgs) {
     this.name = name;
     this.id = id;
-    this.hasFolded = false;
-    this.moneyLeft = moneyLeft;
     this.cards = cards;
-    this.betAmount = 0;
+
+    this.moneyLeft = moneyLeft;
+    // this.betAmount = 0;
+    this.sumOfPersonalBetsInThisRound = 0;
+    this.betToPayToContinue = 0;
+    // this.sumToWinIfGoesAllIn = 0;
+    this.sumToWinIfPlayerGoesAllIn = 0;
+
+    this.isAllIn = false;
+    this.hasFolded = false;
+
+    this.canCheck = false;
+    this.canSupportBet = false;
+    this.canRaise = false;
 
     makeAutoObservable(this);
   }
+
 
   getListOfCombinations(cardsOnTheDesk: Card[], players: Players) {
     const combinations = {
@@ -190,14 +213,12 @@ export class Player implements PlayerType {
   /* player actions! */
   fold(store: StoreType) {
     this.hasFolded = true;
-    this.canCheck = false;
-    this.canSupportBet = false;
     store.logGameEvent(`${this.name}: folds`);
     store.players.passMove(store);
   }
 
   check(store: StoreType) {
-    this.hasChecked = true;
+    // this.hasChecked = true;
     store.logGameEvent(`${this.name}: checks`);
     store.players.passMove(store);
   }
@@ -205,6 +226,10 @@ export class Player implements PlayerType {
   supportBet(store: StoreType) {
     const { betToPayToContinue } = this;
     this.placeBet({ betAmount: betToPayToContinue, store, betAction: BET_ACTION.SUPPORT });
+  }
+
+  allIn(store: StoreType) {
+
   }
 
   // isRaiseBet = false, isSupportBet = false, isAllIn = false, isBigBlind = false, isSmallBlind = false 
@@ -218,9 +243,12 @@ export class Player implements PlayerType {
       return alert(`Player "${name}" can not bet ${betAmount}!`);
     }
 
-    store.addToSumOfBets(betAmount);
-    this.betAmount += betAmount;
     this.moneyLeft -= betAmount;
+    this.sumOfPersonalBetsInThisRound += betAmount;
+    // store.addToSumOfBets(betAmount);
+    if (this.sumOfPersonalBetsInThisRound > store.sumOfBets) {
+      store.sumOfBets = this.sumOfPersonalBetsInThisRound;
+    }
 
     const gameEventText = getGameEventText({ name, betAmount, betAction });
     store.logGameEvent(gameEventText);
@@ -231,4 +259,8 @@ export class Player implements PlayerType {
   pickCard(cardToTake: Card) {
     this.cards.push(cardToTake);
   }
+
+  // isAbleToContinuePlaying(store: StoreType) {
+  //   return this.moneyLeft > store.minimumBet;
+  // }
 }
