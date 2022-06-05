@@ -1,11 +1,10 @@
 import React, { useCallback, useState, ChangeEvent } from 'react';
 import "../styles/App.css";
-import { GameMenuProps, ComponentNames } from '../types';
+import { GameMenuProps } from '../types';
+import NavButton from "./NavButton";
 import PlayerCountCircle from "./PlayerCountCircle";
-
 import store from "../Store";
 import { observer } from 'mobx-react';
-import NavButton from "./NavButton";
 
 const Settings: React.FC<GameMenuProps> = observer(() => {
   const [areSettingsValid, setAreSettingsValid] = useState(true);
@@ -34,7 +33,6 @@ const Settings: React.FC<GameMenuProps> = observer(() => {
         <div className="settingsTable">
           <div>Player count:</div>
           <div className='playerCountSelector'>
-            {/* <PlayerCountCircle amountOfPlayersToSet={1} /> */}
             <PlayerCountCircle amountOfPlayersToSet={2} />
             <PlayerCountCircle amountOfPlayersToSet={3} />
             <PlayerCountCircle amountOfPlayersToSet={4} />

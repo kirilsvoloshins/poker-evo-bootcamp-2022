@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import "../styles/App.css";
-import { ComponentNames, NavButtonProps } from "../types";
+import { NavButtonProps } from "../types";
 import store from "../Store";
 
 const NavButton: React.FC<NavButtonProps> = ({ btnText, screenToOpen, isBackButton, onPress }) => {

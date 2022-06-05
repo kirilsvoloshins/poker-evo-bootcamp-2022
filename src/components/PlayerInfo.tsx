@@ -1,12 +1,11 @@
-
-import React, { FC } from 'react';
+import React from 'react';
 import "../styles/App.css";
 import Card from "./Card";
-import { Player } from "../classes/Player";
 import { observer } from 'mobx-react';
 import store from "../Store";
+import { PlayerInfoProps } from '../types';
 
-const PlayerInfo: FC<PlayerInfoProps> = observer(({ playerId }) => {
+const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
   const { playerList } = store.players;
   const hasGameBeenInitialized = typeof playerList !== "undefined";
   if (!hasGameBeenInitialized) return <></>;
@@ -18,10 +17,8 @@ const PlayerInfo: FC<PlayerInfoProps> = observer(({ playerId }) => {
   const cards = playerAtThisSlot.cards;
   const card1 = cards[0], card2 = cards[1];
 
-
   return (
     <div className="playerDiv" >
-      {/* <div className={`playerInfo ${playerAtThisSlot?.hasActiveTurn ? "activePlayerInfo" : ""}`}> */}
       <div className={`playerInfo ${store.players.activePlayer === playerAtThisSlot ? "activePlayerInfo" : ""}`}>
         <div className="playerInfoText">
           {store.players.bigBlindPlayer === playerAtThisSlot && "big blind"}
@@ -45,6 +42,3 @@ const PlayerInfo: FC<PlayerInfoProps> = observer(({ playerId }) => {
 export default PlayerInfo;
 
 
-interface PlayerInfoProps {
-  playerId: 0 | 1 | 2 | 3
-}

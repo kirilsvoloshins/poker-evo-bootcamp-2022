@@ -1,10 +1,7 @@
-import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
-// import { GameScreenProps, PlayerT } from '../types';
+import React, { useState, useCallback, ChangeEvent } from 'react';
 import { observer } from 'mobx-react';
 import store from "../Store";
 import "../styles/App.css"
-// import { BET_ACTION } from '../utils';
-// import PlayerT from "../classes/Player";
 
 const BetControls: React.FC = observer(() => {
   const [betValue, setBetValue] = useState(store.minimumBet);

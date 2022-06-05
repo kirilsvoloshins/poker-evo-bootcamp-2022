@@ -1,21 +1,9 @@
-import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react';
-import store from "../Store";
 import "../styles/App.css"
-import { Card } from '../classes/Card';
 import CardComp from '../components/Card';
-import { COMBINATIONS, COMBINATION_NAMES_HUMAN } from '../utils';
-import { Winner } from '../types';
-
-
-
-interface GameResultOfPlayerProps {
-  // cards: Card[],
-  // combinationName: COMBINATIONS,
-  // winAmount: number,
-  // playerName: string;
-  player: Winner
-}
+import { COMBINATION_NAMES_HUMAN } from '../consts';
+import { GameResultOfPlayerProps } from '../types';
 
 const GameResults: React.FC<GameResultOfPlayerProps> = observer(({ player }) => {
   const { playerName, winAmount, cards, combinationName } = player;
@@ -24,9 +12,11 @@ const GameResults: React.FC<GameResultOfPlayerProps> = observer(({ player }) => 
     <div className="gameResultOfPlayerWrapper">
       <div>{playerName}: {winAmount}€</div>
       <div className="combinationCards">
-        {cards.map((card, i) => (
-          <CardComp key={i} cardValue={card.cardNameSymbol} cardSuit={card.suitSymbol} />
-        ))}
+        {cards.map((card, i) => {
+          return (
+            <CardComp key={i} cardValue={card.cardNameSymbol} cardSuit={card.suitSymbol} />
+          )
+        })}
       </div>
       <div className="combinationName">
         {COMBINATION_NAMES_HUMAN[combinationName]}

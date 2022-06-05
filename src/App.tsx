@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React from 'react';
 import Game from "./components/Game";
 import Menu from "./components/Menu";
 import Credits from "./components/Credits";
@@ -7,7 +7,6 @@ import Switch from "./components/Switch";
 import NavButton from "./components/NavButton";
 import store from "./Store";
 import { observer } from 'mobx-react';
-import StoreString from "./components/StoreString";
 import TopBar from "./components/TopBar";
 import "./styles/App.css";
 
@@ -23,7 +22,6 @@ export const App: React.FC = observer(() => {
         <Credits name="Credits" />
         <Settings name="Settings" />
       </Switch>
-      {/* <StoreString /> */}
     </div>
   )
 });

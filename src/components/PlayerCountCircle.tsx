@@ -1,15 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import "../styles/App.css";
-import { GameMenuProps, ComponentNames } from '../types';
-
-
+import { PlayerCountCircleProps } from '../types';
 import store from "../Store";
 import { observer } from 'mobx-react';
-import NavButton from "./NavButton";
-
-interface PlayerCountCircleProps {
-  amountOfPlayersToSet: number
-};
 
 const PlayerCountCircle: React.FC<PlayerCountCircleProps> = observer(({ amountOfPlayersToSet }) => {
   const setAmountOfHumanPlayers = useCallback(() => {

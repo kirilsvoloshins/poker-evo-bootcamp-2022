@@ -1,6 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { ComponentNames, SuitSymbol, CardNameSymbol, PlayerType, GameState } from "../types";
-import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck } from "../utils";
+import { suits, cardNames } from "../consts";
 import { Card } from "./Card";
 
 export class Deck {

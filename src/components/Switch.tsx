@@ -1,8 +1,5 @@
 import React from 'react';
-type SwitchProps = {
-  active: string,
-  children: JSX.Element[],
-}
+import { SwitchProps } from '../types';
 
 const Switch: React.FC<SwitchProps> = ({ active, children }) => {
   return <>

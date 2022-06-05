@@ -1,12 +1,7 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import "../styles/App.css";
-import { CardNameSymbol, SuitSymbol } from '../types';
+import { CardProps, SuitSymbol } from '../types';
 import { observer } from 'mobx-react';
-
-interface CardProps {
-  cardValue: CardNameSymbol,
-  cardSuit: SuitSymbol
-}
 
 const Card: React.FC<CardProps> = observer(({ cardValue, cardSuit }) => {
   const redSuits: SuitSymbol[] = ["♦", "♥"];
@@ -20,8 +15,8 @@ const Card: React.FC<CardProps> = observer(({ cardValue, cardSuit }) => {
       <div className="cardSuitDiv">
         {cardSuit}
       </div>
-
     </div>
   )
 });
 export default Card;
+

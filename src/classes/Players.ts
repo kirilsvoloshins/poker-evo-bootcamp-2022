@@ -1,14 +1,10 @@
-// import { ComponentNames, Card, SuitSymbol, CardNameSymbol, GameState } from "../types";
-import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck, POKER_ROUNDS, cardCosts, COMBINATIONS } from "../utils";
-import { StoreType, SuitSymbol, Winner } from "../types";
-import { Deck } from "./Deck";
-// import { Card } from "./Card";
+import { suitSymbols, humanPlayerNames, cardCosts, COMBINATIONS } from "../consts";
+import { PlayersAtCombinations, PlayersConstructorArgs, StoreType, SuitSymbol, Winner } from "../types";
 import { Player } from "./Player";
-// import StoreVal from "../Store";
 import { makeAutoObservable } from "mobx";
 import { Card } from "./Card";
 
-export class Players implements PlayersType {
+export class Players {
   /* player could have folded in this level, but will play in the next! */
   playerList: Player[]; // static list of players which entered the game (on game start we delete ones who cant participate)
   playersStillInThisRound: Player[]; // everyone who has not folded since the start of the game
@@ -51,12 +47,10 @@ export class Players implements PlayersType {
   }
 
   passMove(store: StoreType) {
-    // this.activePlayer.hasReacted = true;
     this.updatePlayerAbilities(store);
 
     const areThereAnyPlayersToReact = this.playersLeftToReact.length > 0;
     if (!areThereAnyPlayersToReact) {
-      console.log('no players to react!');
       store.startNextRound();
       return;
     }
@@ -78,7 +72,6 @@ export class Players implements PlayersType {
       player.canSupportBet = (player.sumOfPersonalBetsInThisRound + player.moneyLeft) >= store.maxSumOfIndividualBets
       player.canRaise = (player.sumOfPersonalBetsInThisRound + player.moneyLeft) > store.maxSumOfIndividualBets
       player.betToPayToContinue = store.maxSumOfIndividualBets - player.sumOfPersonalBetsInThisRound;
-      // console.log(player.name, player.betToPayToContinue, store.maxSumOfIndividualBets, player.sumOfPersonalBetsInThisRound);
     });
   }
 
@@ -88,9 +81,6 @@ export class Players implements PlayersType {
     const nextPlayer = consecutivePlayer ? consecutivePlayer : playersLeftToReact[0];
     return nextPlayer;
   }
-
-
-
 
   getWinners({ sumOfBets, store }: { sumOfBets: number, store: StoreType }) {
     //todo: handle a lot of things...
@@ -240,8 +230,6 @@ export class Players implements PlayersType {
           player.bestCombinationCards = combinationCards;
         }
       }
-
-      console.log({ player });
     });
 
     const playersAtCombination: PlayersAtCombinations = {
@@ -272,7 +260,6 @@ export class Players implements PlayersType {
       };
       store.winners = [winnerObject];
       return;
-      // return playersStillInThisRound[0];
     }
 
     // getting the winner 
@@ -377,8 +364,6 @@ export class Players implements PlayersType {
         }
       }
     }
-
-    // console.log(store.winners);
   }
 }
 
@@ -418,9 +403,7 @@ const getCardsInFlushIfThereIsAny = ({ cardsToCheck, uniqueSuitSymbols }: { card
 }
 
 const getCardsInStraightIfThereIsAny = (cardsToCheck: Card[]): Card[] => {
-  const firstCard = cardsToCheck[0];
-  let amountOfCardsInPotentialStraight = 1, previousCardCost = 0, cardsInStraight: Card[] = [firstCard];
-  // for (const [cardIndex, card] of Object.entries(cardsToCheck)) {
+  let amountOfCardsInPotentialStraight = 0, previousCardCost = 0, cardsInStraight: Card[] = [];
   for (const card of cardsToCheck) {
     const areCardsConsecutive = card.cardCost === previousCardCost - 1;
     if (areCardsConsecutive) {
@@ -434,7 +417,6 @@ const getCardsInStraightIfThereIsAny = (cardsToCheck: Card[]): Card[] => {
         break;
       }
     }
-    // amountOfCardsInPotentialStraight = areCardsConsecutive ? amountOfCardsInPotentialStraight + 1 : 1;
     previousCardCost = card.cardCost;
   }
   if (amountOfCardsInPotentialStraight < 5) {
@@ -446,14 +428,3 @@ const getCardsInStraightIfThereIsAny = (cardsToCheck: Card[]): Card[] => {
 
 
 
-type PlayersAtCombinations = Partial<Record<COMBINATIONS, Player[]>>;
-
-interface PlayersType {
-
-};
-
-interface PlayersConstructorArgs {
-  amountOfHumanPlayers: number,
-  deck: Deck,
-  initialMoney: number,
-}

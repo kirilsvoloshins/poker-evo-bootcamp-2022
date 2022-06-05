@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, ChangeEvent } from "react";
+import React, { useEffect } from "react";
 import { GameScreenProps } from "../types";
 import { observer } from "mobx-react";
 import store from "../Store";
@@ -43,7 +43,6 @@ const GameScreen: React.FC<GameScreenProps> = observer(() => {
 
 
         <BetControls />
-
       </div>
     </>
   )

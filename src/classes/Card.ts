@@ -1,33 +1,19 @@
-import { ComponentNames, SuitSymbol, CardNameSymbol, PlayerType, GameState, Suit, CardName } from "../types";
-import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck, cardCosts } from "../utils";
-
-
-interface CardType {
-  suit: Suit,
-  suitSymbol: SuitSymbol,
-  cardName: CardName,
-  cardNameSymbol: CardNameSymbol,
-  isHidden: boolean,
-}
-
-interface CardConstructorArgs {
-  suit: Suit,
-  cardName: CardName,
-}
+import { CardType, CardConstructorArgs } from "../types";
+import { suits, cardNames, suitSymbols, cardNameSymbols, cardCosts } from "../consts";
 
 export class Card implements CardType {
   suit = suits[0];
-  suitSymbol = suitSymbols[this.suit] as SuitSymbol;
+  suitSymbol = suitSymbols[this.suit];
   cardName = cardNames[0];
-  cardNameSymbol = cardNameSymbols[this.cardName] as CardNameSymbol;
+  cardNameSymbol = cardNameSymbols[this.cardName];
   isHidden = false;
-  cardCost: number = 0;
+  cardCost = 0;
 
   constructor({ suit, cardName }: CardConstructorArgs) {
     this.suit = suit;
-    this.suitSymbol = suitSymbols[suit] as SuitSymbol
+    this.suitSymbol = suitSymbols[suit];
     this.cardName = cardName;
-    this.cardNameSymbol = cardNameSymbols[cardName] as CardNameSymbol;
+    this.cardNameSymbol = cardNameSymbols[cardName];
     this.cardCost = cardCosts[cardName];
   }
 }

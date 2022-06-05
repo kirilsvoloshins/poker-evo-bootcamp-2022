@@ -1,8 +1,8 @@
-import { makeAutoObservable, makeObservable } from "mobx";
-import { ComponentNames, PlayerType, SuitSymbol, CardNameSymbol, CardType, GameState, GameEvent, Winner } from "./types";
-import { suits, cardNames, suitSymbols, cardNameSymbols, aiPlayerNames, humanPlayerNames, amountOfCardsInTheDeck, cardCosts, POKER_ROUNDS, getDateForGameEvent, BET_ACTION, COMBINATION_NAMES_HUMAN } from "./utils";
+import { makeAutoObservable } from "mobx";
+import { ComponentNames, Winner } from "./types";
+import { getDateForGameEvent } from "./utils";
+import { POKER_ROUNDS, BET_ACTION, COMBINATION_NAMES_HUMAN } from "./consts";
 import { Card } from "./classes/Card";
-import { Player } from "./classes/Player";
 import { Players } from "./classes/Players";
 import { Deck } from "./classes/Deck";
 
@@ -28,30 +28,44 @@ const formatGameLog = (arrayOfGameEvents: string[]): any => {
   return formattedEventString;
 }
 
-// type RoundName = ""
+interface StoreType {
+  currentPage: ComponentNames; // the page to show
+  amountOfHumanPlayers: number; // value for game init
+  minimumBet: number; // players can not bet less that this
+  initialDeposit: number; // value for game init
 
-
-
-class Store {
-  currentPage: ComponentNames = "Game"; // the page to show
-  amountOfHumanPlayers: number = 3; // value for game init
-  minimumBet: number = 10; // players can not bet less that this
-  initialDeposit: number = 500; // value for game init
-
-  players: Players = {} as Players; // ???
-  deck: Deck = new Deck; // array of cards to pick from
-  cardsOnTheDesk: Card[] = [];
-  gameLog: string[] = [];
-
-  isGameActive: boolean = false; // game state, set false on end and true on start
+  players: Players; // ???
+  deck: Deck; // array of cards to pick from
+  cardsOnTheDesk: Card[];
+  gameLog: string[];
+  isGameActive: boolean; // game state, set false on end and true on start
   // gameState: GameState = ""; // ???
   activeRound: POKER_ROUNDS;
   // winner: Player | null = null; // if the game ends, show the winner
   winners: Winner[];
 
-  maxSumOfIndividualBets = 0; // maxmimum amount of bets of one person in this round
-  sumOfBets: number = 0; // the sum to split between winners of the round
+  maxSumOfIndividualBets: number; // maxmimum amount of bets of one person in this round
+  sumOfBets: number; // the sum to split between winners of the round
+}
 
+class Store implements StoreType {
+  currentPage = "Game" as ComponentNames; // the page to show
+  amountOfHumanPlayers = 3; // value for game init
+  minimumBet = 10; // players can not bet less that this
+  initialDeposit = 500; // value for game init
+
+  players = {} as Players; // ???
+  deck = {} as Deck; // array of cards to pick from
+  cardsOnTheDesk = [] as Card[];
+  gameLog = [] as string[];
+
+  isGameActive = false; // game state, set false on end and true on start
+  // gameState: GameState = ""; // ???
+  activeRound: POKER_ROUNDS;
+  winners: Winner[];
+
+  maxSumOfIndividualBets = 0; // maxmimum amount of bets of one person in this round
+  sumOfBets = 0; // the sum to split between winners of the round
 
   constructor() {
     makeAutoObservable(this);
@@ -107,7 +121,7 @@ class Store {
       }
       case POKER_ROUNDS.RIVER: {
         this.isGameActive = false;
-        return this.showGameResults();
+        return this.endGame();
       }
       default: {
         console.error("Unhandled activeRound: ", activeRound);
@@ -125,7 +139,6 @@ class Store {
 
     const players = new Players({
       amountOfHumanPlayers: this.amountOfHumanPlayers,
-      deck: deck,
       initialMoney: this.initialDeposit
     });
     this.players = players;
@@ -189,7 +202,9 @@ class Store {
     const nextActivePlayer = this.players.getNextActivePlayer();
     this.players.activePlayer = nextActivePlayer;
   }
-
+  endGame() {
+    this.showGameResults();
+  }
 
 
 
@@ -228,7 +243,7 @@ class Store {
   setAmountOfHumanPlayers(amountOfPlayersToSet: number) {
     this.amountOfHumanPlayers = amountOfPlayersToSet;
   }
-  showGameResults() {
+  private showGameResults() {
     this.players.getWinners({ sumOfBets: this.sumOfBets, store: this });
 
     console.warn(this.winners);
