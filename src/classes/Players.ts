@@ -244,14 +244,14 @@ export class Players {
       [COMBINATIONS.STRAIGHT_FLUSH]: playersWithStraightFlush,
       [COMBINATIONS.FOUR_OF_KIND]: playersWithFourOfKind,
       [COMBINATIONS.FULL_HOUSE]: playersWithFullHouse,
-      [COMBINATIONS.FLUSH]: playersWithFlush,
+      [COMBINATIONS.FLUSH]: playersWithFlush, //
       [COMBINATIONS.STRAIGHT]: playersWithStraight,
       [COMBINATIONS.THREE_OF_KIND]: playersWithThreeOfKind,
       [COMBINATIONS.TWO_PAIRS]: playersWithTwoPairs,
       [COMBINATIONS.PAIR]: playersWithOnePair,
       [COMBINATIONS.HIGH_CARD]: playersWithHighestCards,
     };
-    console.log(playersAtCombination[COMBINATIONS.PAIR].map(({ name }) => name));
+    // console.warn(playersAtCombination[COMBINATIONS.STRAIGHT].map(({ name }) => name));
 
     let winMoneyLeft = sumOfBets;
     // if there is only one player left, he is the winner

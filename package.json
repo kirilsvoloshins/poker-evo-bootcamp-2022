@@ -11,8 +11,10 @@
     "mobx": "^6.6.0",
     "mobx-devtools-mst": "^0.9.30",
     "mobx-react": "^7.5.0",
+    "parcel-plugin-typed-css-modules": "^1.1.0",
     "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react-dom": "^18.1.0",
+    "typed-css-modules": "^0.7.2"
   },
   "devDependencies": {
     "@testing-library/react": "^12.1.3",

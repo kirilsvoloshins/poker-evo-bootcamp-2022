@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { GameScreenProps } from "../types";
 import { observer } from "mobx-react";
 import store from "../Store";
-import "../styles/App.css"
+import "../styles/App.css";
 import PlayerInfo from "./PlayerInfo";
 import GameLog from "./GameLog";
 import GameTable from "./GameTable";
