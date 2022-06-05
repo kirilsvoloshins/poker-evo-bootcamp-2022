@@ -22,11 +22,11 @@ const GameTable: React.FC = observer(() => {
       <div className='tableSumOfBets'>
         {store?.sumOfBets} €
       </div>
-      <div className='winnersInfo'>
+      {/* <div className='winnersInfo'>
         Winners: {store?.winners?.map(winner => {
           return (<>{winner.playerName}</>)
         })}
-      </div>
+      </div> */}
 
     </div>
   )

@@ -5,7 +5,6 @@ import { makeAutoObservable } from "mobx";
 import { getCardsInFlushIfThereIsAny, getCardsInStraightIfThereIsAny, getDescSortedArrayofCards, getHighestCardOfCards, getPlayersDescSortedByHighestCards } from "../utils";
 
 export class Players {
-  /* player could have folded in this level, but will play in the next! */
   playerList: Player[]; // static list of players which entered the game (on game start we delete ones who cant participate)
   playersStillInThisRound: Player[]; // everyone who has not folded since the start of the game
   playersLeftToReact: Player[]; // everyone who has not folded and is not all in
@@ -92,7 +91,6 @@ export class Players {
   }
 
   getWinners({ sumOfBets, store }: { sumOfBets: number, store: StoreType }) {
-    //todo: handle a lot of things...
     const { playersStillInThisRound } = this;
 
     // HIGH_CARD
@@ -107,11 +105,11 @@ export class Players {
 
       const cardsToCheckForCombinations = [...store.cardsOnTheDesk, ...player.cards].sort(getDescSortedArrayofCards);
       const cardCostsToCheckForCombinations = cardsToCheckForCombinations.map(({ cardCost }) => cardCost);
+
       const uniqueCardCosts = [...new Set(cardCostsToCheckForCombinations)];
-      // const costsOfUniqueCardCosts = uniqueCardCosts.map(uniqueCardCost => cardCostsToCheckForCombinations.filter(cardCost => cardCost === uniqueCardCost));
       const cardsOfUniqueCardCosts = uniqueCardCosts.map(uniqueCardCost => cardsToCheckForCombinations.filter(({ cardCost }) => cardCost === uniqueCardCost));
-      // const cardsWithPairs = costsOfUniqueCardCosts.filter(cardsWithMatchingCosts => cardsWithMatchingCosts.length === 2);
       const cardsWithPairs = cardsOfUniqueCardCosts.filter(cardsWithMatchingCosts => cardsWithMatchingCosts.length === 2);
+
       if (cardsWithPairs.length === 1) {
         // PAIR
         playersWithOnePair.push(player);
@@ -253,7 +251,7 @@ export class Players {
       [COMBINATIONS.PAIR]: playersWithOnePair,
       [COMBINATIONS.HIGH_CARD]: playersWithHighestCards,
     };
-    // console.log(playersAtCombination);
+    console.log(playersAtCombination[COMBINATIONS.PAIR].map(({ name }) => name));
 
     let winMoneyLeft = sumOfBets;
     // if there is only one player left, he is the winner
@@ -320,21 +318,15 @@ export class Players {
 
       //=> there are multiple people with the same combination
       const sortedPlayersWithThisCombination = getPlayersDescSortedByHighestCards({ playersWithThisCombination, combinationName });
-      console.log(sortedPlayersWithThisCombination.map(player => player.cards));
-      const uniqueHighCardCombinations = [... new Map(sortedPlayersWithThisCombination.map(player => {
-        // if (typeof player.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost === "undefined") {
-        //   console.log(player.cardsAtCombination, combinationName);
-        //   return [
-        //     player.cardsAtCombination[combinationName].highestCardInCombination.cardCost,
-        //     0
-        //   ]
-        // }
+      const uniqueHighCardCombinations: number[][] = [];
+      sortedPlayersWithThisCombination.forEach(player => {
+        const highestCardCostInCombination = player.cardsAtCombination[combinationName].highestCardInCombination.cardCost;
+        const highestCardCostOutsideCombination = player.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost;
 
-        return [
-          player.cardsAtCombination[combinationName].highestCardInCombination.cardCost,
-          player.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost
-        ]
-      }))];
+        if (!uniqueHighCardCombinations.filter(([comboHighCardCost, outsideComboHighCardCost]) => comboHighCardCost === highestCardCostInCombination && outsideComboHighCardCost === highestCardCostOutsideCombination).length) {
+          uniqueHighCardCombinations.push([highestCardCostInCombination, highestCardCostOutsideCombination])
+        }
+      });
 
       for (const [uniqueHighCombinationCardCost, uniqueHighOutsideCombinationCardCost] of uniqueHighCardCombinations) {
         const playersWithTheseHighCards = sortedPlayersWithThisCombination.filter(player => {
@@ -343,13 +335,8 @@ export class Players {
 
           return highCombinationCardCost === uniqueHighCombinationCardCost && highOutsideCombinationCardCost === uniqueHighOutsideCombinationCardCost;
         });
-        console.warn(playersWithTheseHighCards.map(({ cards }) => cards));
-        // console.log(playersWithTheseHighCards.length && playersWithTheseHighCards);
         let amountOfPlayersLeftWithThisCombination = playersWithTheseHighCards.length;
         for (const player of playersWithTheseHighCards) {
-          // console.log(player);
-          // console.log(player.bestCombinationCards);
-          // console.log(player.bestCombinationName);
           const approxSumToWin = Math.floor(winMoneyLeft / amountOfPlayersLeftWithThisCombination);
           const { isAllIn, sumToWinIfPlayerGoesAllIn } = player;
           if (isAllIn) {
@@ -382,6 +369,7 @@ export class Players {
             playerName: player.name,
           };
           store.winners.push(winnerObject);
+          /* since we rounded the sum which is split between multiple winners, we can not give the rest out */
           if (winMoneyLeft < 2) {
             return
           }

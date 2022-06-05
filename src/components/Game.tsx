@@ -16,7 +16,7 @@ const GameScreen: React.FC<GameScreenProps> = observer(() => {
 
   return (
     <>
-      <GameResults />
+      {/* <GameResults /> */}
       <GameLog />
       <div className="gameDiv">
         <div></div>

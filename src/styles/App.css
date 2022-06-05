@@ -400,7 +400,7 @@ input[type=number] {
   box-sizing: border-box;
 
 
-  /* background-color: var(--bg-darkgreen); */
+  background-color: var(--bg-darkgreen);
   display: flex;
   justify-content: center;
   align-items: center;
