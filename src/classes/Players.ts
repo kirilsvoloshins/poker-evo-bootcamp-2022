@@ -253,7 +253,7 @@ export class Players {
       [COMBINATIONS.PAIR]: playersWithOnePair,
       [COMBINATIONS.HIGH_CARD]: playersWithHighestCards,
     };
-    console.log(playersAtCombination);
+    // console.log(playersAtCombination);
 
     let winMoneyLeft = sumOfBets;
     // if there is only one player left, he is the winner
@@ -320,10 +320,15 @@ export class Players {
 
       //=> there are multiple people with the same combination
       const sortedPlayersWithThisCombination = getPlayersDescSortedByHighestCards({ playersWithThisCombination, combinationName });
+      console.log(sortedPlayersWithThisCombination.map(player => player.cards));
       const uniqueHighCardCombinations = [... new Map(sortedPlayersWithThisCombination.map(player => {
-        if (typeof player.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost === "undefined") {
-          console.log(player.cardsAtCombination, combinationName);
-        }
+        // if (typeof player.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost === "undefined") {
+        //   console.log(player.cardsAtCombination, combinationName);
+        //   return [
+        //     player.cardsAtCombination[combinationName].highestCardInCombination.cardCost,
+        //     0
+        //   ]
+        // }
 
         return [
           player.cardsAtCombination[combinationName].highestCardInCombination.cardCost,
@@ -335,10 +340,16 @@ export class Players {
         const playersWithTheseHighCards = sortedPlayersWithThisCombination.filter(player => {
           const highCombinationCardCost = player.cardsAtCombination[combinationName].highestCardInCombination.cardCost;
           const highOutsideCombinationCardCost = player.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost;
+
           return highCombinationCardCost === uniqueHighCombinationCardCost && highOutsideCombinationCardCost === uniqueHighOutsideCombinationCardCost;
         });
+        console.warn(playersWithTheseHighCards.map(({ cards }) => cards));
+        // console.log(playersWithTheseHighCards.length && playersWithTheseHighCards);
         let amountOfPlayersLeftWithThisCombination = playersWithTheseHighCards.length;
         for (const player of playersWithTheseHighCards) {
+          // console.log(player);
+          // console.log(player.bestCombinationCards);
+          // console.log(player.bestCombinationName);
           const approxSumToWin = Math.floor(winMoneyLeft / amountOfPlayersLeftWithThisCombination);
           const { isAllIn, sumToWinIfPlayerGoesAllIn } = player;
           if (isAllIn) {
@@ -360,6 +371,8 @@ export class Players {
 
           //=> player is not all in => he takes it all
           player.moneyLeft += approxSumToWin;
+          winMoneyLeft -= approxSumToWin;
+          amountOfPlayersLeftWithThisCombination -= 1;
           const winnerObject: Winner = {
             id: player.id,
             cards: player.cards,
@@ -369,6 +382,9 @@ export class Players {
             playerName: player.name,
           };
           store.winners.push(winnerObject);
+          if (winMoneyLeft < 2) {
+            return
+          }
         }
       }
     }

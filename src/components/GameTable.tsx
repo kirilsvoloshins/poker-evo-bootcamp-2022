@@ -24,11 +24,12 @@ const GameTable: React.FC = observer(() => {
       </div>
       <div className='winnersInfo'>
         Winners: {store?.winners?.map(winner => {
-          return (<>{winner.playerName}: {winner.winAmount} ({winner.combinationName}) </>)
+          return (<>{winner.playerName}</>)
         })}
       </div>
 
     </div>
   )
 });
+// return (<>{winner.playerName}: {winner.winAmount} ({winner.combinationName}) </>)
 export default GameTable;

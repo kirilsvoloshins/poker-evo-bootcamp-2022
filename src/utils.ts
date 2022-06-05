@@ -63,7 +63,7 @@ export const getDescSortedArrayofCards = (cardA: Card, cardB: Card): any => {
 
 export const getHighestCardOfCards = (cards: Card[]): Card => {
   if (!cards.length) {
-    return {} as Card;
+    return { cardCost: 0 } as Card;
   }
 
   const descSortedArrayOfCards = cards.sort(getDescSortedArrayofCards);
