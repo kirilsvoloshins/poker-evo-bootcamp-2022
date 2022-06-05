@@ -90,6 +90,7 @@ class Store {
       player.canRaise = true;
       player.hasReacted = false;
       player.isAllIn = false;
+      player.allInSum = 0;
     });
 
     // this.players.activePlayer = this.players.getNextActivePlayer();
@@ -105,9 +106,8 @@ class Store {
         return this.startRound_River();
       }
       case POKER_ROUNDS.RIVER: {
-        alert("game end!");
         this.isGameActive = false;
-        return this.determineWinners();
+        return this.showGameResults();
       }
       default: {
         console.error("Unhandled activeRound: ", activeRound);
@@ -228,23 +228,10 @@ class Store {
   setAmountOfHumanPlayers(amountOfPlayersToSet: number) {
     this.amountOfHumanPlayers = amountOfPlayersToSet;
   }
-  showEndGameDialog() {
-
-  }
-
-  determineWinners() {
+  showGameResults() {
     this.players.getWinners({ sumOfBets: this.sumOfBets, store: this });
-    // const playerList = this.players.playerList;
-    // if (playerList.length === 1) {
-    //   /* there is only one player left, so he is the winner :) */
-    //   this.winner = playerList[0];
-    //   this.winner.moneyLeft += this.sumOfBets;
-    //   this.logGameEvent(`< WINNER: ${this.winner.name} gets ${this.sumOfBets} >`);
-    //   this.showEndGameDialog();
-    //   return;
-    // }
 
-
+    console.warn(this.winners);
   }
 }
 

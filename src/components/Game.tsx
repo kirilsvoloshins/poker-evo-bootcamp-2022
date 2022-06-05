@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useCallback, ChangeEvent } from 'react';
-import { GameScreenProps } from '../types';
-import { observer } from 'mobx-react';
+import React, { useEffect, useState, useCallback, ChangeEvent } from "react";
+import { GameScreenProps } from "../types";
+import { observer } from "mobx-react";
 import store from "../Store";
 import "../styles/App.css"
-import PlayerInfo from './PlayerInfo';
-import GameLog from './GameLog';
-import GameTable from './GameTable';
-import BetControls from './BetControls';
-
+import PlayerInfo from "./PlayerInfo";
+import GameLog from "./GameLog";
+import GameTable from "./GameTable";
+import BetControls from "./BetControls";
+import GameResults from "./GameResults";
 
 const GameScreen: React.FC<GameScreenProps> = observer(() => {
   useEffect(() => {
@@ -16,6 +16,7 @@ const GameScreen: React.FC<GameScreenProps> = observer(() => {
 
   return (
     <>
+      <GameResults />
       <GameLog />
       <div className="gameDiv">
         <div></div>

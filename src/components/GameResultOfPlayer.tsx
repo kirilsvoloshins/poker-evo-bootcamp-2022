@@ -4,17 +4,22 @@ import store from "../Store";
 import "../styles/App.css"
 import { Card } from '../classes/Card';
 import CardComp from '../components/Card';
+import { COMBINATIONS, COMBINATION_NAMES_HUMAN } from '../utils';
+import { Winner } from '../types';
 
 
 
 interface GameResultOfPlayerProps {
-  cards: Card[],
-  combinationName: string,
-  winAmount: number,
-  playerName: string;
+  // cards: Card[],
+  // combinationName: COMBINATIONS,
+  // winAmount: number,
+  // playerName: string;
+  player: Winner
 }
 
-const GameResults: React.FC<GameResultOfPlayerProps> = observer(({ playerName, cards, combinationName, winAmount }) => {
+const GameResults: React.FC<GameResultOfPlayerProps> = observer(({ player }) => {
+  const { playerName, winAmount, cards, combinationName } = player;
+
   return (
     <div className="gameResultOfPlayerWrapper">
       <div>{playerName}: {winAmount}€</div>
@@ -24,7 +29,7 @@ const GameResults: React.FC<GameResultOfPlayerProps> = observer(({ playerName, c
         ))}
       </div>
       <div className="combinationName">
-        {combinationName}
+        {COMBINATION_NAMES_HUMAN[combinationName]}
       </div>
     </div>
   )

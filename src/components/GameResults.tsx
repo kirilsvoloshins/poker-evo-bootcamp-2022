@@ -8,9 +8,7 @@ const GameResults: React.FC = observer(() => {
   return (
     <div className="gameResultWrapper">
       Winner[s]
-      {store.winners.map(winner => {
-        return (<GameResultOfPlayer cards={winner.cards} combinationName={winner.combinationName} winAmount={winner.winAmount} playerName={winner.name} />)
-      })}
+      {store.winners?.map(winner => (<GameResultOfPlayer player={winner} />))}
       <div className="gameResultButtonsDiv">
         <div>restart</div>
         <div>continue</div>

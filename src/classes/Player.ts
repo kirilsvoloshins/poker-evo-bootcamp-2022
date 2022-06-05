@@ -11,14 +11,21 @@ interface PlayerType {
   name: string,
   id: number,
   cards: [Card, Card] | Card[], //! fixing:  Type '[Card, Card]' is not assignable to type 'null'.ts(2322)
-  highestCard: Card;
-  cardsAtCombination: Partial<Record<COMBINATIONS, Card[]>>
+  // highestCard: Card;
+  cardsAtCombination: Partial<Record<COMBINATIONS, {
+    combinationCards: Card[],
+    highestCardInCombination: Card,
+    highestCardOutsideCombination: Card,
+  }>>;
+  bestCombinationName: COMBINATIONS;
+  bestCombinationCards: Card[];
   // cardsInTheBestCombination: Card[];
 
   moneyLeft: number, // amount of money left
   sumOfPersonalBetsInThisRound: number, // money bet in this round
   betToPayToContinue: number, // money left to bet to continue playing
   sumToWinIfPlayerGoesAllIn: number, // if player goes all in, he gets all money in the round + his bet + equivalent bets of other players
+  allInSum: number;
 
   hasReacted: boolean,
   isAllIn: boolean,
@@ -41,25 +48,69 @@ export class Player implements PlayerType {
   name = ""; // player name
   id = 0; // player id (used in getting the next player) 
   cards: [Card, Card] | Card[];
-  highestCard: Card;
+  // highestCard: Card;
+  bestCombinationName = COMBINATIONS.HIGH_CARD;
+  bestCombinationCards = [] as Card[];
+
   // cardsInTheBestCombination: Card[];
   cardsAtCombination = {
-    [COMBINATIONS.ROYAL_FLUSH]: [] as Card[],
-    [COMBINATIONS.STRAIGHT_FLUSH]: [] as Card[],
-    [COMBINATIONS.FOUR_OF_KIND]: [] as Card[],
-    [COMBINATIONS.FULL_HOUSE]: [] as Card[],
-    [COMBINATIONS.FLUSH]: [] as Card[],
-    [COMBINATIONS.STRAIGHT]: [] as Card[],
-    [COMBINATIONS.THREE_OF_KIND]: [] as Card[],
-    [COMBINATIONS.TWO_PAIRS]: [] as Card[],
-    [COMBINATIONS.PAIR]: [] as Card[],
-    [COMBINATIONS.HIGH_CARD]: [] as Card[],
+    [COMBINATIONS.ROYAL_FLUSH]: {
+      combinationCards: [] as Card[],
+      highestCardInCombination: {} as Card,
+      highestCardOutsideCombination: {} as Card,
+    },
+    [COMBINATIONS.STRAIGHT_FLUSH]: {
+      combinationCards: [] as Card[],
+      highestCardInCombination: {} as Card,
+      highestCardOutsideCombination: {} as Card,
+    },
+    [COMBINATIONS.FOUR_OF_KIND]: {
+      combinationCards: [] as Card[],
+      highestCardInCombination: {} as Card,
+      highestCardOutsideCombination: {} as Card,
+    },
+    [COMBINATIONS.FULL_HOUSE]: {
+      combinationCards: [] as Card[],
+      highestCardInCombination: {} as Card,
+      highestCardOutsideCombination: {} as Card,
+    },
+    [COMBINATIONS.FLUSH]: {
+      combinationCards: [] as Card[],
+      highestCardInCombination: {} as Card,
+      highestCardOutsideCombination: {} as Card,
+    },
+    [COMBINATIONS.STRAIGHT]: {
+      combinationCards: [] as Card[],
+      highestCardInCombination: {} as Card,
+      highestCardOutsideCombination: {} as Card,
+    },
+    [COMBINATIONS.THREE_OF_KIND]: {
+      combinationCards: [] as Card[],
+      highestCardInCombination: {} as Card,
+      highestCardOutsideCombination: {} as Card,
+    },
+    [COMBINATIONS.TWO_PAIRS]: {
+      combinationCards: [] as Card[],
+      highestCardInCombination: {} as Card,
+      highestCardOutsideCombination: {} as Card,
+    },
+    [COMBINATIONS.PAIR]: {
+      combinationCards: [] as Card[],
+      highestCardInCombination: {} as Card,
+      highestCardOutsideCombination: {} as Card,
+    },
+    [COMBINATIONS.HIGH_CARD]: {
+      combinationCards: [] as Card[],
+      highestCardInCombination: {} as Card,
+      highestCardOutsideCombination: {} as Card,
+    },
   };
 
   moneyLeft = 0; // money left
   sumOfPersonalBetsInThisRound = 0; // sum of money the player has bet in this round
   betToPayToContinue = 0; // money left to bet to continue playing
   sumToWinIfPlayerGoesAllIn = 0; // if player goes all in, he gets all money in the round + his bet + equivalent bets of other players
+  allInSum = 0;
 
   hasReacted = false;
   isAllIn = false;
@@ -73,13 +124,14 @@ export class Player implements PlayerType {
     this.name = name;
     this.id = id;
     this.cards = cards;
-    this.highestCard = cards.sort((card1, card2) => card1.cardCost - card2.cardCost)[0];
+    // this.highestCard = cards.sort((card1, card2) => card1.cardCost - card2.cardCost)[0];
     // this.cardsInTheBestCombination = [];
 
     this.moneyLeft = moneyLeft;
     this.sumOfPersonalBetsInThisRound = 0;
     this.betToPayToContinue = 0;
     this.sumToWinIfPlayerGoesAllIn = 0;
+    this.allInSum = 0;
 
     this.hasReacted = false;
     this.isAllIn = false;
@@ -123,6 +175,8 @@ export class Player implements PlayerType {
   allIn(store: StoreType) {
     const { moneyLeft } = this;
     this.isAllIn = true;
+    this.allInSum = moneyLeft;
+    this.sumToWinIfPlayerGoesAllIn = store.sumOfBets + moneyLeft;
     this.placeBet({ betAmount: moneyLeft, store, betAction: BET_ACTION.ALL_IN });
   }
 
@@ -145,6 +199,17 @@ export class Player implements PlayerType {
     if (this.sumOfPersonalBetsInThisRound > store.maxSumOfIndividualBets) {
       store.maxSumOfIndividualBets = this.sumOfPersonalBetsInThisRound;
     }
+
+    const playersAllInInThisRound = store.players.playersStillInThisRound.filter(player => player.isAllIn && player !== this);
+    // const isThereAllInPlayerInThisRound = store.players.playersStillInThisRound.some(player => player.isAllIn);
+    if (playersAllInInThisRound.length) {
+      playersAllInInThisRound.forEach(player => {
+        const { allInSum } = player;
+        player.sumToWinIfPlayerGoesAllIn += allInSum;
+      });
+    }
+
+    // store.players.playersStillInThisRound.forEach()
 
     const gameEventText = getGameEventText({ name, betAmount, betAction });
     store.logGameEvent(gameEventText);

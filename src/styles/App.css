@@ -480,6 +480,10 @@ input[type=number] {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  right: 0;
+  top: 20%;
+  z-index: 9000;
 }
 
 .gameResultOfPlayerWrapper {
