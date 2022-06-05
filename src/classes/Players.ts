@@ -2,7 +2,7 @@ import { suitSymbols, humanPlayerNames, cardCosts, COMBINATIONS } from "../const
 import { PlayersAtCombinations, PlayersConstructorArgs, StoreType, SuitSymbol, Winner } from "../types";
 import { Player } from "./Player";
 import { makeAutoObservable } from "mobx";
-import { Card } from "./Card";
+import { getCardsInFlushIfThereIsAny, getCardsInStraightIfThereIsAny, getDescSortedArrayofCards, getHighestCardOfCards, getPlayersDescSortedByHighestCards } from "../utils";
 
 export class Players {
   /* player could have folded in this level, but will play in the next! */
@@ -21,7 +21,7 @@ export class Players {
       return new Player({
         name: playerName,
         id: i,
-        moneyLeft: initialMoney,
+        moneyLeft: initialMoney * (i + 1),
         cards: [],
       });
     });
@@ -36,17 +36,21 @@ export class Players {
     makeAutoObservable(this);
   }
 
-  //!!! handle having players which can not react to bets
   passBlinds() {
     const { smallBlindPlayer: prevSmallBlindPlayer, playerList } = this;
     this.bigBlindPlayer = prevSmallBlindPlayer;
-    const indexOfPrevSmallBlindPlayer = playerList.indexOf(prevSmallBlindPlayer);
-    const newSmallBlindPlayerIndex = indexOfPrevSmallBlindPlayer === playerList.length - 1 ? 0 : indexOfPrevSmallBlindPlayer + 1;
-    const newSmallBlindPlayer = playerList[newSmallBlindPlayerIndex];
+    const consecutivePlayer = playerList.find(({ id }) => id > prevSmallBlindPlayer.id);
+    const newSmallBlindPlayer = consecutivePlayer ? consecutivePlayer : playerList[0];
     this.smallBlindPlayer = newSmallBlindPlayer;
   }
 
   passMove(store: StoreType) {
+    const isEveryoneAllIn = this.playerList.every(player => player.isAllIn);
+    store.isEveryoneAllIn = isEveryoneAllIn;
+    if (isEveryoneAllIn) {
+      return store.startNextRound();
+    }
+
     this.updatePlayerAbilities(store);
 
     const areThereAnyPlayersToReact = this.playersLeftToReact.length > 0;
@@ -56,21 +60,26 @@ export class Players {
     }
 
     this.activePlayer = this.getNextActivePlayer();
-    /* if there is only one player left (everyone else can not continue), he wins! */
-    // if (this.playerList.length === 1) {
-
-    // }
   }
 
   updatePlayerAbilities(store: StoreType) {
     // player can't continue playing in this round if: hasFolded
     this.playersStillInThisRound = this.playerList.filter(player => !player.hasFolded);
+    // if everyone else folds, the last player wins
+    if (this.playersStillInThisRound.length === 1) {
+      return store.endGame();
+    }
+
     // player can react to the bet if: !isAllIn && !hasFolded
     this.playersLeftToReact = this.playersStillInThisRound.filter(player => !player.isAllIn && !player.hasReacted);
     this.playersLeftToReact.forEach(player => {
       player.canCheck = player.sumOfPersonalBetsInThisRound === store.maxSumOfIndividualBets;
-      player.canSupportBet = (player.sumOfPersonalBetsInThisRound + player.moneyLeft) >= store.maxSumOfIndividualBets
-      player.canRaise = (player.sumOfPersonalBetsInThisRound + player.moneyLeft) > store.maxSumOfIndividualBets
+      player.canSupportBet = (player.sumOfPersonalBetsInThisRound + player.moneyLeft) >= store.maxSumOfIndividualBets;
+      const otherPlayersLeftInThisRound = this.playersLeftToReact.filter(otherPlayer => otherPlayer !== player);
+      // const canPlayerRaise = (player.sumOfPersonalBetsInThisRound + player.moneyLeft) > store.maxSumOfIndividualBets && !otherPlayersLeftInThisRound.every(otherPlayer => otherPlayer.moneyLeft === 0);
+      const canPlayerRaise = (player.sumOfPersonalBetsInThisRound + player.moneyLeft) > store.maxSumOfIndividualBets;
+
+      player.canRaise = canPlayerRaise;
       player.betToPayToContinue = store.maxSumOfIndividualBets - player.sumOfPersonalBetsInThisRound;
     });
   }
@@ -244,7 +253,7 @@ export class Players {
       [COMBINATIONS.PAIR]: playersWithOnePair,
       [COMBINATIONS.HIGH_CARD]: playersWithHighestCards,
     };
-    console.warn(playersAtCombination);
+    console.log(playersAtCombination);
 
     let winMoneyLeft = sumOfBets;
     // if there is only one player left, he is the winner
@@ -265,7 +274,6 @@ export class Players {
     // getting the winner 
     // todo: handle splitting the win if the first winner went did not bet enough to take everything
     const combinations = [COMBINATIONS.ROYAL_FLUSH, COMBINATIONS.STRAIGHT_FLUSH, COMBINATIONS.FOUR_OF_KIND, COMBINATIONS.FULL_HOUSE, COMBINATIONS.FLUSH, COMBINATIONS.STRAIGHT, COMBINATIONS.THREE_OF_KIND, COMBINATIONS.TWO_PAIRS, COMBINATIONS.PAIR, COMBINATIONS.HIGH_CARD];
-    // let isThereAnyWinMoneyLeft = true;
     for (const combinationName of combinations) {
       if (!winMoneyLeft) {
         return;
@@ -313,7 +321,7 @@ export class Players {
       //=> there are multiple people with the same combination
       const sortedPlayersWithThisCombination = getPlayersDescSortedByHighestCards({ playersWithThisCombination, combinationName });
       const uniqueHighCardCombinations = [... new Map(sortedPlayersWithThisCombination.map(player => {
-        if (typeof player.cardsAtCombination[combinationName].highestCardOutsideCombination === "undefined") {
+        if (typeof player.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost === "undefined") {
           console.log(player.cardsAtCombination, combinationName);
         }
 
@@ -366,65 +374,3 @@ export class Players {
     }
   }
 }
-
-const getPlayersDescSortedByHighestCards = ({ playersWithThisCombination, combinationName }: { playersWithThisCombination: Player[], combinationName: COMBINATIONS }): Player[] => {
-  const sortedPlayersWithThisCombination = playersWithThisCombination.sort((player1, player2) => {
-    const costOfHighestCardInCombination_1 = player1.cardsAtCombination[combinationName].highestCardInCombination.cardCost;
-    const costOfHighestCardInCombination_2 = player2.cardsAtCombination[combinationName].highestCardInCombination.cardCost;
-    const costOfHighestCardOutsideCombination_1 = player1.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost;
-    const costOfHighestCardOutsideCombination_2 = player2.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost;
-    const totalHighCardCost_1 = costOfHighestCardInCombination_1 * 100 + costOfHighestCardOutsideCombination_1;
-    const totalHighCardCost_2 = costOfHighestCardInCombination_2 * 100 + costOfHighestCardOutsideCombination_2;
-    return totalHighCardCost_2 - totalHighCardCost_1;
-  });
-  return sortedPlayersWithThisCombination;
-}
-
-
-const getDescSortedArrayofCards = (cardA: Card, cardB: Card): any => {
-  const { cardCost: cardCost_1 } = cardA;
-  const { cardCost: cardCost_2 } = cardB;
-  return cardCost_2 - cardCost_1;
-}
-
-const getHighestCardOfCards = (cards: Card[]): Card => {
-  const descSortedArrayOfCards = cards.sort(getDescSortedArrayofCards);
-  return descSortedArrayOfCards[0];
-}
-
-const getCardsInFlushIfThereIsAny = ({ cardsToCheck, uniqueSuitSymbols }: { cardsToCheck: Card[], uniqueSuitSymbols: SuitSymbol[] }): Card[] => {
-  const cardsWithFlush = uniqueSuitSymbols.map(uniqueSuitSymbol => {
-    return cardsToCheck.filter(({ suitSymbol }) => suitSymbol === uniqueSuitSymbol);
-  }).filter(cardsOfSameSuit => cardsOfSameSuit.length >= 5);
-  if (cardsWithFlush.length) {
-    return cardsWithFlush[0];
-  }
-  return [];
-}
-
-const getCardsInStraightIfThereIsAny = (cardsToCheck: Card[]): Card[] => {
-  let amountOfCardsInPotentialStraight = 0, previousCardCost = 0, cardsInStraight: Card[] = [];
-  for (const card of cardsToCheck) {
-    const areCardsConsecutive = card.cardCost === previousCardCost - 1;
-    if (areCardsConsecutive) {
-      amountOfCardsInPotentialStraight++;
-      cardsInStraight.push(card);
-    } else {
-      amountOfCardsInPotentialStraight = 1;
-      cardsInStraight = [card];
-      // no way there is a street from 4 cards
-      if (cardsToCheck.indexOf(card) >= 3) {
-        break;
-      }
-    }
-    previousCardCost = card.cardCost;
-  }
-  if (amountOfCardsInPotentialStraight < 5) {
-    return [];
-  }
-  cardsInStraight = cardsInStraight.filter((_, i) => i <= 4); // return only 5 cards (starting from the highest so as not to miss flash royale)
-  return cardsInStraight;
-}
-
-
-

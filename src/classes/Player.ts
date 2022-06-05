@@ -121,15 +121,20 @@ export class Player implements PlayerType {
   }
 
   raise({ store, bet }: { store: StoreType, bet: number }) {
-    this.placeBet({ betAmount: bet, store, betAction: BET_ACTION.RAISE });
-    store.players.playersLeftToReact.filter(player => player !== this).forEach(player => {
+    store.players.playersLeftToReact.filter(player => player !== this && !player.isAllIn && player.moneyLeft > 0).forEach(player => {
       // everyone still playing has to react to the bet raise
       player.hasReacted = false;
     });
+    this.placeBet({ betAmount: bet, store, betAction: BET_ACTION.RAISE });
   }
 
   allIn(store: StoreType) {
     const { moneyLeft } = this;
+    store.players.playersLeftToReact.filter(player => player !== this && !player.isAllIn && player.moneyLeft > 0).forEach(player => {
+      // everyone still playing has to react to the bet raise
+      player.hasReacted = false;
+    });
+    // console.warn(store.players.playersLeftToReact);
     this.isAllIn = true;
     this.allInSum = moneyLeft;
     this.sumToWinIfPlayerGoesAllIn = store.sumOfBets + moneyLeft;

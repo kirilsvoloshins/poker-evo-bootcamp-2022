@@ -35,6 +35,7 @@ interface StoreType {
   initialDeposit: number; // value for game init
 
   players: Players; // ???
+  isEveryoneAllIn: boolean;
   deck: Deck; // array of cards to pick from
   cardsOnTheDesk: Card[];
   gameLog: string[];
@@ -52,9 +53,10 @@ class Store implements StoreType {
   currentPage = "Game" as ComponentNames; // the page to show
   amountOfHumanPlayers = 3; // value for game init
   minimumBet = 10; // players can not bet less that this
-  initialDeposit = 500; // value for game init
+  initialDeposit = 100; // value for game init
 
   players = {} as Players; // ???
+  isEveryoneAllIn = true;
   deck = {} as Deck; // array of cards to pick from
   cardsOnTheDesk = [] as Card[];
   gameLog = [] as string[];
@@ -71,9 +73,31 @@ class Store implements StoreType {
     makeAutoObservable(this);
   }
 
-  resetGameSettingsBeforeStart() {
-    this.players = {} as Players;
-    this.deck = {} as Deck;
+  // resetGameSettingsBeforeStart() {
+  //   this.players = {} as Players;
+  //   this.deck = {} as Deck;
+  //   this.cardsOnTheDesk = [];
+  //   this.gameLog = [];
+
+  //   this.isGameActive = true;
+  //   this.winners = [];
+
+  //   this.maxSumOfIndividualBets = 0;
+  //   this.sumOfBets = 0;
+  // }
+
+  // very first game
+  startInitialGame() {
+    this.logGameEvent("<<< GAME START >>>");
+    const players = new Players({
+      amountOfHumanPlayers: this.amountOfHumanPlayers,
+      initialMoney: this.initialDeposit
+    });
+    this.players = players;
+    this.isEveryoneAllIn = false;
+    this.players.passBlinds();
+
+    this.deck = new Deck();
     this.cardsOnTheDesk = [];
     this.gameLog = [];
 
@@ -82,30 +106,55 @@ class Store implements StoreType {
 
     this.maxSumOfIndividualBets = 0;
     this.sumOfBets = 0;
-  }
 
-  startGame() {
-    this.resetGameSettingsBeforeStart();
-    this.logGameEvent("<<< GAME START >>>");
     this.startRound_BlindCall();
   }
 
-  restartGame() {
-    this.resetGameSettingsBeforeStart();
+  // game being continued
+  continueGame() {
     this.logGameEvent("<<< GAME START >>>");
+    const { playerList } = this.players;
+    playerList.forEach(player => {
+      player.sumOfPersonalBetsInThisRound = 0;
+      player.sumToWinIfPlayerGoesAllIn = 0;
+      player.isAllIn = false;
+    })
+
+    const playersWhoCanContinuePlaying = playerList.filter(player => player.moneyLeft >= this.blinds.bigBlind);
+    if (playersWhoCanContinuePlaying.length === 1) {
+      const { name, moneyLeft } = playersWhoCanContinuePlaying[0];
+      return alert(`${name} won with ${moneyLeft}€! Refresh to restart.`);
+    }
+
+    this.players.playerList = playersWhoCanContinuePlaying;
+    this.isEveryoneAllIn = false;
+    this.players.passBlinds();
+
+    this.deck = new Deck();
+    this.cardsOnTheDesk = [];
+    this.gameLog = [];
+
+    this.isGameActive = true;
+    this.winners = [];
+
+    this.maxSumOfIndividualBets = 0;
+    this.sumOfBets = 0;
+
     this.startRound_BlindCall();
   }
 
   startNextRound() {
     /* cleanup before the round */
-    this.players.playersStillInThisRound.forEach(player => {
-      player.canCheck = true;
-      player.canSupportBet = true;
-      player.canRaise = true;
-      player.hasReacted = false;
-      player.isAllIn = false;
-      player.allInSum = 0;
-    });
+    if (!this.isEveryoneAllIn) {
+      this.players.playersStillInThisRound.forEach(player => {
+        player.canCheck = true;
+        player.canSupportBet = true;
+        player.canRaise = true;
+        player.hasReacted = false;
+        player.isAllIn = false;
+        player.allInSum = 0;
+      });
+    }
 
     // this.players.activePlayer = this.players.getNextActivePlayer();
     const activeRound = this.activeRound;
@@ -134,19 +183,9 @@ class Store implements StoreType {
     this.activeRound = POKER_ROUNDS.BLIND_CALL;
     this.logGameEvent("< BLIND CALL >");
 
-    const deck = new Deck();
-    this.deck = deck;
-
-    const players = new Players({
-      amountOfHumanPlayers: this.amountOfHumanPlayers,
-      initialMoney: this.initialDeposit
-    });
-    this.players = players;
-
     /* big and small blinds */
-    this.players.passBlinds();
     const { smallBlind, bigBlind } = this.blinds;
-    const { smallBlindPlayer, bigBlindPlayer } = players;
+    const { smallBlindPlayer, bigBlindPlayer } = this.players;
     bigBlindPlayer.placeBet({ betAmount: bigBlind, store: this, betAction: BET_ACTION.BIG_BLIND });
     smallBlindPlayer.placeBet({ betAmount: smallBlind, store: this, betAction: BET_ACTION.SMALL_BLIND });
 
@@ -154,17 +193,17 @@ class Store implements StoreType {
     const playerList = this.players.playerList;
     for (const player of playerList) {
       for (let i = 0; i <= 1; i++) {
-        const randomCard = deck.pickRandomCard();
+        const randomCard = this.deck.pickRandomCard();
         player.pickCard(randomCard);
       }
     }
 
     /* players decide whether to continue playing with these cards or fold (starting from the small blind player) */
     this.players.updatePlayerAbilities(this);
-    this.players.activePlayer = players.smallBlindPlayer;
+    this.players.activePlayer = this.players.smallBlindPlayer;
   }
 
-  startRound_Flop() {
+  startRound_Flop(): any {
     this.activeRound = POKER_ROUNDS.FLOP;
     this.logGameEvent("< FLOP >");
     //todo: make sure it is the right time to update data...
@@ -175,11 +214,17 @@ class Store implements StoreType {
       this.cardsOnTheDesk.push(randomCard);
     }
 
+    /* if everyone is allIn, just go to the next round */
+    if (this.players.playersStillInThisRound.every(player => player.isAllIn)) {
+      return this.startNextRound();
+    }
+
+
     const nextActivePlayer = this.players.getNextActivePlayer();
     this.players.activePlayer = nextActivePlayer;
   }
 
-  startRound_Turn() {
+  startRound_Turn(): any {
     this.activeRound = POKER_ROUNDS.TURN;
     this.logGameEvent("< TURN >");
     this.players.updatePlayerAbilities(this);
@@ -187,11 +232,17 @@ class Store implements StoreType {
     const randomCard = this.deck.pickRandomCard();
     this.cardsOnTheDesk.push(randomCard);
 
+    /* if everyone is allIn, just go to the next round */
+    if (this.players.playersStillInThisRound.every(player => player.isAllIn)) {
+      return this.startNextRound();
+    }
+
+
     const nextActivePlayer = this.players.getNextActivePlayer();
     this.players.activePlayer = nextActivePlayer;
   }
 
-  startRound_River() {
+  startRound_River(): any {
     this.activeRound = POKER_ROUNDS.RIVER;
     this.logGameEvent("< RIVER >");
     this.players.updatePlayerAbilities(this);
@@ -199,11 +250,20 @@ class Store implements StoreType {
     const randomCard = this.deck.pickRandomCard();
     this.cardsOnTheDesk.push(randomCard);
 
+    /* if everyone is allIn, just go to the next round */
+    if (this.players.playersStillInThisRound.every(player => player.isAllIn)) {
+      return this.startNextRound();
+    }
+
     const nextActivePlayer = this.players.getNextActivePlayer();
     this.players.activePlayer = nextActivePlayer;
   }
   endGame() {
     this.showGameResults();
+
+    // setTimeout(() => {
+    //   this.continueGame();
+    // }, 3000)
   }
 
 
@@ -246,7 +306,9 @@ class Store implements StoreType {
   private showGameResults() {
     this.players.getWinners({ sumOfBets: this.sumOfBets, store: this });
 
+
     console.warn(this.winners);
+
   }
 }
 

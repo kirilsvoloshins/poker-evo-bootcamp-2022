@@ -18,7 +18,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
   const card1 = cards[0], card2 = cards[1];
 
   return (
-    <div className="playerDiv" >
+    <div className={`playerDiv ${playerAtThisSlot?.hasFolded ? "foldedPlayer" : ""}`}>
       <div className={`playerInfo ${store.players.activePlayer === playerAtThisSlot ? "activePlayerInfo" : ""}`}>
         <div className="playerInfoText">
           {store.players.bigBlindPlayer === playerAtThisSlot && "big blind"}
@@ -36,6 +36,13 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
         </div>
       </div>
       <div className="playerBet">{playerAtThisSlot?.sumOfPersonalBetsInThisRound} €</div>
+      <span>
+        canCheck: {playerAtThisSlot?.canCheck === true ? "yes" : "no"}
+        <br />
+        canSupportBet: {playerAtThisSlot?.canSupportBet === true ? "yes" : "no"}
+        <br />
+        canRaise: {playerAtThisSlot?.canRaise === true ? "yes" : "no"}
+      </span>
     </div>
   )
 });

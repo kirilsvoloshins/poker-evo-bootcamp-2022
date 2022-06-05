@@ -8,7 +8,7 @@ import store from "../Store";
 
 const GameMenu: React.FC<GameMenuProps> = observer(() => {
   const startTheGame = useCallback(() => {
-    store.startGame();
+    store.startInitialGame();
   }, []);
 
   return (

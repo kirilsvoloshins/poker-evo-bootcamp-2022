@@ -11,7 +11,7 @@ import GameResults from "./GameResults";
 
 const GameScreen: React.FC<GameScreenProps> = observer(() => {
   useEffect(() => {
-    store.startGame();
+    store.startInitialGame();
   }, []);
 
   return (

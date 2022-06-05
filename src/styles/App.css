@@ -262,6 +262,7 @@ input[type=number] {
 
 .playerDiv {
   width: 200px;
+  z-index: 1 900;
 }
 
 .playerCards {
@@ -399,7 +400,7 @@ input[type=number] {
   box-sizing: border-box;
 
 
-  background-color: var(--bg-darkgreen);
+  /* background-color: var(--bg-darkgreen); */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -512,4 +513,8 @@ input[type=number] {
   display: flex;
   justify-content: center;
   gap: 10px;
+}
+
+.foldedPlayer {
+  opacity: 0.3;
 }

@@ -19,17 +19,17 @@ describe("players", () => {
     });
   });
 
-  // describe("combinations", () => {
-  //   it("should create a player", () => {
-  //     const store = {
-  //       winners: [],
-  //     };
-  //     const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
+  describe("combinations", () => {
+    it("should create a player", () => {
+      const store = {
+        winners: [],
+      };
+      const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
 
 
-  //     expect(players.playerList).toEqual([
-  //     ]);
-  //   });
-  // });
+      expect(players.playerList).toEqual([
+      ]);
+    });
+  });
 
 });

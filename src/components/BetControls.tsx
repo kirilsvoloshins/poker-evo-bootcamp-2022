@@ -84,11 +84,11 @@ const BetControls: React.FC = observer(() => {
           }
         </div>
         <div>
-          <div id="raiseBtn" onClick={handleRaise} className='raiseBtns noSelect'>
+          {store.players.activePlayer?.canRaise && <div id="raiseBtn" onClick={handleRaise} className='raiseBtns noSelect'>
             raise
             <br />
             {betValue}
-          </div>
+          </div>}
         </div>
         <div>
           <div id="allInBtn" onClick={handleAllIn} className='raiseBtns noSelect'>ALL IN</div>

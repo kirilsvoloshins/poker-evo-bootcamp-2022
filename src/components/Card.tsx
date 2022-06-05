@@ -8,7 +8,7 @@ const Card: React.FC<CardProps> = observer(({ cardValue, cardSuit }) => {
   const isRed = redSuits.includes(cardSuit);
 
   return (
-    <div className={`card playerCard1 ${isRed ? "red" : "black"}`}>
+    <div className={`card playerCard1 ${isRed ? "red" : "black"}`} id={`${cardValue}_${cardSuit}`}>
       <div className="cardValueDiv">
         {cardValue}
       </div>
