@@ -8,9 +8,9 @@ export type StoreType = typeof StoreVal;
 export type ComponentNames = "Menu" | "Game" | "Settings" | "Credits";
 export type Suit = "diamonds" | "clubs" | "hearts" | "spades";
 export type SuitSymbol = "♦" | "♣" | "♥" | "♠";
-export type CardName = "six" | "seven" | "eight" | "nine" | "ten" | "jack" | "queen" | "king" | "ace";
-export type CardNameSymbol = "6" | "7" | "8" | "9" | "10" | "J" | "Q" | "K" | "A";
-export type CardCost = 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
+export type CardName = "two" | "three" | "four" | "five" | "six" | "seven" | "eight" | "nine" | "ten" | "jack" | "queen" | "king" | "ace";
+export type CardNameSymbol = "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "J" | "Q" | "K" | "A";
+export type CardCost = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
 export type GameState = "";
 
 export interface GameEvent {

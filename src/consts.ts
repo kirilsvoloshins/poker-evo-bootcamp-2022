@@ -9,8 +9,12 @@ export const suitSymbols: Partial<Record<Suit, SuitSymbol>> = {
   "spades": "♠",
 };
 
-export const cardNames: CardName[] = ["six", "seven", "eight", "nine", "ten", "jack", "queen", "king", "ace"];
+export const cardNames: CardName[] = ["two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack", "queen", "king", "ace"];
 export const cardNameSymbols: Partial<Record<CardName, CardNameSymbol>> = {
+  "two": "2",
+  "three": "3",
+  "four": "4",
+  "five": "5",
   "six": "6",
   "seven": "7",
   "eight": "8",
@@ -22,6 +26,10 @@ export const cardNameSymbols: Partial<Record<CardName, CardNameSymbol>> = {
   "ace": "A",
 };
 export const cardCosts: Partial<Record<CardName, CardCost>> = {
+  "two": 2,
+  "three": 3,
+  "four": 4,
+  "five": 5,
   "six": 6,
   "seven": 7,
   "eight": 8,
@@ -30,10 +38,10 @@ export const cardCosts: Partial<Record<CardName, CardCost>> = {
   "jack": 11,
   "queen": 12,
   "king": 13,
-  "ace": 14
+  "ace": 14,
 }
 export const humanPlayerNames: string[] = ["player-1", "player-2", "player-3", "player-4"];
-export const amountOfCardsInTheDeck = 36;
+export const amountOfCardsInTheDeck = 54;
 
 export enum POKER_ROUNDS {
   BLIND_CALL, // 0 cards on the table
@@ -68,7 +76,7 @@ export enum COMBINATION_NAMES_HUMAN {
   PAIR = "pair",
   TWO_PAIRS = "two pairs",
   THREE_OF_KIND = "three of kind",
-  STRAIGHT = "straight",
+  STRAIGHT = "straight", // add ace - two ... street
   FLUSH = "flush",
   FULL_HOUSE = "full house",
   FOUR_OF_KIND = "four of kind",

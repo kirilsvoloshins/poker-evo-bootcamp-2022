@@ -41,6 +41,14 @@ export function getGameEventText({ name, betAmount, betAction }: { name: string,
   }
 }
 
+// export const
+// STRAIGHT = "STRAIGHT",
+// FLUSH = "FLUSH",
+// FULL_HOUSE = "FULL_HOUSE",
+// FOUR_OF_KIND = "FOUR_OF_KIND",
+// STRAIGHT_FLUSH = "STRAIGHT_FLUSH",
+// ROYAL_FLUSH = "ROYAL_FLUSH"
+
 export const getPlayersDescSortedByHighestCards = ({ playersWithThisCombination, combinationName }: { playersWithThisCombination: Player[], combinationName: COMBINATIONS }): Player[] => {
   const sortedPlayersWithThisCombination = playersWithThisCombination.sort((player1, player2) => {
     const costOfHighestCardInCombination_1 = player1.cardsAtCombination[combinationName].highestCardInCombination.cardCost;

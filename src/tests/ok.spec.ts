@@ -136,7 +136,6 @@ describe("players", () => {
         const sumOfBets = 300;
         players.getWinners({ sumOfBets, store });
         const { winners } = store;
-        console.log(winners)
         expect(winners).toHaveLength(2);
         expect(winners).toEqual([
           {
@@ -632,6 +631,7 @@ describe("players", () => {
     });
 
 
+    //todo: handle straights Ace, 2, ...
     describe("straight", () => {
       it("one straight - one player wins", () => {
         const store = {
@@ -689,7 +689,7 @@ describe("players", () => {
           ],
           winners: [],
         } as StoreType;
-        const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
+        const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
         const player1 = players.playerList[0];
         player1.cards = [
@@ -764,51 +764,317 @@ describe("players", () => {
       });
     });
 
+    describe("flush", () => {
+      it("one flush - one player wins", () => {
+        const store = {
+          cardsOnTheDesk: [
+            new Card({ suit: "clubs", cardName: "two" }),
+            new Card({ suit: "clubs", cardName: "four" }),
+            new Card({ suit: "clubs", cardName: "ace" }),
+            new Card({ suit: "hearts", cardName: "seven" }),
+            new Card({ suit: "hearts", cardName: "nine" }),
+          ],
+          winners: [],
+        } as StoreType;
+        const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
+        // player-1
+        const player1 = players.playerList[0];
+        player1.cards = [
+          new Card({ suit: "hearts", cardName: "king" }),
+          new Card({ suit: "spades", cardName: "six" })
+        ];
+        // player-2
+        const player2 = players.playerList[1];
+        player2.cards = [
+          new Card({ suit: "clubs", cardName: "six" }),
+          new Card({ suit: "clubs", cardName: "ten" })
+        ];
 
-    // it("if five card combination is on the table, everyone is a winner", () => {
-    //   const store = {
-    //     cardsOnTheDesk: [
-    //       new Card({ suit: "spades", cardName: "queen" }),
-    //       new Card({ suit: "hearts", cardName: "ten" }),
-    //       new Card({ suit: "hearts", cardName: "ace" }),
-    //       new Card({ suit: "diamonds", cardName: "jack" }),
-    //       new Card({ suit: "diamonds", cardName: "king" }),
-    //     ],
-    //     winners: [],
-    //   } as StoreType;
-    //   const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
-    //   players.playerList[0].cards = [
-    //     new Card({ suit: "hearts", cardName: "nine" }),
-    //     new Card({ suit: "spades", cardName: "king" })
-    //   ];
-    //   players.playerList[1].cards = [
-    //     new Card({ suit: "hearts", cardName: "king" }),
-    //     new Card({ suit: "hearts", cardName: "jack" })
-    //   ];
-    //   players.playerList[2].cards = [
-    //     new Card({ suit: "spades", cardName: "six" }),
-    //     new Card({ suit: "hearts", cardName: "eight" })
-    //   ];
+        const sumOfBets = 300;
+        players.getWinners({ sumOfBets, store });
+        const { winners } = store;
+        expect(winners).toHaveLength(1);
+        expect(winners).toEqual([
+          {
+            ...winners[0],
+            playerName: "player-2",
+            combinationName: COMBINATIONS.FLUSH,
+            winAmount: sumOfBets
+          }
+        ]);
+      });
 
-    //   const sumOfBets = 300, winOfEveryone = sumOfBets / 3;
-    //   players.getWinners({ sumOfBets, store });
-    //   const { winners } = store;
-    //   expect(winners).toHaveLength(3);
-    //   expect(winners).toEqual([
-    //     {
-    //       ...winners[0],
-    //       winAmount: winOfEveryone
-    //     },
-    //     {
-    //       ...winners[1],
-    //       winAmount: winOfEveryone
-    //     },
-    //     {
-    //       ...winners[2],
-    //       winAmount: winOfEveryone
-    //     },
-    //   ]);
-    // });
+      it("one flush on the table - all [3] players win", () => {
+        const store = {
+          cardsOnTheDesk: [
+            new Card({ suit: "clubs", cardName: "two" }),
+            new Card({ suit: "clubs", cardName: "four" }),
+            new Card({ suit: "clubs", cardName: "ace" }),
+            new Card({ suit: "clubs", cardName: "seven" }),
+            new Card({ suit: "clubs", cardName: "nine" }),
+          ],
+          winners: [],
+        } as StoreType;
+        const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
+        // player-1
+        const player1 = players.playerList[0];
+        player1.cards = [
+          new Card({ suit: "hearts", cardName: "two" }),
+          new Card({ suit: "spades", cardName: "three" })
+        ];
+        // player-2
+        const player2 = players.playerList[1];
+        player2.cards = [
+          new Card({ suit: "hearts", cardName: "four" }),
+          new Card({ suit: "spades", cardName: "two" })
+        ];
+        // player-3
+        const player3 = players.playerList[2];
+        player3.cards = [
+          new Card({ suit: "hearts", cardName: "three" }),
+          new Card({ suit: "spades", cardName: "five" })
+        ];
+
+        const sumOfBets = 300;
+        players.getWinners({ sumOfBets, store });
+        const { winners } = store;
+        expect(winners).toHaveLength(3);
+        expect(winners).toEqual([
+          {
+            ...winners[0],
+            playerName: "player-1",
+            combinationName: COMBINATIONS.FLUSH,
+            winAmount: sumOfBets / 3
+          },
+          {
+            ...winners[1],
+            playerName: "player-2",
+            combinationName: COMBINATIONS.FLUSH,
+            winAmount: sumOfBets / 3
+          },
+          {
+            ...winners[2],
+            playerName: "player-3",
+            combinationName: COMBINATIONS.FLUSH,
+            winAmount: sumOfBets / 3
+          },
+        ]);
+      });
+
+      // todo: handle case when kicker is not the highest card in the final combo (but is the highest card on hand)
+      it("two flushes - players with the highest wins", () => {
+        const store = {
+          cardsOnTheDesk: [
+            new Card({ suit: "hearts", cardName: "two" }),
+            new Card({ suit: "clubs", cardName: "four" }),
+            new Card({ suit: "clubs", cardName: "king" }),
+            new Card({ suit: "clubs", cardName: "seven" }),
+            new Card({ suit: "clubs", cardName: "nine" }),
+          ],
+          winners: [],
+        } as StoreType;
+        const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
+        // player-1
+        const player1 = players.playerList[0];
+        player1.cards = [
+          new Card({ suit: "clubs", cardName: "two" }),
+          new Card({ suit: "spades", cardName: "three" })
+        ];
+        // player-2
+        const player2 = players.playerList[1];
+        player2.cards = [
+          new Card({ suit: "clubs", cardName: "ace" }),
+          new Card({ suit: "spades", cardName: "two" })
+        ];
+
+        const sumOfBets = 300;
+        players.getWinners({ sumOfBets, store });
+        const { winners } = store;
+        expect(winners).toHaveLength(1);
+        expect(winners).toEqual([
+          {
+            ...winners[0],
+            playerName: "player-2",
+            combinationName: COMBINATIONS.FLUSH,
+            winAmount: sumOfBets
+          },
+        ]);
+      });
+    });
+
+
+    describe("full house", () => {
+      it("one full house - one player wins", () => {
+        const store = {
+          cardsOnTheDesk: [
+            new Card({ suit: "clubs", cardName: "two" }),
+            new Card({ suit: "hearts", cardName: "two" }),
+            new Card({ suit: "diamonds", cardName: "ace" }),
+            new Card({ suit: "hearts", cardName: "seven" }),
+            new Card({ suit: "hearts", cardName: "nine" }),
+          ],
+          winners: [],
+        } as StoreType;
+        const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
+        // player-1
+        const player1 = players.playerList[0];
+        player1.cards = [
+          new Card({ suit: "hearts", cardName: "king" }),
+          new Card({ suit: "spades", cardName: "six" })
+        ];
+        // player-2
+        const player2 = players.playerList[1];
+        player2.cards = [
+          new Card({ suit: "spades", cardName: "two" }),
+          new Card({ suit: "diamonds", cardName: "seven" })
+        ];
+
+        const sumOfBets = 300;
+        players.getWinners({ sumOfBets, store });
+        const { winners } = store;
+        expect(winners).toHaveLength(1);
+        expect(winners).toEqual([
+          {
+            ...winners[0],
+            playerName: "player-2",
+            combinationName: COMBINATIONS.FULL_HOUSE,
+            winAmount: sumOfBets
+          }
+        ]);
+      });
+
+      it("2 players have the same full house - both players win", () => {
+        const store = {
+          cardsOnTheDesk: [
+            new Card({ suit: "clubs", cardName: "two" }),
+            new Card({ suit: "hearts", cardName: "two" }),
+            new Card({ suit: "diamonds", cardName: "ace" }),
+            new Card({ suit: "hearts", cardName: "seven" }),
+            new Card({ suit: "hearts", cardName: "nine" }),
+          ],
+          winners: [],
+        } as StoreType;
+        const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
+        // player-1
+        const player1 = players.playerList[0];
+        player1.cards = [
+          new Card({ suit: "spades", cardName: "two" }),
+          new Card({ suit: "clubs", cardName: "seven" })
+        ];
+        // player-2
+        const player2 = players.playerList[1];
+        player2.cards = [
+          new Card({ suit: "spades", cardName: "two" }),
+          new Card({ suit: "diamonds", cardName: "seven" })
+        ];
+
+        const sumOfBets = 300;
+        players.getWinners({ sumOfBets, store });
+        const { winners } = store;
+        expect(winners).toHaveLength(2);
+        expect(winners).toEqual([
+          {
+            ...winners[0],
+            playerName: "player-1",
+            combinationName: COMBINATIONS.FULL_HOUSE,
+            winAmount: sumOfBets / 2
+          },
+          {
+            ...winners[1],
+            playerName: "player-2",
+            combinationName: COMBINATIONS.FULL_HOUSE,
+            winAmount: sumOfBets / 2
+          },
+        ]);
+      });
+
+      it("full house is on the table - everyone wins", () => {
+        const store = {
+          cardsOnTheDesk: [
+            new Card({ suit: "clubs", cardName: "two" }),
+            new Card({ suit: "hearts", cardName: "two" }),
+            new Card({ suit: "diamonds", cardName: "two" }),
+            new Card({ suit: "hearts", cardName: "seven" }),
+            new Card({ suit: "diamonds", cardName: "seven" }),
+          ],
+          winners: [],
+        } as StoreType;
+        const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
+        // player-1
+        const player1 = players.playerList[0];
+        player1.cards = [
+          new Card({ suit: "clubs", cardName: "king" }),
+          new Card({ suit: "clubs", cardName: "ace" })
+        ];
+        // player-2
+        const player2 = players.playerList[1];
+        player2.cards = [
+          new Card({ suit: "clubs", cardName: "queen" }),
+          new Card({ suit: "clubs", cardName: "king" })
+        ];
+
+        const sumOfBets = 300;
+        players.getWinners({ sumOfBets, store });
+        const { winners } = store;
+        expect(winners).toHaveLength(2);
+        expect(winners).toEqual([
+          {
+            ...winners[0],
+            playerName: "player-1",
+            combinationName: COMBINATIONS.FULL_HOUSE,
+            winAmount: sumOfBets / 2
+          },
+          {
+            ...winners[1],
+            playerName: "player-2",
+            combinationName: COMBINATIONS.FULL_HOUSE,
+            winAmount: sumOfBets / 2
+          },
+        ]);
+      });
+
+      it("2 players have the different full houses - the one with the highest three of kinds wins", () => {
+        const store = {
+          cardsOnTheDesk: [
+            new Card({ suit: "clubs", cardName: "two" }),
+            new Card({ suit: "hearts", cardName: "two" }),
+            new Card({ suit: "diamonds", cardName: "king" }),
+            new Card({ suit: "hearts", cardName: "seven" }),
+            new Card({ suit: "spades", cardName: "seven" }),
+          ],
+          winners: [],
+        } as StoreType;
+        const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
+        // player-1
+        const player1 = players.playerList[0];
+        player1.cards = [
+          new Card({ suit: "spades", cardName: "two" }),
+          new Card({ suit: "clubs", cardName: "ace" })
+        ];
+        // player-2
+        const player2 = players.playerList[1];
+        player2.cards = [
+          new Card({ suit: "spades", cardName: "three" }),
+          new Card({ suit: "diamonds", cardName: "seven" })
+        ];
+
+        console.warn("THIS TEST");
+        const sumOfBets = 300;
+        players.getWinners({ sumOfBets, store });
+        const { winners } = store;
+        expect(winners).toHaveLength(1);
+        console.warn(winners);
+        expect(winners).toEqual([
+          {
+            ...winners[0],
+            playerName: "player-2",
+            combinationName: COMBINATIONS.FULL_HOUSE,
+            winAmount: sumOfBets
+          },
+        ]);
+      });
+    });
+
+
   });
-
 });
