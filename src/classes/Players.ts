@@ -3,6 +3,7 @@ import { PlayersAtCombinations, PlayersConstructorArgs, StoreType, SuitSymbol, W
 import { Player } from "./Player";
 import { makeAutoObservable } from "mobx";
 import { getCardsInFlushIfThereIsAny, getCardsInStraightIfThereIsAny, getDescSortedArrayofCards, getHighestCardOfCards, getPlayersDescSortedByHighestCards } from "../utils";
+import { Card } from "./Card";
 
 export class Players {
   playerList: Player[]; // static list of players which entered the game (on game start we delete ones who cant participate)
@@ -170,11 +171,15 @@ export class Players {
       if (cardsWithFlush.length) {
         playersWithFlush.push(player);
         const combinationCards = cardsWithFlush;
-        const cardsOutsideCombination = player.cards.filter(card => !combinationCards.includes(card));
+        const highestCombinationCardInHand = combinationCards.filter(combinationCard => player.cards.includes(combinationCard)).sort(getDescSortedArrayofCards)[0];
+        const cardsOutsideCombination = player.cards.filter(card => combinationCards.includes(card));
         player.cardsAtCombination[COMBINATIONS.FLUSH] = {
           combinationCards,
+          // highestCardInCombination: highestCombinationCardInHand,
           highestCardInCombination: getHighestCardOfCards(combinationCards),
-          highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
+          // highestCardInCombination: highestCombinationCardInHand,
+          // highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
+          highestCardOutsideCombination: { cardCost: 0 } as Card
         };
         player.bestCombinationName = COMBINATIONS.FLUSH;
         player.bestCombinationCards = combinationCards;
@@ -188,7 +193,8 @@ export class Players {
         player.cardsAtCombination[COMBINATIONS.STRAIGHT] = {
           combinationCards,
           highestCardInCombination: getHighestCardOfCards(combinationCards),
-          highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
+          // highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
+          highestCardOutsideCombination: { cardCost: 0 } as Card,
         };
         player.bestCombinationName = COMBINATIONS.STRAIGHT;
         player.bestCombinationCards = combinationCards;
@@ -196,13 +202,15 @@ export class Players {
       // STRAIGHT_FLUSH
       const cardsInStraightFlush = getCardsInFlushIfThereIsAny({ cardsToCheck: cardsInStraight, uniqueSuitSymbols });
       if (cardsInStraightFlush.length) {
+        console.log({ cardsInStraightFlush });
         playersWithStraightFlush.push(player);
         const combinationCards = cardsInStraight;
         const cardsOutsideCombination = player.cards.filter(card => !combinationCards.includes(card));
         player.cardsAtCombination[COMBINATIONS.STRAIGHT_FLUSH] = {
           combinationCards,
           highestCardInCombination: getHighestCardOfCards(combinationCards),
-          highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
+          // highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
+          highestCardOutsideCombination: { cardCost: 0 } as Card
         };
         player.bestCombinationName = COMBINATIONS.STRAIGHT_FLUSH;
         player.bestCombinationCards = combinationCards;
@@ -216,8 +224,9 @@ export class Players {
         const cardsOutsideCombination = player.cards.filter(card => !combinationCards.includes(card));
         player.cardsAtCombination[COMBINATIONS.FULL_HOUSE] = {
           combinationCards,
-          highestCardInCombination: getHighestCardOfCards(combinationCards),
-          highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
+          highestCardInCombination: getHighestCardOfCards(cardsWithThreeOfKinds[0]),
+          // highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
+          highestCardOutsideCombination: { cardCost: 0 } as Card
         };
         player.bestCombinationName = COMBINATIONS.FULL_HOUSE;
         player.bestCombinationCards = combinationCards;
@@ -232,7 +241,8 @@ export class Players {
           player.cardsAtCombination[COMBINATIONS.ROYAL_FLUSH] = {
             combinationCards,
             highestCardInCombination: getHighestCardOfCards(combinationCards),
-            highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
+            // highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
+            highestCardOutsideCombination: { cardCost: 0 } as Card
           };
           player.bestCombinationName = COMBINATIONS.ROYAL_FLUSH;
           player.bestCombinationCards = combinationCards;
@@ -245,7 +255,7 @@ export class Players {
       [COMBINATIONS.STRAIGHT_FLUSH]: playersWithStraightFlush,
       [COMBINATIONS.FOUR_OF_KIND]: playersWithFourOfKind,
       [COMBINATIONS.FULL_HOUSE]: playersWithFullHouse,
-      [COMBINATIONS.FLUSH]: playersWithFlush, //
+      [COMBINATIONS.FLUSH]: playersWithFlush,
       [COMBINATIONS.STRAIGHT]: playersWithStraight,
       [COMBINATIONS.THREE_OF_KIND]: playersWithThreeOfKind,
       [COMBINATIONS.TWO_PAIRS]: playersWithTwoPairs,
@@ -325,20 +335,19 @@ export class Players {
       const isFiveCardCombination = [COMBINATIONS.STRAIGHT, COMBINATIONS.FLUSH, COMBINATIONS.FULL_HOUSE, COMBINATIONS.STRAIGHT_FLUSH, COMBINATIONS.ROYAL_FLUSH].includes(combinationName);
       if (isFiveCardCombination) {
         playersWithThisCombination.forEach(player => {
-          if (combinationName === COMBINATIONS.FULL_HOUSE) {
-            player.cardsAtCombination[combinationName].highestCardInCombination = player.cardsAtCombination[COMBINATIONS.THREE_OF_KIND].highestCardInCombination;
-
-          }
+          // if (combinationName === COMBINATIONS.FULL_HOUSE) {
+          //   player.cardsAtCombination[combinationName].highestCardInCombination = player.cardsAtCombination[COMBINATIONS.THREE_OF_KIND].highestCardInCombination;
+          // }
           // player.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost = 0;
           player.cardsAtCombination[combinationName].highestCardOutsideCombination = { ...player.cardsAtCombination[combinationName].highestCardOutsideCombination, cardCost: 0 };
         });
       }
       const sortedPlayersWithThisCombination = getPlayersDescSortedByHighestCards({ playersWithThisCombination, combinationName });
-      if (combinationName === COMBINATIONS.FULL_HOUSE) {
-        // console.warn(sortedPlayersWithThisCombination.map(player => player.cardsAtCombination[COMBINATIONS.FULL_HOUSE].combinationCards));
-        // console.warn(sortedPlayersWithThisCombination.map(player => player.cardsAtCombination[COMBINATIONS.FULL_HOUSE].highestCardInCombination));
-        console.warn(sortedPlayersWithThisCombination.map(player => player.name));
-      }
+      // if (combinationName === COMBINATIONS.FULL_HOUSE) {
+      //   // console.warn(sortedPlayersWithThisCombination.map(player => player.cardsAtCombination[COMBINATIONS.FULL_HOUSE].combinationCards));
+      //   // console.warn(sortedPlayersWithThisCombination.map(player => player.cardsAtCombination[COMBINATIONS.FULL_HOUSE].highestCardInCombination));
+      //   console.warn(sortedPlayersWithThisCombination.map(player => player.name));
+      // }
       const uniqueHighCardCombinations: number[][] = [];
       sortedPlayersWithThisCombination.forEach(player => {
         const highestCardCostInCombination = player.cardsAtCombination[combinationName].highestCardInCombination.cardCost;
@@ -353,9 +362,9 @@ export class Players {
           uniqueHighCardCombinations.push([highestCardCostInCombination, highestCardCostOutsideCombination])
         }
       });
-      if (combinationName === COMBINATIONS.FULL_HOUSE) {
-        console.warn(uniqueHighCardCombinations);
-      }
+      // if (combinationName === COMBINATIONS.FULL_HOUSE) {
+      //   console.warn(uniqueHighCardCombinations);
+      // }
 
       /* 
       if the same 5 card combination, then split win between players
@@ -363,13 +372,13 @@ export class Players {
       */
 
       for (const [uniqueHighCombinationCardCost, uniqueHighOutsideCombinationCardCost] of uniqueHighCardCombinations) {
-        if (combinationName === COMBINATIONS.FULL_HOUSE) {
-          console.warn(uniqueHighCombinationCardCost, uniqueHighOutsideCombinationCardCost);
-        }
+        // if (combinationName === COMBINATIONS.FULL_HOUSE) {
+        //   console.warn(uniqueHighCombinationCardCost, uniqueHighOutsideCombinationCardCost);
+        // }
 
         const playersWithTheseHighCards = sortedPlayersWithThisCombination.filter(player => {
           const highCombinationCardCost = player.cardsAtCombination[combinationName].highestCardInCombination.cardCost;
-          const highOutsideCombinationCardCost = isFiveCardCombination ? 0 : player.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost;
+          const highOutsideCombinationCardCost = player.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost;
 
           return highCombinationCardCost === uniqueHighCombinationCardCost && highOutsideCombinationCardCost === uniqueHighOutsideCombinationCardCost;
         });
