@@ -99,7 +99,8 @@ export class Players {
     const playersWithHighestCards = playersStillInThisRound.filter(player => player.cards.map(({ cardCost }) => cardCost).includes(highestCardCostAmongstAllPlayers));
 
     const uniqueSuitSymbols = suits.map(suit => suitSymbols[suit]);
-    const playersWithOnePair: Player[] = [], playersWithTwoPairs: Player[] = [], playersWithThreeOfKind: Player[] = [], playersWithFourOfKind: Player[] = [], playersWithFlush: Player[] = [], playersWithStraight: Player[] = [], playersWithRoyalFlush: Player[] = [], playersWithFullHouse: Player[] = [], playersWithStraightFlush: Player[] = [];
+    const playersWithOnePair: Player[] = [], playersWithTwoPairs: Player[] = [], playersWithThreeOfKind: Player[] = [], playersWithFourOfKind: Player[] = [], playersWithFlush: Player[] = [], playersWithStraight: Player[] = [], playersWithRoyalFlush: Player[] = [], playersWithFullHouse: Player[] = [];
+    let playersWithStraightFlush: Player[] = [];
     playersStillInThisRound.forEach(player => {
       player.bestCombinationName = COMBINATIONS.HIGH_CARD;
       player.bestCombinationCards = player.cards;
@@ -208,18 +209,39 @@ export class Players {
       const cardsInStraightFlush = getCardsInStraightIfThereIsAny(cardsWithFlush);
       // console.warn(cardsInStraightFlush);
       if (cardsInStraightFlush.length) {
-        // console.log({ cardsInStraightFlush });
-        playersWithStraightFlush.push(player);
-        const combinationCards = cardsInStraight;
-        const cardsOutsideCombination = player.cards.filter(card => !combinationCards.includes(card));
-        player.cardsAtCombination[COMBINATIONS.STRAIGHT_FLUSH] = {
-          combinationCards,
-          highestCardInCombination: getHighestCardOfCards(combinationCards),
-          // highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
-          highestCardOutsideCombination: { cardCost: 0 } as Card
-        };
-        player.bestCombinationName = COMBINATIONS.STRAIGHT_FLUSH;
-        player.bestCombinationCards = combinationCards;
+        // ROYAL FLUSH
+        if (cardsInStraightFlush[0].cardCost === cardCosts["ace"]) {
+          //!!! there can only be one player with royal flash
+          playersWithRoyalFlush.push(player);
+          // playersWithStraightFlush = playersWithStraightFlush.filter(existingPlayer => existingPlayer !== player);
+          console.log(playersWithStraightFlush);
+          const combinationCards = cardsInStraightFlush;
+          const cardsOutsideCombination = player.cards.filter(card => !combinationCards.includes(card));
+          player.cardsAtCombination[COMBINATIONS.ROYAL_FLUSH] = {
+            combinationCards,
+            highestCardInCombination: getHighestCardOfCards(combinationCards),
+            // highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
+            highestCardOutsideCombination: { cardCost: 0 } as Card
+          };
+          player.bestCombinationName = COMBINATIONS.ROYAL_FLUSH;
+          player.bestCombinationCards = combinationCards;
+        } else {
+          // console.log({ cardsInStraightFlush });
+          playersWithStraightFlush.push(player);
+          const combinationCards = cardsInStraight;
+          const cardsOutsideCombination = player.cards.filter(card => !combinationCards.includes(card));
+          player.cardsAtCombination[COMBINATIONS.STRAIGHT_FLUSH] = {
+            combinationCards,
+            highestCardInCombination: getHighestCardOfCards(combinationCards),
+            // highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
+            highestCardOutsideCombination: { cardCost: 0 } as Card
+          };
+          player.bestCombinationName = COMBINATIONS.STRAIGHT_FLUSH;
+          player.bestCombinationCards = combinationCards;
+        }
+
+
+
       }
 
       //!!! handle ignoring a pair if there is full house
@@ -237,23 +259,7 @@ export class Players {
         player.bestCombinationName = COMBINATIONS.FULL_HOUSE;
         player.bestCombinationCards = combinationCards;
       }
-      // ROYAL FLUSH
-      if (cardsInStraightFlush.length) {
-        if (cardsInStraightFlush[0].cardCost === cardCosts["ace"]) {
-          //!!! there can only be one player with royal flash
-          playersWithRoyalFlush.push(player);
-          const combinationCards = cardsInStraightFlush;
-          const cardsOutsideCombination = player.cards.filter(card => !combinationCards.includes(card));
-          player.cardsAtCombination[COMBINATIONS.ROYAL_FLUSH] = {
-            combinationCards,
-            highestCardInCombination: getHighestCardOfCards(combinationCards),
-            // highestCardOutsideCombination: getHighestCardOfCards(cardsOutsideCombination),
-            highestCardOutsideCombination: { cardCost: 0 } as Card
-          };
-          player.bestCombinationName = COMBINATIONS.ROYAL_FLUSH;
-          player.bestCombinationCards = combinationCards;
-        }
-      }
+
     });
 
     const playersAtCombination: PlayersAtCombinations = {
@@ -268,6 +274,7 @@ export class Players {
       [COMBINATIONS.PAIR]: playersWithOnePair,
       [COMBINATIONS.HIGH_CARD]: playersWithHighestCards,
     };
+    console.warn(playersWithRoyalFlush.map(p => p.name));
     // console.warn(playersAtCombination[COMBINATIONS.STRAIGHT].map(({ name }) => name));
 
     let winMoneyLeft = sumOfBets;
@@ -291,11 +298,12 @@ export class Players {
     const combinations = [COMBINATIONS.ROYAL_FLUSH, COMBINATIONS.STRAIGHT_FLUSH, COMBINATIONS.FOUR_OF_KIND, COMBINATIONS.FULL_HOUSE, COMBINATIONS.FLUSH, COMBINATIONS.STRAIGHT, COMBINATIONS.THREE_OF_KIND, COMBINATIONS.TWO_PAIRS, COMBINATIONS.PAIR, COMBINATIONS.HIGH_CARD];
     // console.warn(playersAtCombination[COMBINATIONS.FLUSH].map(player => player.name));
     for (const combinationName of combinations) {
-      if (winMoneyLeft < 10) {
+      if (winMoneyLeft < store.minimumBet) {
         return;
       }
 
       const playersWithThisCombination = playersAtCombination[combinationName];
+      console.warn(combinationName, playersWithThisCombination.map(o => o.name));
       // if (combinationName === COMBINATIONS.STRAIGHT_FLUSH) {
       //   console.warn(playersWithThisCombination.map(player => player.cards));
       // }
@@ -336,7 +344,7 @@ export class Players {
           winAmount: winMoneyLeft,
           playerName: player.name,
         };
-        store.winners = [winnerObject];
+        store.winners.push(winnerObject);
         return;
       }
 
@@ -394,10 +402,10 @@ export class Players {
         //   console.warn(playersWithTheseHighCards.map(x => x.name));
         // }
 
-        if (combinationName === COMBINATIONS.ROYAL_FLUSH) {
-          console.warn(sortedPlayersWithThisCombination.map(p => p.name));
-          // console.warn(playersWithTheseHighCards);
-        }
+        // if (combinationName === COMBINATIONS.ROYAL_FLUSH) {
+        //   console.warn(sortedPlayersWithThisCombination.map(p => p.name));
+        //   // console.warn(playersWithTheseHighCards);
+        // }
 
         let amountOfPlayersLeftWithThisCombination = playersWithTheseHighCards.length;
         for (const player of playersWithTheseHighCards) {

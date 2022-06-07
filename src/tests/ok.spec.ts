@@ -1848,6 +1848,7 @@ describe("players", () => {
         new Card({ suit: "spades", cardName: "ace" }),
         new Card({ suit: "hearts", cardName: "six" })
       ];
+      // const sumToWinIfPlayerGoesAllIn_1 = 300;
       player1.isAllIn = true;
       const sumToWinIfPlayerGoesAllIn_1 = 100;
       player1.sumToWinIfPlayerGoesAllIn = sumToWinIfPlayerGoesAllIn_1;
@@ -1861,6 +1862,7 @@ describe("players", () => {
       const sumOfBets = 300;
       players.getWinners({ sumOfBets, store });
       const { winners } = store;
+      console.warn(winners);
       expect(winners).toHaveLength(2);
       expect(winners).toEqual([
         {
