@@ -1,4 +1,4 @@
-import { CardType, CardConstructorArgs } from "../types";
+import { CardType, CardConstructorArgs, CardCost } from "../types";
 import { suits, cardNames, suitSymbols, cardNameSymbols, cardCosts } from "../consts";
 
 export class Card implements CardType {
@@ -7,7 +7,7 @@ export class Card implements CardType {
   cardName = cardNames[0];
   cardNameSymbol = cardNameSymbols[this.cardName];
   isHidden = false;
-  cardCost = 0;
+  cardCost = 0 as CardCost;
 
   constructor({ suit, cardName }: CardConstructorArgs) {
     this.suit = suit;

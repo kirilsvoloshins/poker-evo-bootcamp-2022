@@ -1,5 +1,5 @@
 import { BET_ACTION, COMBINATIONS } from "./consts";
-import { SuitSymbol } from "./types";
+import { CardCost, SuitSymbol } from "./types";
 import { Player } from "./classes/Player";
 import { Card } from "./classes/Card";
 
@@ -71,7 +71,7 @@ export const getDescSortedArrayofCards = (cardA: Card, cardB: Card): any => {
 
 export const getHighestCardOfCards = (cards: Card[]): Card => {
   if (!cards.length) {
-    return { cardCost: 0 } as Card;
+    return { cardCost: 0 as CardCost } as Card;
   }
 
   const descSortedArrayOfCards = cards.sort(getDescSortedArrayofCards);
@@ -88,8 +88,17 @@ export const getCardsInFlushIfThereIsAny = ({ cardsToCheck, uniqueSuitSymbols }:
   return [];
 }
 
-export const getCardsInStraightIfThereIsAny = (cardsToCheck: Card[]): Card[] => {
-  let amountOfCardsInPotentialStraight = 0, previousCardCost = 0, cardsInStraight: Card[] = [];
+export const getCardsInStraightIfThereIsAny = (rawCardsToCheck: Card[]): Card[] => {
+  const cardCostsAlreadyChecked: CardCost[] = [], cardsToCheck: Card[] = [];
+  let cardsInStraight: Card[] = [];
+  let previousCardCost = 0 as CardCost, amountOfCardsInPotentialStraight = 0;
+  rawCardsToCheck.forEach(card => {
+    const { cardCost } = card;
+    if (!cardCostsAlreadyChecked.includes(cardCost)) {
+      cardCostsAlreadyChecked.push(cardCost);
+      cardsToCheck.push(card);
+    }
+  });
   for (const card of cardsToCheck) {
     const areCardsConsecutive = card.cardCost === previousCardCost - 1;
     if (areCardsConsecutive) {
@@ -99,11 +108,15 @@ export const getCardsInStraightIfThereIsAny = (cardsToCheck: Card[]): Card[] => 
       amountOfCardsInPotentialStraight = 1;
       cardsInStraight = [card];
       // no way there is a straight from 4 cards
-      if (cardsToCheck.indexOf(card) >= 3) {
-        break;
-      }
+      // if (cardsToCheck.indexOf(card) >= 3) {
+      //   break;
+      // }
     }
     previousCardCost = card.cardCost;
+    if (cardsInStraight.length === 5) {
+      // console.warn('FIVE CARDS IN STRAIGHT');
+      return cardsInStraight;
+    }
   }
   if (amountOfCardsInPotentialStraight < 5) {
     return [];

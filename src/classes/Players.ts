@@ -1,5 +1,5 @@
 import { suitSymbols, humanPlayerNames, cardCosts, COMBINATIONS, suits } from "../consts";
-import { PlayersAtCombinations, PlayersConstructorArgs, StoreType, SuitSymbol, Winner } from "../types";
+import { CardCost, PlayersAtCombinations, PlayersConstructorArgs, StoreType, SuitSymbol, Winner } from "../types";
 import { Player } from "./Player";
 import { makeAutoObservable } from "mobx";
 import { getCardsInFlushIfThereIsAny, getCardsInStraightIfThereIsAny, getDescSortedArrayofCards, getHighestCardOfCards, getPlayersDescSortedByHighestCards } from "../utils";
@@ -95,7 +95,7 @@ export class Players {
     const { playersStillInThisRound } = this;
 
     // HIGH_CARD
-    const highestCardCostAmongstAllPlayers = Math.max(...playersStillInThisRound.map(({ cards }) => cards.map(({ cardCost }) => cardCost)).flat());
+    const highestCardCostAmongstAllPlayers = Math.max(...playersStillInThisRound.map(({ cards }) => cards.map(({ cardCost }) => cardCost)).flat()) as CardCost;
     const playersWithHighestCards = playersStillInThisRound.filter(player => player.cards.map(({ cardCost }) => cardCost).includes(highestCardCostAmongstAllPlayers));
 
     const uniqueSuitSymbols = suits.map(suit => suitSymbols[suit]);
@@ -185,7 +185,11 @@ export class Players {
         player.bestCombinationCards = combinationCards;
       }
       // STRAIGHT
+      // console.log(cardsToCheckForCombinations.map(({ cardName }) => cardName));
       const cardsInStraight = getCardsInStraightIfThereIsAny(cardsToCheckForCombinations);
+      // if (cardsInStraight.length) {
+      //   console.warn(cardsInStraight);
+      // }
       if (cardsInStraight.length) {
         playersWithStraight.push(player);
         const combinationCards = cardsInStraight;
@@ -200,9 +204,11 @@ export class Players {
         player.bestCombinationCards = combinationCards;
       }
       // STRAIGHT_FLUSH
+      // console.warn(cardsInStraight);
       const cardsInStraightFlush = getCardsInFlushIfThereIsAny({ cardsToCheck: cardsInStraight, uniqueSuitSymbols });
+      // console.warn(cardsInStraightFlush);
       if (cardsInStraightFlush.length) {
-        console.log({ cardsInStraightFlush });
+        // console.log({ cardsInStraightFlush });
         playersWithStraightFlush.push(player);
         const combinationCards = cardsInStraight;
         const cardsOutsideCombination = player.cards.filter(card => !combinationCards.includes(card));
@@ -290,10 +296,13 @@ export class Players {
       }
 
       const playersWithThisCombination = playersAtCombination[combinationName];
-      // if (combinationName === COMBINATIONS.FULL_HOUSE) {
+      // if (combinationName === COMBINATIONS.STRAIGHT_FLUSH) {
       //   console.warn(playersWithThisCombination.map(player => player.cards));
       // }
       const amountOfPlayersWithThisCombination = playersWithThisCombination.length;
+      // if (combinationName === COMBINATIONS.STRAIGHT_FLUSH) {
+      //   console.warn({ amountOfPlayersWithThisCombination });
+      // }
       if (!amountOfPlayersWithThisCombination) {
         continue;
       }
@@ -343,6 +352,9 @@ export class Players {
         });
       }
       const sortedPlayersWithThisCombination = getPlayersDescSortedByHighestCards({ playersWithThisCombination, combinationName });
+      // if (combinationName === COMBINATIONS.STRAIGHT_FLUSH) {
+      //   console.warn(sortedPlayersWithThisCombination.map(player => player.name));
+      // }
       // if (combinationName === COMBINATIONS.FULL_HOUSE) {
       //   // console.warn(sortedPlayersWithThisCombination.map(player => player.cardsAtCombination[COMBINATIONS.FULL_HOUSE].combinationCards));
       //   // console.warn(sortedPlayersWithThisCombination.map(player => player.cardsAtCombination[COMBINATIONS.FULL_HOUSE].highestCardInCombination));
@@ -362,19 +374,15 @@ export class Players {
           uniqueHighCardCombinations.push([highestCardCostInCombination, highestCardCostOutsideCombination])
         }
       });
-      // if (combinationName === COMBINATIONS.FULL_HOUSE) {
+      // if (combinationName === COMBINATIONS.STRAIGHT_FLUSH) {
       //   console.warn(uniqueHighCardCombinations);
       // }
 
-      /* 
-      if the same 5 card combination, then split win between players
-      
-      */
-
+      // if (combinationName === COMBINATIONS.STRAIGHT_FLUSH) {
+      //   console.warn('test')
+      // }
       for (const [uniqueHighCombinationCardCost, uniqueHighOutsideCombinationCardCost] of uniqueHighCardCombinations) {
-        // if (combinationName === COMBINATIONS.FULL_HOUSE) {
-        //   console.warn(uniqueHighCombinationCardCost, uniqueHighOutsideCombinationCardCost);
-        // }
+        // console.warn('test')
 
         const playersWithTheseHighCards = sortedPlayersWithThisCombination.filter(player => {
           const highCombinationCardCost = player.cardsAtCombination[combinationName].highestCardInCombination.cardCost;
@@ -382,6 +390,10 @@ export class Players {
 
           return highCombinationCardCost === uniqueHighCombinationCardCost && highOutsideCombinationCardCost === uniqueHighOutsideCombinationCardCost;
         });
+        if (combinationName === COMBINATIONS.STRAIGHT_FLUSH) {
+          console.warn(playersWithTheseHighCards);
+        }
+
         // console.warn(playersWithTheseHighCards.map(p => p.name));
         let amountOfPlayersLeftWithThisCombination = playersWithTheseHighCards.length;
         for (const player of playersWithTheseHighCards) {
