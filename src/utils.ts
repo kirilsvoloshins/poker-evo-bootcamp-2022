@@ -92,6 +92,7 @@ export const getCardsInStraightIfThereIsAny = (rawCardsToCheck: Card[]): Card[] 
   const cardCostsAlreadyChecked: CardCost[] = [], cardsToCheck: Card[] = [];
   let cardsInStraight: Card[] = [];
   let previousCardCost = 0 as CardCost, amountOfCardsInPotentialStraight = 0;
+  const isAceBetweenCards = !!rawCardsToCheck.filter(({ cardCost }) => cardCost === 14).length;
   rawCardsToCheck.forEach(card => {
     const { cardCost } = card;
     if (!cardCostsAlreadyChecked.includes(cardCost)) {
@@ -104,25 +105,21 @@ export const getCardsInStraightIfThereIsAny = (rawCardsToCheck: Card[]): Card[] 
     if (areCardsConsecutive) {
       amountOfCardsInPotentialStraight++;
       cardsInStraight.push(card);
+      const doCardsLookLikeBabyStraight = isAceBetweenCards && cardsInStraight[0].cardCost === 5 && cardsInStraight.length === 4;
+      if (doCardsLookLikeBabyStraight) {
+        const aceCard = rawCardsToCheck.find(card => card.cardCost === 14);
+        return [...cardsInStraight, aceCard];
+      }
     } else {
       amountOfCardsInPotentialStraight = 1;
       cardsInStraight = [card];
-      // no way there is a straight from 4 cards
-      // if (cardsToCheck.indexOf(card) >= 3) {
-      //   break;
-      // }
     }
     previousCardCost = card.cardCost;
     if (cardsInStraight.length === 5) {
-      // console.warn('FIVE CARDS IN STRAIGHT');
       return cardsInStraight;
     }
   }
-  if (amountOfCardsInPotentialStraight < 5) {
-    return [];
-  }
-  cardsInStraight = cardsInStraight.filter((_, i) => i <= 4); // return only 5 cards (starting from the highest so as not to miss flash royale)
-  return cardsInStraight;
+  return [];
 }
 
 

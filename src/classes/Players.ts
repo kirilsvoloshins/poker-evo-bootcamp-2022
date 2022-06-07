@@ -205,7 +205,7 @@ export class Players {
       }
       // STRAIGHT_FLUSH
       // console.warn(cardsInStraight);
-      const cardsInStraightFlush = getCardsInFlushIfThereIsAny({ cardsToCheck: cardsInStraight, uniqueSuitSymbols });
+      const cardsInStraightFlush = getCardsInStraightIfThereIsAny(cardsWithFlush);
       // console.warn(cardsInStraightFlush);
       if (cardsInStraightFlush.length) {
         // console.log({ cardsInStraightFlush });
@@ -291,7 +291,7 @@ export class Players {
     const combinations = [COMBINATIONS.ROYAL_FLUSH, COMBINATIONS.STRAIGHT_FLUSH, COMBINATIONS.FOUR_OF_KIND, COMBINATIONS.FULL_HOUSE, COMBINATIONS.FLUSH, COMBINATIONS.STRAIGHT, COMBINATIONS.THREE_OF_KIND, COMBINATIONS.TWO_PAIRS, COMBINATIONS.PAIR, COMBINATIONS.HIGH_CARD];
     // console.warn(playersAtCombination[COMBINATIONS.FLUSH].map(player => player.name));
     for (const combinationName of combinations) {
-      if (!winMoneyLeft) {
+      if (winMoneyLeft < 10) {
         return;
       }
 
@@ -374,7 +374,7 @@ export class Players {
           uniqueHighCardCombinations.push([highestCardCostInCombination, highestCardCostOutsideCombination])
         }
       });
-      // if (combinationName === COMBINATIONS.STRAIGHT_FLUSH) {
+      // if (combinationName === COMBINATIONS.ROYAL_FLUSH) {
       //   console.warn(uniqueHighCardCombinations);
       // }
 
@@ -390,11 +390,15 @@ export class Players {
 
           return highCombinationCardCost === uniqueHighCombinationCardCost && highOutsideCombinationCardCost === uniqueHighOutsideCombinationCardCost;
         });
-        if (combinationName === COMBINATIONS.STRAIGHT_FLUSH) {
-          console.warn(playersWithTheseHighCards);
+        // if (combinationName === COMBINATIONS.ROYAL_FLUSH) {
+        //   console.warn(playersWithTheseHighCards.map(x => x.name));
+        // }
+
+        if (combinationName === COMBINATIONS.ROYAL_FLUSH) {
+          console.warn(sortedPlayersWithThisCombination.map(p => p.name));
+          // console.warn(playersWithTheseHighCards);
         }
 
-        // console.warn(playersWithTheseHighCards.map(p => p.name));
         let amountOfPlayersLeftWithThisCombination = playersWithTheseHighCards.length;
         for (const player of playersWithTheseHighCards) {
           const approxSumToWin = Math.floor(winMoneyLeft / amountOfPlayersLeftWithThisCombination);
