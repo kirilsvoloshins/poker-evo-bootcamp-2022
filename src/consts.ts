@@ -47,15 +47,15 @@ export enum POKER_ROUNDS {
   BLIND_CALL = "BLIND_CALL", // 0 cards on the table
   FLOP = "FLOP", // 3 cards on the table
   TURN = "TURN", // 4 cards on the table
-  RIVER = "RIVER" // 5 cards on the table
+  RIVER = "RIVER", // 5 cards on the table
 }
 
 export enum BET_ACTION {
-  RAISE,
-  SUPPORT,
-  ALL_IN,
-  BIG_BLIND,
-  SMALL_BLIND
+  RAISE = "RAISE",
+  SUPPORT = "SUPPORT",
+  ALL_IN = "ALL_IN",
+  BIG_BLIND = "BIG_BLIND",
+  SMALL_BLIND = "SMALL_BLIND",
 }
 
 export enum COMBINATIONS {
@@ -68,7 +68,7 @@ export enum COMBINATIONS {
   FULL_HOUSE = "FULL_HOUSE",
   FOUR_OF_KIND = "FOUR_OF_KIND",
   STRAIGHT_FLUSH = "STRAIGHT_FLUSH",
-  ROYAL_FLUSH = "ROYAL_FLUSH"
+  ROYAL_FLUSH = "ROYAL_FLUSH",
 }
 
 export enum COMBINATION_NAMES_HUMAN {

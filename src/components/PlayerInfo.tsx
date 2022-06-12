@@ -17,7 +17,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
   const cards = playerAtThisSlot.cards;
   const card1 = cards[0], card2 = cards[1];
 
-  console.log(playerAtThisSlot.name + ", isAllIn" + playerAtThisSlot.isAllIn);
+  // console.log(playerAtThisSlot.name + ", isAllIn" + playerAtThisSlot.isAllIn);
   return (
     <div className={`playerDiv ${playerAtThisSlot?.hasFolded ? "foldedPlayer" : ""}`}>
       <div className={`playerInfo ${store.players?.activePlayer === playerAtThisSlot ? "activePlayerInfo" : ""}`}>

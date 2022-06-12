@@ -1,16 +1,37 @@
-import React, { useState, useCallback, ChangeEvent } from 'react';
+import React, { useState, useCallback, ChangeEvent, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import store from "../Store";
 import "../styles/App.css"
 
 const BetControls: React.FC = observer(() => {
+  const [minBetValue, setMinBetValue] = useState(store.minimumBet);
   const [betValue, setBetValue] = useState(store.minimumBet);
   const [sBetValue, setSBetValue] = useState(String(betValue));
 
+  useEffect(() => {
+    if (typeof store.players.activePlayer === "undefined") { return };
+
+    const { activePlayer } = store.players;
+    const { betToPayToContinue, moneyLeft } = activePlayer;
+    const doesPlayerHaveEnoughMoney = betToPayToContinue >= moneyLeft;
+
+    // const minimumBetAmount = betToPayToContinue >= moneyLeft ? betToPayToContinue : moneyLeft;
+    const minimumBetAmount = betToPayToContinue;
+    setMinBetValue(minimumBetAmount);
+    setBetValue(minimumBetAmount);
+    setSBetValue(String(minimumBetAmount));
+  }, [store.players.activePlayer]);
+
   const updateBetValue = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    // console.log('yaaaaaaaa')
     const target = e.target as HTMLInputElement;
-    const sNewValue = target.value;
-    const value = parseInt(sNewValue);
+    let sNewValue = target.value;
+    let value = parseInt(sNewValue);
+    if (value < 0) {
+      value = 0;
+      sNewValue = "0";
+    }
+    console.log({ value });
     setBetValue(value);
     setSBetValue(sNewValue);
   }, []);
@@ -39,10 +60,15 @@ const BetControls: React.FC = observer(() => {
   }, [store.players.activePlayer]);
 
   const handleRaise = useCallback(() => {
-    const { moneyLeft } = store.players.activePlayer;
+    const { moneyLeft, betToPayToContinue } = store?.players?.activePlayer;
+    if (betValue === betToPayToContinue) {
+      return handleBetOrCheck();
+    }
+
     if (betValue === moneyLeft) {
       return handleAllIn();
     }
+
 
     store.players.activePlayer.raiseBet({ store, bet: betValue });
   }, [store.players.activePlayer, betValue]);
@@ -54,8 +80,9 @@ const BetControls: React.FC = observer(() => {
   const handlePeakCards = useCallback(() => {
     store.players.activePlayer.cards.forEach(card => card.show());
   }, [store.players.activePlayer]);
+
   const handleUnpeakCards = useCallback(() => {
-    store.players.activePlayer.cards.forEach(card => card.hide());
+    store.players?.activePlayer?.cards.forEach(card => card.hide());
   }, [store.players.activePlayer]);
 
 
@@ -71,7 +98,7 @@ const BetControls: React.FC = observer(() => {
         <div className="tac">money</div>
 
         <div className='sliderDiv'>
-          <input type="range" min={store.minimumBet} max={store.players.activePlayer?.moneyLeft} value={betValue} className="slider" onChange={updateBetValue} id="betSlider" />
+          <input type="range" min={minBetValue} max={store.players.activePlayer?.moneyLeft} value={betValue} className="slider" onChange={updateBetValue} id="betSlider" />
         </div>
         <div className="bet-active-player-name">
           {store.players.activePlayer?.moneyLeft} €

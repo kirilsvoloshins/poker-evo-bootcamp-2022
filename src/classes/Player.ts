@@ -130,11 +130,13 @@ export class Player implements PlayerType {
 
   allIn(store: StoreType) {
     const { moneyLeft } = this;
-    store.players.playersLeftToReact.filter(player => player !== this && !player.isAllIn && player.moneyLeft > 0).forEach(player => {
+    // store.players.playersLeftToReact.filter(player => player !== this && !player.isAllIn && player.moneyLeft > 0).forEach(player => {
+    store.players.playersStillInThisRound.filter(player => player !== this && !player.isAllIn && player.moneyLeft > 0).forEach(player => {
       // everyone still playing has to react to the bet raise
       player.hasReacted = false;
     });
     this.isAllIn = true;
+    this.hasReacted = true;
     this.allInSum = moneyLeft;
     this.sumToWinIfPlayerGoesAllIn = store.sumOfBets + moneyLeft;
     this.placeBet({ betAmount: moneyLeft, store, betAction: BET_ACTION.ALL_IN });
@@ -144,8 +146,8 @@ export class Player implements PlayerType {
     const { moneyLeft, name } = this;
     const canThePlayerBet = moneyLeft >= betAmount;
     if (!canThePlayerBet) {
-      debugger;
-      return alert(`Player "${name}" can not bet ${betAmount}! ${betAction}`);
+      return alert(`Player "${name}" can not bet ${betAmount}! ${betAction} \n Place a proper bet!`);
+      // store.finishGame();
     }
 
     if (![BET_ACTION.SMALL_BLIND, BET_ACTION.BIG_BLIND].includes(betAction)) {

@@ -96,7 +96,7 @@ class Store implements StoreType {
 
     this.deck = new Deck();
     this.cardsOnTheDesk = [];
-    this.gameLog = [];
+    // this.gameLog = [];
 
     this.isGameActive = true;
     this.winners = [];
@@ -285,7 +285,7 @@ class Store implements StoreType {
   private logWinners() {
     this.winners.forEach(winner => {
       const { name, winAmount, bestCombinationName } = winner;
-      const message = `${name} wins ${winAmount}€ [${COMBINATIONS[bestCombinationName]}]`;
+      const message = `${name} wins ${winAmount}€ [${COMBINATION_NAMES_HUMAN[bestCombinationName]}]`;
       this.logGameEvent(message);
       this.gameInfo.push(message);
     });
