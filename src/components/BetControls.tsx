@@ -31,7 +31,7 @@ const BetControls: React.FC = observer(() => {
       value = 0;
       sNewValue = "0";
     }
-    console.log({ value });
+    // console.log({ value });
     setBetValue(value);
     setSBetValue(sNewValue);
   }, []);
@@ -124,7 +124,7 @@ const BetControls: React.FC = observer(() => {
           </div>}
         </div>
         <div>
-          <div id="allInBtn" onClick={handleAllIn} className='raiseBtns noSelect'>ALL IN</div>
+          {store.players.activePlayer?.canGoAllIn && <div id="allInBtn" onClick={handleAllIn} className='raiseBtns noSelect'>ALL IN</div>}
         </div>
         <div className="peakCardsBtn noSelect" onMouseDown={handlePeakCards} onMouseUp={handleUnpeakCards} onMouseLeave={handleUnpeakCards}>peak cards</div>
       </div>

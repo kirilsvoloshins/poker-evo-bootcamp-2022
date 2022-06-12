@@ -38,6 +38,10 @@ class Store implements StoreType {
       amountOfHumanPlayers: this.amountOfHumanPlayers,
       initialMoney: this.initialDeposit
     });
+    const { playerList } = this.players;
+    playerList.forEach(player => {
+      player.canGoAllIn = playerList.filter(ePlayer => ePlayer !== player).every(ePlayer => ePlayer.moneyLeft >= player.moneyLeft);
+    })
     this.isEveryoneAllIn = false;
 
     this.deck = new Deck();
@@ -81,7 +85,7 @@ class Store implements StoreType {
       player.canCheck = false;
       player.canSupportBet = false;
       player.canRaise = false;
-      player.canGoAllIn = false;
+      player.canGoAllIn = playerList.filter(ePlayer => ePlayer !== player).every(ePlayer => ePlayer.moneyLeft >= player.moneyLeft);
     });
 
     const playersWhoCanContinuePlaying = playerList.filter(player => player.moneyLeft >= this.blinds.bigBlind);

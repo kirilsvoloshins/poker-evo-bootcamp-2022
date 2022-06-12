@@ -36,6 +36,7 @@ export class Players {
   }
 
   passBlinds() {
+    /* breaks if the player leaves game */
     const { smallBlindPlayer: prevSmallBlindPlayer, playerList } = this;
     this.bigBlindPlayer = prevSmallBlindPlayer;
     const consecutivePlayer = playerList.find(({ id }) => id > prevSmallBlindPlayer.id);
@@ -67,7 +68,7 @@ export class Players {
     this.playersStillInThisRound = this.playerList.filter(player => !player.hasFolded);
     // if everyone else folds, the last player wins
     if (this.playersStillInThisRound.length === 1) {
-      return store.finishGame();
+      return store.endGame();
     }
 
     // player can react to the bet if: !isAllIn && !hasFolded
