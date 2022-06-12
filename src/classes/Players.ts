@@ -22,7 +22,6 @@ export class Players {
         name: playerName,
         id: i,
         moneyLeft: initialMoney * (i + 1),
-        cards: [],
       });
     });
     this.playerList = playerList;
@@ -297,7 +296,8 @@ export class Players {
       const isFiveCardCombination = [COMBINATIONS.STRAIGHT, COMBINATIONS.FLUSH, COMBINATIONS.FULL_HOUSE, COMBINATIONS.STRAIGHT_FLUSH, COMBINATIONS.ROYAL_FLUSH].includes(combinationName);
       if (isFiveCardCombination) {
         playersWithThisCombination.forEach(player => {
-          player.cardsAtCombination[combinationName].highestCardOutsideCombination = { ...player.cardsAtCombination[combinationName].highestCardOutsideCombination, cardCost: 0 };
+          player.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost = 0;
+          // player.cardsAtCombination[combinationName].highestCardOutsideCombination = { ...player.cardsAtCombination[combinationName].highestCardOutsideCombination, cardCost: 0 };
         });
       }
       const sortedPlayersWithThisCombination = getPlayersDescSortedByHighestCards({ playersWithThisCombination, combinationName });

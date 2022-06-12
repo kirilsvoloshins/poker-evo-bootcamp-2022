@@ -124,3 +124,24 @@ export const getCardsInStraightIfThereIsAny = (rawCardsToCheck: Card[]): Card[] 
 
 
 
+export const formatGameLog = (arrayOfGameEvents: string[]): any => {
+  const amountOfLatestEventsToShow = 14;
+  const latestGameEventIndex = arrayOfGameEvents.length - 1;
+  const rangeOfGameEventIndexesToShow = latestGameEventIndex - amountOfLatestEventsToShow;
+  const latestEventRecords = arrayOfGameEvents.filter((gameEvent, i) => {
+    const doesEventNeedToBeShown = i > rangeOfGameEventIndexesToShow;
+    return doesEventNeedToBeShown;
+  });
+  const formattedEventString = (
+    <>
+      {
+        latestEventRecords.map(x =>
+          <>
+            <span >{x} </span>
+            <br />
+          </>
+        )
+      }
+    </>);
+  return formattedEventString;
+}

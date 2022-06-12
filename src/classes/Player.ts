@@ -81,10 +81,9 @@ export class Player implements PlayerType {
   canSupportBet = false;
   canRaise = false;
 
-  constructor({ name, id, moneyLeft, cards }: PlayerConstructorArgs) {
+  constructor({ name, id, moneyLeft }: PlayerConstructorArgs) {
     this.name = name;
     this.id = id;
-    this.cards = cards;
 
     this.moneyLeft = moneyLeft;
     this.sumOfPersonalBetsInThisRound = 0;
@@ -111,7 +110,6 @@ export class Player implements PlayerType {
   }
 
   check(store: StoreType) {
-    // this.hasChecked = true;
     this.hasReacted = true;
     store.logGameEvent(`${this.name}: checks`);
     store.players.passMove(store);
@@ -145,8 +143,6 @@ export class Player implements PlayerType {
   }
 
   placeBet({ betAmount, store, betAction }: PlaceBetArguments) {
-    //todo: validate that the player can bet!
-    //todo: can not bet lower than the sum to support!
     const { moneyLeft, name } = this;
     const canThePlayerBet = moneyLeft >= betAmount;
     if (!canThePlayerBet) {

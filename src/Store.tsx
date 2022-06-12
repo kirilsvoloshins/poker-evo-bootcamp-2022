@@ -1,33 +1,13 @@
 import { makeAutoObservable } from "mobx";
 import { ComponentNames, Winner } from "./types";
-import { getDateForGameEvent } from "./utils";
+import { formatGameLog, getDateForGameEvent } from "./utils";
 import { POKER_ROUNDS, BET_ACTION, COMBINATION_NAMES_HUMAN } from "./consts";
 import { Card } from "./classes/Card";
 import { Players } from "./classes/Players";
 import { Deck } from "./classes/Deck";
 import { Player } from "./classes/Player";
 
-const formatGameLog = (arrayOfGameEvents: string[]): any => {
-  const amountOfLatestEventsToShow = 14;
-  const latestGameEventIndex = arrayOfGameEvents.length - 1;
-  const rangeOfGameEventIndexesToShow = latestGameEventIndex - amountOfLatestEventsToShow;
-  const latestEventRecords = arrayOfGameEvents.filter((gameEvent, i) => {
-    const doesEventNeedToBeShown = i > rangeOfGameEventIndexesToShow;
-    return doesEventNeedToBeShown;
-  });
-  const formattedEventString = (
-    <>
-      {
-        latestEventRecords.map(x =>
-          <>
-            <span >{x} </span>
-            <br />
-          </>
-        )
-      }
-    </>);
-  return formattedEventString;
-}
+
 
 interface StoreType {
   currentPage: ComponentNames; // the page to show
@@ -43,7 +23,6 @@ interface StoreType {
   isGameActive: boolean; // game state, set false on end and true on start
   // gameState: GameState = ""; // ???
   activeRound: POKER_ROUNDS;
-  // winner: Player | null = null; // if the game ends, show the winner
   winners: Player[];
 
   maxSumOfIndividualBets: number; // maxmimum amount of bets of one person in this round
@@ -321,26 +300,34 @@ class Store implements StoreType {
   // get allCardsInThisRound(){
   //   return 
   //  }
+  get allCards() {
+    const allPlayerCards = this.players.playerList.map(player => player.cards).flat();
+    const cardsOnTheDesk = this.cardsOnTheDesk;
+    return [...allPlayerCards, ...cardsOnTheDesk];
+  }
 
   private fadeAllCards() {
-    this.players.playerList.forEach(player => player.cards.forEach(card => {
-      card.isFaded = true;
-    }));
-    this.cardsOnTheDesk.forEach(card => {
-      card.isFaded = true;
-    });
+    this.allCards.forEach(card => card.fade());
+    // this.players.playerList.forEach(player => player.cards.forEach(card => {
+    //   card.isFaded = true;
+    // }));
+    // this.cardsOnTheDesk.forEach(card => {
+    //   card.isFaded = true;
+    // });
   }
   private unfadeAllCards() {
-    this.players.playerList.forEach(player => player.cards.forEach(card => {
-      card.isFaded = false;
-    }));
-    this.cardsOnTheDesk.forEach(card => {
-      card.isFaded = false
-    });
+    this.allCards.forEach(card => card.unfade());
+    // this.players.playerList.forEach(player => player.cards.forEach(card => {
+    //   card.isFaded = false;
+    // }));
+    // this.cardsOnTheDesk.forEach(card => {
+    //   card.isFaded = false
+    // });
   }
   endGame() {
+    console.log(this.allCards);
+
     this.showGameResults();
-    // this.continueGame();
     setTimeout(() => {
       this.unfadeAllCards();
       this.payWinners();

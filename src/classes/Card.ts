@@ -19,4 +19,12 @@ export class Card implements CardType {
     this.cardCost = cardCosts[cardName];
     makeAutoObservable(this);
   }
+
+  fade() {
+    this.isFaded = true;
+  }
+
+  unfade() {
+    this.isFaded = false;
+  }
 }

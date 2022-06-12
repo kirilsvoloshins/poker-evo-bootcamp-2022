@@ -15,13 +15,13 @@ export type GameState = "";
 
 export interface GameEvent {
   eventTime: string,
-  event: string
+  event: string,
 }
 
 export interface PlaceBetArguments {
   betAmount: number,
   store: StoreType,
-  betAction: BET_ACTION
+  betAction: BET_ACTION,
 }
 
 export interface Winner {
@@ -36,14 +36,14 @@ export interface Winner {
 export interface PlayerConstructorArgs {
   name: string,
   id: number,
-  moneyLeft: number, // amount of money left
-  cards: [Card, Card] | Card[]
+  moneyLeft: number,
+  // cards: [Card, Card],
 }
 
 export interface PlayerType {
   name: string,
   id: number,
-  cards: [Card, Card] | Card[], //! fixing:  Type '[Card, Card]' is not assignable to type 'null'.ts(2322)
+  cards: Card[],
   cardsAtCombination: Partial<Record<COMBINATIONS, {
     combinationCards: Card[],
     highestCardInCombination: Card,
@@ -75,13 +75,13 @@ export interface CardType {
   cardNameSymbol: CardNameSymbol,
   isHidden: boolean,
   cardCost: CardCost,
-
+  fade?: () => any,
+  unfade?: () => any,
 }
 
 export interface CardConstructorArgs {
   suit: Suit,
   cardName: CardName,
-  // isFaded: boolean
 }
 
 export type PlayersAtCombinations = Partial<Record<COMBINATIONS, Player[]>>;
@@ -89,7 +89,7 @@ export type PlayersAtCombinations = Partial<Record<COMBINATIONS, Player[]>>;
 // --- constructorArgs
 export interface PlayersConstructorArgs {
   amountOfHumanPlayers: number,
-  initialMoney: number
+  initialMoney: number,
 }
 
 // --- props ---
@@ -109,16 +109,12 @@ export interface CardProps {
   cardValue: CardNameSymbol,
   cardSuit: SuitSymbol,
   isFaded: boolean,
-  forceRender?: boolean
-}
-export interface GameResultOfPlayerProps {
-  player: Winner
 }
 export interface PlayerCountCircleProps {
   amountOfPlayersToSet: number
 };
 export interface PlayerInfoProps {
-  playerId: 0 | 1 | 2 | 3
+  playerId: 0 | 1 | 2 | 3,
 }
 export interface SwitchProps {
   active: string,
