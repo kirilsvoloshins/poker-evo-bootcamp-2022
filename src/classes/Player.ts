@@ -1,15 +1,13 @@
-import { StoreType, PlaceBetArguments, PlayerConstructorArgs, PlayerType, Winner } from "../types";
+import { StoreType, PlaceBetArguments, PlayerConstructorArgs, PlayerType, RaiseBetArguments } from "../types";
 import { BET_ACTION, COMBINATIONS } from "../consts";
 import { getGameEventText } from "../utils";
 import { Card } from "./Card";
 import { makeAutoObservable } from "mobx";
 
-
-
 export class Player implements PlayerType {
-  name = ""; // player name
-  id = 0; // player id (used in getting the next player) 
-  cards: [Card, Card] | Card[] = [];
+  name = "";
+  id = 0;
+  cards = [] as Card[];
   bestCombinationName = COMBINATIONS.HIGH_CARD;
   bestCombinationCards = [] as Card[];
   winAmount = 0;
@@ -67,7 +65,7 @@ export class Player implements PlayerType {
     },
   };
 
-  moneyLeft = 0; // money left
+  moneyLeft = 0;
   sumOfPersonalBetsInThisRound = 0; // sum of money the player has bet in this round
   betToPayToContinue = 0; // money left to bet to continue playing
   sumToWinIfPlayerGoesAllIn = 0; // if player goes all in, he gets all money in the round + his bet + equivalent bets of other players
@@ -80,6 +78,7 @@ export class Player implements PlayerType {
   canCheck = false;
   canSupportBet = false;
   canRaise = false;
+  canGoAllIn = false;
 
   constructor({ name, id, moneyLeft }: PlayerConstructorArgs) {
     this.name = name;
@@ -121,7 +120,7 @@ export class Player implements PlayerType {
     this.placeBet({ betAmount: betToPayToContinue, store, betAction: BET_ACTION.SUPPORT });
   }
 
-  raise({ store, bet }: { store: StoreType, bet: number }) {
+  raiseBet({ store, bet }: RaiseBetArguments) {
     store.players.playersLeftToReact.filter(player => player !== this && !player.isAllIn && player.moneyLeft > 0).forEach(player => {
       // everyone still playing has to react to the bet raise
       player.hasReacted = false;
@@ -135,7 +134,6 @@ export class Player implements PlayerType {
       // everyone still playing has to react to the bet raise
       player.hasReacted = false;
     });
-    // console.warn(store.players.playersLeftToReact);
     this.isAllIn = true;
     this.allInSum = moneyLeft;
     this.sumToWinIfPlayerGoesAllIn = store.sumOfBets + moneyLeft;
@@ -146,7 +144,8 @@ export class Player implements PlayerType {
     const { moneyLeft, name } = this;
     const canThePlayerBet = moneyLeft >= betAmount;
     if (!canThePlayerBet) {
-      return alert(`Player "${name}" can not bet ${betAmount}!`);
+      debugger;
+      return alert(`Player "${name}" can not bet ${betAmount}! ${betAction}`);
     }
 
     if (![BET_ACTION.SMALL_BLIND, BET_ACTION.BIG_BLIND].includes(betAction)) {
@@ -174,9 +173,19 @@ export class Player implements PlayerType {
   }
 
   pickCard(cardToTake: Card) {
+    cardToTake.isHidden = true;
     this.cards.push(cardToTake);
   }
+
   dropCards() {
     this.cards = [];
+  }
+
+  showCards() {
+    this.cards.forEach(card => card.show());
+  }
+
+  hideCards() {
+    this.cards.forEach(card => card.hide());
   }
 }

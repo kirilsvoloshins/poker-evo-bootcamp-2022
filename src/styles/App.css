@@ -118,9 +118,9 @@ body {
   background-color: var(--bg-darkgreen);
   padding: 15px;
   border-radius: 10px;
-  position: absolute;
+  /* position: absolute;
   bottom: 0;
-  right: 0;
+  right: 0; */
 
   display: flex;
   flex-direction: column;
@@ -132,7 +132,7 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 100px);
   gap: 10px;
-  grid-auto-rows: 20px 40px 100px;
+  grid-auto-rows: 20px 40px 100px 40px;
 }
 
 
@@ -182,6 +182,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.peakCardsBtn {
+  background-color: var(--btn-blue-hover);
+  box-sizing: border-box;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-column: 1 / span 4;
+  height: 100%;
+  cursor: pointer;
 }
 
 #raiseBtn:hover {
@@ -279,7 +291,8 @@ input[type=number] {
   width: 71.4px;
   height: 100px;
   border-radius: 12px;
-  background-color: #c5c5c5;
+  background-color: white;
+  /* background-color: #c5c5c5; */
   padding: 7px 9px;
   display: flex;
   flex-direction: column;
@@ -445,15 +458,21 @@ input[type=number] {
   color: black;
 }
 
+.gameLogContainer {
+  display: flex;
+  height: 100%;
+}
+
 .gameLogDiv {
   background-color: var(--bg-darkgreen);
   color: white;
-  width: 520px;
-  height: 260px;
-  position: absolute;
-  right: 0;
-  top: 0;
+  width: 100%;
+  height: 100%;
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-radius: 12px;
 }
 
 .tableInfo {
@@ -521,4 +540,11 @@ input[type=number] {
 
 .foldedPlayer {
   opacity: 0.3;
+}
+
+.cardOutside {
+  background-image: url("../textures/card_hidden_red.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
 }

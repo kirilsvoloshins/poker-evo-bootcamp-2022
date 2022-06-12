@@ -1,34 +1,12 @@
 import { makeAutoObservable } from "mobx";
-import { ComponentNames, Winner } from "./types";
+import { ComponentNames } from "./types";
 import { formatGameLog, getDateForGameEvent } from "./utils";
-import { POKER_ROUNDS, BET_ACTION, COMBINATION_NAMES_HUMAN } from "./consts";
+import { POKER_ROUNDS, BET_ACTION, COMBINATION_NAMES_HUMAN, COMBINATIONS } from "./consts";
 import { Card } from "./classes/Card";
 import { Players } from "./classes/Players";
 import { Deck } from "./classes/Deck";
 import { Player } from "./classes/Player";
-
-
-
-interface StoreType {
-  currentPage: ComponentNames; // the page to show
-  amountOfHumanPlayers: number; // value for game init
-  minimumBet: number; // players can not bet less that this
-  initialDeposit: number; // value for game init
-
-  players: Players; // ???
-  isEveryoneAllIn: boolean;
-  deck: Deck; // array of cards to pick from
-  cardsOnTheDesk: Card[];
-  gameLog: string[];
-  isGameActive: boolean; // game state, set false on end and true on start
-  // gameState: GameState = ""; // ???
-  activeRound: POKER_ROUNDS;
-  winners: Player[];
-
-  maxSumOfIndividualBets: number; // maxmimum amount of bets of one person in this round
-  sumOfBets: number; // the sum to split between winners of the round
-  gameInfo: string[];
-}
+import { StoreType } from "./types";
 
 class Store implements StoreType {
   currentPage = "Game" as ComponentNames; // the page to show
@@ -36,7 +14,7 @@ class Store implements StoreType {
   minimumBet = 10; // players can not bet less that this
   initialDeposit = 100; // value for game init
 
-  players = {} as Players; // ???
+  players = {} as Players;
   isEveryoneAllIn = true;
   deck = {} as Deck; // array of cards to pick from
   cardsOnTheDesk = [] as Card[];
@@ -46,7 +24,7 @@ class Store implements StoreType {
   // gameState: GameState = ""; // ???
   activeRound: POKER_ROUNDS;
   winners: Player[];
-  gameInfo: [];
+  gameInfo: string[];
 
   maxSumOfIndividualBets = 0; // maxmimum amount of bets of one person in this round
   sumOfBets = 0; // the sum to split between winners of the round
@@ -55,29 +33,12 @@ class Store implements StoreType {
     makeAutoObservable(this);
   }
 
-  // resetGameSettingsBeforeStart() {
-  //   this.players = {} as Players;
-  //   this.deck = {} as Deck;
-  //   this.cardsOnTheDesk = [];
-  //   this.gameLog = [];
-
-  //   this.isGameActive = true;
-  //   this.winners = [];
-
-  //   this.maxSumOfIndividualBets = 0;
-  //   this.sumOfBets = 0;
-  // }
-
-  // very first game
-  startInitialGame() {
-    this.logGameEvent("<<< GAME START >>>");
-    const players = new Players({
+  performInititalGameReset() {
+    this.players = new Players({
       amountOfHumanPlayers: this.amountOfHumanPlayers,
       initialMoney: this.initialDeposit
     });
-    this.players = players;
     this.isEveryoneAllIn = false;
-    this.players.passBlinds();
 
     this.deck = new Deck();
     this.cardsOnTheDesk = [];
@@ -85,50 +46,85 @@ class Store implements StoreType {
 
     this.isGameActive = true;
     this.winners = [];
+    this.gameInfo = [];
 
     this.maxSumOfIndividualBets = 0;
     this.sumOfBets = 0;
 
-    this.startRound_BlindCall();
+    this.players.passBlinds();
   }
 
-  // game being continued
-  continueGame() {
-    this.logGameEvent("<<< GAME START >>>");
+  performContinuingGameReset() {
     const { playerList } = this.players;
     playerList.forEach(player => {
+      player.cards = [];
+      player.bestCombinationName = COMBINATIONS.HIGH_CARD;
+      player.bestCombinationCards = [];
+      player.winAmount = 0;
+
+      (Object.keys(player.cardsAtCombination) as COMBINATIONS[]).forEach(combination => {
+        const comboInfo = player.cardsAtCombination[combination];
+        comboInfo.combinationCards = [];
+        comboInfo.highestCardInCombination = {} as Card;
+        comboInfo.highestCardOutsideCombination = {} as Card;
+      });
+
       player.sumOfPersonalBetsInThisRound = 0;
       player.sumToWinIfPlayerGoesAllIn = 0;
+      player.betToPayToContinue = 0;
+      player.sumToWinIfPlayerGoesAllIn = 0;
+      player.allInSum = 0;
+
+      player.hasReacted = false;
       player.isAllIn = false;
-      player.bestCombinationCards = [];
-      player.bestCombinationName = null;
-      player.winAmount = 0;
+      player.hasFolded = false;
+      player.canCheck = false;
+      player.canSupportBet = false;
+      player.canRaise = false;
+      player.canGoAllIn = false;
     });
 
     const playersWhoCanContinuePlaying = playerList.filter(player => player.moneyLeft >= this.blinds.bigBlind);
     if (playersWhoCanContinuePlaying.length === 1) {
       const { name, moneyLeft } = playersWhoCanContinuePlaying[0];
-      return alert(`${name} won with ${moneyLeft}€! Refresh to restart.`);
+      this.gameInfo.push(`${name} won with ${moneyLeft}€! Refresh to restart.`);
+      return this.finishGame();
     }
 
     this.players.playerList = playersWhoCanContinuePlaying;
     this.isEveryoneAllIn = false;
-    this.players.passBlinds();
 
     this.deck = new Deck();
     this.cardsOnTheDesk = [];
-    // this.gameLog = [];
+    this.gameLog = [];
 
     this.isGameActive = true;
     this.winners = [];
+    this.gameInfo = [];
 
     this.maxSumOfIndividualBets = 0;
     this.sumOfBets = 0;
 
+    this.players.passBlinds();
+  }
+
+
+
+  // very first game
+  startInitialGame() {
+    this.performInititalGameReset();
+    this.logGameEvent("<<< GAME START >>>");
     this.startRound_BlindCall();
   }
 
-  startNextRound() {
+  // game being continued
+  continueGame() {
+    this.performContinuingGameReset();
+    this.logGameEvent("<<< GAME START >>>");
+    this.startRound_BlindCall();
+  }
+
+  startNextRound(): any {
     /* cleanup before the round */
     if (!this.isEveryoneAllIn) {
       this.players.playersStillInThisRound.forEach(player => {
@@ -136,7 +132,7 @@ class Store implements StoreType {
         player.canSupportBet = true;
         player.canRaise = true;
         player.hasReacted = false;
-        player.isAllIn = false;
+        // player.isAllIn = false;
         player.allInSum = 0;
       });
     }
@@ -171,6 +167,7 @@ class Store implements StoreType {
     /* big and small blinds */
     const { smallBlind, bigBlind } = this.blinds;
     const { smallBlindPlayer, bigBlindPlayer } = this.players;
+    console.log("blinds let's go!");
     bigBlindPlayer.placeBet({ betAmount: bigBlind, store: this, betAction: BET_ACTION.BIG_BLIND });
     smallBlindPlayer.placeBet({ betAmount: smallBlind, store: this, betAction: BET_ACTION.SMALL_BLIND });
 
@@ -188,10 +185,9 @@ class Store implements StoreType {
     this.players.activePlayer = this.players.smallBlindPlayer;
   }
 
-  startRound_Flop(): any {
+  startRound_Flop() {
     this.activeRound = POKER_ROUNDS.FLOP;
     this.logGameEvent("< FLOP >");
-    //todo: make sure it is the right time to update data...
     this.players.updatePlayerAbilities(this);
 
     for (let i = 1; i <= 3; i++) {
@@ -251,45 +247,50 @@ class Store implements StoreType {
   setCurrentPage(pageToShow: ComponentNames) {
     this.currentPage = pageToShow;
   }
+
   /* game settings */
   setInitialDeposit(initialDeposit: number) {
     this.initialDeposit = initialDeposit;
   }
+
   setMinimumBet(minimumBet: number) {
     this.minimumBet = minimumBet;
   }
+
   addToSumOfBets(amountToAdd: number) {
     this.sumOfBets += amountToAdd;
   }
+
   get blinds() {
     return {
       smallBlind: this.minimumBet,
       bigBlind: this.minimumBet * 2,
     }
   }
+
   logGameEvent(event: string) {
     const eventTime = getDateForGameEvent(new Date());
     const gameEvent = `${eventTime}: ${event}`;
     this.gameLog.push(gameEvent);
   }
+
   get formattedGameLog() {
     return formatGameLog(this.gameLog);
   }
+
   setAmountOfHumanPlayers(amountOfPlayersToSet: number) {
     this.amountOfHumanPlayers = amountOfPlayersToSet;
   }
-  // private animateWinners() {
-  //   const winners = this.winners;
-  //   for (let winner of winners) {
-  //     winner.showWinningCombination(this);
-  //   }
-  // }
+
   private logWinners() {
     this.winners.forEach(winner => {
       const { name, winAmount, bestCombinationName } = winner;
-      this.logGameEvent(`${name} wins ${winAmount}€ [${bestCombinationName}]`);
+      const message = `${name} wins ${winAmount}€ [${COMBINATIONS[bestCombinationName]}]`;
+      this.logGameEvent(message);
+      this.gameInfo.push(message);
     });
   }
+
   private payWinners() {
     this.winners.forEach(winner => {
       winner.moneyLeft += winner.winAmount;
@@ -297,66 +298,60 @@ class Store implements StoreType {
     });
   }
 
-  // get allCardsInThisRound(){
-  //   return 
-  //  }
+  get allPlayerCards() {
+    return this.players.playerList.map(player => player.cards).flat();
+  }
+
   get allCards() {
-    const allPlayerCards = this.players.playerList.map(player => player.cards).flat();
+    // const allPlayerCards = this.players.playerList.map(player => player.cards).flat();
     const cardsOnTheDesk = this.cardsOnTheDesk;
-    return [...allPlayerCards, ...cardsOnTheDesk];
+    // return [...allPlayerCards, ...cardsOnTheDesk];
+    return [...this.allPlayerCards, ...cardsOnTheDesk];
+  }
+
+  private hideAllPlayerCards() {
+    this.allPlayerCards.forEach(card => card.hide());
   }
 
   private fadeAllCards() {
     this.allCards.forEach(card => card.fade());
-    // this.players.playerList.forEach(player => player.cards.forEach(card => {
-    //   card.isFaded = true;
-    // }));
-    // this.cardsOnTheDesk.forEach(card => {
-    //   card.isFaded = true;
-    // });
   }
+
   private unfadeAllCards() {
     this.allCards.forEach(card => card.unfade());
-    // this.players.playerList.forEach(player => player.cards.forEach(card => {
-    //   card.isFaded = false;
-    // }));
-    // this.cardsOnTheDesk.forEach(card => {
-    //   card.isFaded = false
-    // });
   }
-  endGame() {
-    console.log(this.allCards);
 
+  endGame() {
     this.showGameResults();
     setTimeout(() => {
       this.unfadeAllCards();
       this.payWinners();
-      this.winners = [];
-      this.players.playerList.forEach(player => player.dropCards());
 
+      console.warn("continuing!");
       this.continueGame();
     }, 3000)
   }
+
   private showGameResults() {
+    this.players.showAllCards();
     this.players.getWinners({ sumOfBets: this.sumOfBets, store: this });
     this.logWinners();
     const { winners, players } = this;
-
 
     for (const winner of winners) {
       this.fadeAllCards();
       winner.bestCombinationCards.forEach(card => card.isFaded = false);
       break;
     }
+  }
 
-    // this.unfadeAllCards();
+  finishGame() {
+    setTimeout(() => {
+      this.unfadeAllCards();
 
-
-    // this.cardsOnTheDesk.forEach(card => card.isFaded = true);
-    // bestCombinationCards.forEach(card => card.isFaded = false);
-    //   break;
-    // }
-    // console.warn(this.cardsOnTheDesk);
+      console.warn("restarting!");
+      this.startInitialGame();
+    }, 3000)
   }
 }
 

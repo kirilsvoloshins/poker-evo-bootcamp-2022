@@ -138,7 +138,6 @@ export const formatGameLog = (arrayOfGameEvents: string[]): any => {
         latestEventRecords.map(x =>
           <>
             <span >{x} </span>
-            <br />
           </>
         )
       }

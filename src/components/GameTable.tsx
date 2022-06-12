@@ -9,11 +9,12 @@ const GameTable: React.FC = observer(() => {
   return (
     <div className="gameTable">
       <div className="tableCardsContainer">
-        {store.cardsOnTheDesk?.map(({ suit, cardName, isFaded }) => {
+        {store.cardsOnTheDesk?.map(({ suit, cardName, isFaded, isHidden }) => {
           return <Card key={`${suit}_${cardName}`}
             cardValue={cardNameSymbols[cardName]}
             cardSuit={suitSymbols[suit]}
             isFaded={isFaded}
+            isHidden={isHidden}
           />
         })}
         <br />
@@ -21,11 +22,12 @@ const GameTable: React.FC = observer(() => {
       <div className='tableInfo'>
         {store?.sumOfBets} €
       </div>
-      <div className='winnersInfo'>
+      <div className='gameInfo'>
         <ul>
-          {store?.winners?.map(({ name, winAmount, bestCombinationName }) => {
+          {store?.gameInfo?.map((message) => (<li>{message}</li>))}
+          {/* {store?.winners?.map(({ name, winAmount, bestCombinationName }) => {
             return (<li>{name} wins {winAmount}€ [{bestCombinationName}]</li>)
-          })}
+          })} */}
         </ul>
       </div>
     </div>

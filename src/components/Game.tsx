@@ -17,13 +17,15 @@ const GameScreen: React.FC<GameScreenProps> = observer(() => {
   return (
     <>
       {/* <GameResults /> */}
-      <GameLog />
+
       <div className="gameDiv">
         <div></div>
-        <div style={{ margin: "auto", marginBottom: 0 }}>
+        <div style={{ margin: "auto", marginBottom: 0, zIndex: 9999, }}>
           <PlayerInfo playerId={2} />
         </div>
-        <div></div>
+        <div className="gameLogContainer">
+          <GameLog />
+        </div>
 
         <div style={{ margin: "auto", marginRight: 0 }}>
           <PlayerInfo playerId={1} />
@@ -39,10 +41,12 @@ const GameScreen: React.FC<GameScreenProps> = observer(() => {
         <div style={{ margin: "auto", marginTop: 0 }}>
           <PlayerInfo playerId={0} />
         </div>
-        <div></div>
+        <div className="flex-in-col">
+          <BetControls />
+        </div>
 
 
-        <BetControls />
+
       </div>
     </>
   )

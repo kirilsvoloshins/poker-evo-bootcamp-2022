@@ -44,10 +44,10 @@ export const humanPlayerNames: string[] = ["player-1", "player-2", "player-3", "
 export const amountOfCardsInTheDeck = 54;
 
 export enum POKER_ROUNDS {
-  BLIND_CALL, // 0 cards on the table
-  FLOP, // 3 cards on the table
-  TURN, // 4 cards on the table
-  RIVER // 5 cards on the table
+  BLIND_CALL = "BLIND_CALL", // 0 cards on the table
+  FLOP = "FLOP", // 3 cards on the table
+  TURN = "TURN", // 4 cards on the table
+  RIVER = "RIVER" // 5 cards on the table
 }
 
 export enum BET_ACTION {

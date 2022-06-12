@@ -17,6 +17,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
   const cards = playerAtThisSlot.cards;
   const card1 = cards[0], card2 = cards[1];
 
+  console.log(playerAtThisSlot.name + ", isAllIn" + playerAtThisSlot.isAllIn);
   return (
     <div className={`playerDiv ${playerAtThisSlot?.hasFolded ? "foldedPlayer" : ""}`}>
       <div className={`playerInfo ${store.players?.activePlayer === playerAtThisSlot ? "activePlayerInfo" : ""}`}>
@@ -26,8 +27,8 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
         </div>
         <div className="playerInfoBody">
           <div className="playerCards">
-            {card1 && <Card cardValue={card1.cardNameSymbol} cardSuit={card1.suitSymbol} isFaded={card1.isFaded} />}
-            {card2 && <Card cardValue={card2.cardNameSymbol} cardSuit={card2.suitSymbol} isFaded={card2.isFaded} />}
+            {card1 && <Card cardValue={card1.cardNameSymbol} cardSuit={card1.suitSymbol} isFaded={card1.isFaded} isHidden={card1.isHidden} />}
+            {card2 && <Card cardValue={card2.cardNameSymbol} cardSuit={card2.suitSymbol} isFaded={card2.isFaded} isHidden={card2.isHidden} />}
           </div>
           <div className="playerName">
             {playerAtThisSlot?.name}
@@ -36,13 +37,19 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
         </div>
       </div>
       <div className="playerBet">{playerAtThisSlot?.sumOfPersonalBetsInThisRound} €</div>
-      {/* <span>
+      <span>
+        hasReacted: {playerAtThisSlot?.hasReacted === true ? "yes" : "no"}
+        <br />
         canCheck: {playerAtThisSlot?.canCheck === true ? "yes" : "no"}
         <br />
         canSupportBet: {playerAtThisSlot?.canSupportBet === true ? "yes" : "no"}
         <br />
         canRaise: {playerAtThisSlot?.canRaise === true ? "yes" : "no"}
-      </span> */}
+        <br />
+        canGoAllIn: {playerAtThisSlot?.canGoAllIn === true ? "yes" : "no"}
+        <br />
+        isAllIn: {playerAtThisSlot?.isAllIn === true ? "yes" : "no"}
+      </span>
     </div>
   )
 });

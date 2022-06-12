@@ -1,5 +1,5 @@
 import { suitSymbols, humanPlayerNames, cardCosts, COMBINATIONS, suits, cardNameSymbols } from "../consts";
-import { CardCost, PlayersAtCombinations, PlayersConstructorArgs, StoreType, SuitSymbol, Winner } from "../types";
+import { CardCost, GetWinnersArguments, PlayersAtCombinations, PlayersConstructorArgs, StoreType, SuitSymbol } from "../types";
 import { Player } from "./Player";
 import { makeAutoObservable } from "mobx";
 import { getCardsInFlushIfThereIsAny, getCardsInStraightIfThereIsAny, getDescSortedArrayofCards, getHighestCardOfCards, getPlayersDescSortedByHighestCards } from "../utils";
@@ -47,6 +47,7 @@ export class Players {
     const isEveryoneAllIn = this.playerList.every(player => player.isAllIn);
     store.isEveryoneAllIn = isEveryoneAllIn;
     if (isEveryoneAllIn) {
+      this.showAllCards();
       return store.startNextRound();
     }
 
@@ -66,7 +67,7 @@ export class Players {
     this.playersStillInThisRound = this.playerList.filter(player => !player.hasFolded);
     // if everyone else folds, the last player wins
     if (this.playersStillInThisRound.length === 1) {
-      return store.endGame();
+      return store.finishGame();
     }
 
     // player can react to the bet if: !isAllIn && !hasFolded
@@ -74,8 +75,6 @@ export class Players {
     this.playersLeftToReact.forEach(player => {
       player.canCheck = player.sumOfPersonalBetsInThisRound === store.maxSumOfIndividualBets;
       player.canSupportBet = (player.sumOfPersonalBetsInThisRound + player.moneyLeft) >= store.maxSumOfIndividualBets;
-      // const otherPlayersLeftInThisRound = this.playersLeftToReact.filter(otherPlayer => otherPlayer !== player);
-      // const canPlayerRaise = (player.sumOfPersonalBetsInThisRound + player.moneyLeft) > store.maxSumOfIndividualBets && !otherPlayersLeftInThisRound.every(otherPlayer => otherPlayer.moneyLeft === 0);
       const canPlayerRaise = (player.sumOfPersonalBetsInThisRound + player.moneyLeft) > store.maxSumOfIndividualBets;
 
       player.canRaise = canPlayerRaise;
@@ -90,7 +89,11 @@ export class Players {
     return nextPlayer;
   }
 
-  getWinners({ sumOfBets, store }: { sumOfBets: number, store: StoreType }) {
+  showAllCards() {
+    this.playerList.forEach(player => player.showCards());
+  }
+
+  getWinners({ sumOfBets, store }: GetWinnersArguments) {
     const { playersStillInThisRound } = this;
 
     // HIGH_CARD
@@ -223,7 +226,6 @@ export class Players {
         }
       }
 
-      //!!! handle ignoring a pair if there is full house
       // FULL_HOUSE
       if (cardsWithPairs.length && cardsWithThreeOfKinds.length) {
         playersWithFullHouse.push(player);
@@ -262,7 +264,6 @@ export class Players {
     }
 
     // getting the winner 
-    // todo: handle splitting the win if the first winner went did not bet enough to take everything
     const combinations = [COMBINATIONS.ROYAL_FLUSH, COMBINATIONS.STRAIGHT_FLUSH, COMBINATIONS.FOUR_OF_KIND, COMBINATIONS.FULL_HOUSE, COMBINATIONS.FLUSH, COMBINATIONS.STRAIGHT, COMBINATIONS.THREE_OF_KIND, COMBINATIONS.TWO_PAIRS, COMBINATIONS.PAIR, COMBINATIONS.HIGH_CARD];
     for (const combinationName of combinations) {
       if (winMoneyLeft < store.minimumBet) {

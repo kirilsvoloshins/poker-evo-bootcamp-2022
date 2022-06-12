@@ -44,13 +44,19 @@ const BetControls: React.FC = observer(() => {
       return handleAllIn();
     }
 
-    store.players.activePlayer.raise({ store, bet: betValue });
+    store.players.activePlayer.raiseBet({ store, bet: betValue });
   }, [store.players.activePlayer, betValue]);
 
   const handleAllIn = useCallback(() => {
     store.players.activePlayer.allIn(store);
   }, [store.players.activePlayer]);
 
+  const handlePeakCards = useCallback(() => {
+    store.players.activePlayer.cards.forEach(card => card.show());
+  }, [store.players.activePlayer]);
+  const handleUnpeakCards = useCallback(() => {
+    store.players.activePlayer.cards.forEach(card => card.hide());
+  }, [store.players.activePlayer]);
 
 
   return (
@@ -93,6 +99,7 @@ const BetControls: React.FC = observer(() => {
         <div>
           <div id="allInBtn" onClick={handleAllIn} className='raiseBtns noSelect'>ALL IN</div>
         </div>
+        <div className="peakCardsBtn noSelect" onMouseDown={handlePeakCards} onMouseUp={handleUnpeakCards} onMouseLeave={handleUnpeakCards}>peak cards</div>
       </div>
     </div>
   )

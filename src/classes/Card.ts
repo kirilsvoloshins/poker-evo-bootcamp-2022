@@ -27,4 +27,11 @@ export class Card implements CardType {
   unfade() {
     this.isFaded = false;
   }
+
+  hide() {
+    this.isHidden = true;
+  }
+  show() {
+    this.isHidden = false;
+  }
 }
