@@ -32,6 +32,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -54,8 +57,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.HIGH_CARD,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.HIGH_CARD,
             winAmount: sumOfBets
           }
         ]);
@@ -73,6 +76,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -95,8 +101,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.PAIR,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.PAIR,
             winAmount: sumOfBets
           }
         ]);
@@ -112,6 +118,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -137,14 +146,14 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.PAIR,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.PAIR,
             winAmount: sumToWinIfPlayerGoesAllIn_1
           },
           {
             ...winners[1],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.PAIR,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.PAIR,
             winAmount: sumOfBets - sumToWinIfPlayerGoesAllIn_1
           },
         ]);
@@ -160,6 +169,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -188,8 +200,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.PAIR,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.PAIR,
             winAmount: sumOfBets
           }
         ]);
@@ -204,6 +216,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -232,14 +247,14 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.PAIR,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.PAIR,
             winAmount: sumOfBets / 2
           },
           {
             ...winners[1],
-            playerName: "player-3",
-            combinationName: COMBINATIONS.PAIR,
+            name: "player-3",
+            bestCombinationName: COMBINATIONS.PAIR,
             winAmount: sumOfBets / 2
           }
         ]);
@@ -254,6 +269,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -286,14 +304,14 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.PAIR,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.PAIR,
             winAmount: sumToWinIfPlayerGoesAllIn_1
           },
           {
             ...winners[1],
-            playerName: "player-3",
-            combinationName: COMBINATIONS.PAIR,
+            name: "player-3",
+            bestCombinationName: COMBINATIONS.PAIR,
             winAmount: sumOfBets - sumToWinIfPlayerGoesAllIn_1
           }
         ]);
@@ -311,6 +329,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -339,8 +360,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.TWO_PAIRS,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.TWO_PAIRS,
             winAmount: sumOfBets
           }
         ]);
@@ -355,6 +376,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -383,14 +407,14 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.TWO_PAIRS,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.TWO_PAIRS,
             winAmount: sumOfBets / 2
           },
           {
             ...winners[1],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.TWO_PAIRS,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.TWO_PAIRS,
             winAmount: sumOfBets / 2
           }
         ]);
@@ -406,6 +430,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -437,14 +464,14 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.TWO_PAIRS,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.TWO_PAIRS,
             winAmount: sumToWinIfPlayerGoesAllIn_1
           },
           {
             ...winners[1],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.TWO_PAIRS,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.TWO_PAIRS,
             winAmount: sumOfBets - sumToWinIfPlayerGoesAllIn_1
           }
         ]);
@@ -462,6 +489,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -490,8 +520,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.THREE_OF_KIND,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.THREE_OF_KIND,
             winAmount: sumOfBets
           }
         ]);
@@ -507,6 +537,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -535,14 +568,14 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.THREE_OF_KIND,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.THREE_OF_KIND,
             winAmount: sumOfBets / 2
           },
           {
             ...winners[1],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.THREE_OF_KIND,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.THREE_OF_KIND,
             winAmount: sumOfBets / 2
           }
         ]);
@@ -558,6 +591,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -580,8 +616,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.THREE_OF_KIND,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.THREE_OF_KIND,
             winAmount: sumOfBets
           }
         ]);
@@ -597,6 +633,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "queen" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -619,8 +658,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.THREE_OF_KIND,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.THREE_OF_KIND,
             winAmount: sumOfBets
           },
         ]);
@@ -640,6 +679,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -668,8 +710,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.STRAIGHT,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.STRAIGHT,
             winAmount: sumOfBets
           }
         ]);
@@ -685,6 +727,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -713,8 +758,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.STRAIGHT,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.STRAIGHT,
             winAmount: sumOfBets
           }
         ]);
@@ -730,6 +775,9 @@ describe("players", () => {
             new Card({ suit: "clubs", cardName: "ace" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -752,8 +800,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.STRAIGHT,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.STRAIGHT,
             winAmount: sumOfBets
           }
         ]);
@@ -769,6 +817,9 @@ describe("players", () => {
             new Card({ suit: "clubs", cardName: "ace" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -792,14 +843,14 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.STRAIGHT,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.STRAIGHT,
             winAmount: sumOfBets / 2
           },
           {
             ...winners[1],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.STRAIGHT,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.STRAIGHT,
             winAmount: sumOfBets / 2
           }
         ]);
@@ -817,6 +868,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -839,8 +893,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.FLUSH,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.FLUSH,
             winAmount: sumOfBets
           }
         ]);
@@ -856,6 +910,9 @@ describe("players", () => {
             new Card({ suit: "clubs", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -884,20 +941,20 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.FLUSH,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.FLUSH,
             winAmount: sumOfBets / 3
           },
           {
             ...winners[1],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.FLUSH,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.FLUSH,
             winAmount: sumOfBets / 3
           },
           {
             ...winners[2],
-            playerName: "player-3",
-            combinationName: COMBINATIONS.FLUSH,
+            name: "player-3",
+            bestCombinationName: COMBINATIONS.FLUSH,
             winAmount: sumOfBets / 3
           },
         ]);
@@ -914,6 +971,9 @@ describe("players", () => {
             new Card({ suit: "clubs", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -936,8 +996,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.FLUSH,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.FLUSH,
             winAmount: sumOfBets
           },
         ]);
@@ -956,6 +1016,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -978,8 +1041,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.FULL_HOUSE,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.FULL_HOUSE,
             winAmount: sumOfBets
           }
         ]);
@@ -995,6 +1058,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -1017,14 +1083,14 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.FULL_HOUSE,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.FULL_HOUSE,
             winAmount: sumOfBets / 2
           },
           {
             ...winners[1],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.FULL_HOUSE,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.FULL_HOUSE,
             winAmount: sumOfBets / 2
           },
         ]);
@@ -1040,6 +1106,9 @@ describe("players", () => {
             new Card({ suit: "diamonds", cardName: "seven" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -1062,14 +1131,14 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.FULL_HOUSE,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.FULL_HOUSE,
             winAmount: sumOfBets / 2
           },
           {
             ...winners[1],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.FULL_HOUSE,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.FULL_HOUSE,
             winAmount: sumOfBets / 2
           },
         ]);
@@ -1085,6 +1154,9 @@ describe("players", () => {
             new Card({ suit: "spades", cardName: "seven" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -1107,8 +1179,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.FULL_HOUSE,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.FULL_HOUSE,
             winAmount: sumOfBets
           },
         ]);
@@ -1127,6 +1199,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
         // player-1
@@ -1149,8 +1224,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.FOUR_OF_KIND,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.FOUR_OF_KIND,
             winAmount: sumOfBets
           }
         ]);
@@ -1166,6 +1241,9 @@ describe("players", () => {
             new Card({ suit: "clubs", cardName: "three" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -1188,14 +1266,14 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.FOUR_OF_KIND,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.FOUR_OF_KIND,
             winAmount: sumOfBets / 2
           },
           {
             ...winners[1],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.FOUR_OF_KIND,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.FOUR_OF_KIND,
             winAmount: sumOfBets / 2
           }
         ]);
@@ -1210,6 +1288,9 @@ describe("players", () => {
             new Card({ suit: "clubs", cardName: "three" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -1232,8 +1313,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.FOUR_OF_KIND,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.FOUR_OF_KIND,
             winAmount: sumOfBets
           },
         ]);
@@ -1248,6 +1329,9 @@ describe("players", () => {
             new Card({ suit: "clubs", cardName: "three" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -1270,8 +1354,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.FOUR_OF_KIND,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.FOUR_OF_KIND,
             winAmount: sumOfBets
           }
         ]);
@@ -1289,6 +1373,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -1310,8 +1397,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.STRAIGHT_FLUSH,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.STRAIGHT_FLUSH,
             winAmount: sumOfBets
           }
         ]);
@@ -1327,6 +1414,9 @@ describe("players", () => {
             new Card({ suit: "spades", cardName: "king" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -1348,14 +1438,14 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.STRAIGHT_FLUSH,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.STRAIGHT_FLUSH,
             winAmount: sumOfBets / 2
           },
           {
             ...winners[1],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.STRAIGHT_FLUSH,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.STRAIGHT_FLUSH,
             winAmount: sumOfBets / 2
           },
         ]);
@@ -1371,6 +1461,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -1392,8 +1485,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.STRAIGHT_FLUSH,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.STRAIGHT_FLUSH,
             winAmount: sumOfBets
           }
         ]);
@@ -1411,6 +1504,9 @@ describe("players", () => {
             new Card({ suit: "hearts", cardName: "nine" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -1432,8 +1528,8 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.ROYAL_FLUSH,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.ROYAL_FLUSH,
             winAmount: sumOfBets
           }
         ]);
@@ -1449,6 +1545,9 @@ describe("players", () => {
             new Card({ suit: "spades", cardName: "ace" }),
           ],
           winners: [],
+          logGameEvent(gameEvent: string) {
+
+          }
         } as StoreType;
         const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
@@ -1470,14 +1569,14 @@ describe("players", () => {
         expect(winners).toEqual([
           {
             ...winners[0],
-            playerName: "player-1",
-            combinationName: COMBINATIONS.ROYAL_FLUSH,
+            name: "player-1",
+            bestCombinationName: COMBINATIONS.ROYAL_FLUSH,
             winAmount: sumOfBets / 2
           },
           {
             ...winners[1],
-            playerName: "player-2",
-            combinationName: COMBINATIONS.ROYAL_FLUSH,
+            name: "player-2",
+            bestCombinationName: COMBINATIONS.ROYAL_FLUSH,
             winAmount: sumOfBets / 2
           }
         ]);
@@ -1496,6 +1595,9 @@ describe("players", () => {
           new Card({ suit: "hearts", cardName: "nine" }),
         ],
         winners: [],
+        logGameEvent(gameEvent: string) {
+
+        }
       } as StoreType;
       const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
       // player-1
@@ -1517,8 +1619,8 @@ describe("players", () => {
       expect(winners).toEqual([
         {
           ...winners[0],
-          playerName: "player-1",
-          combinationName: COMBINATIONS.ROYAL_FLUSH,
+          name: "player-1",
+          bestCombinationName: COMBINATIONS.ROYAL_FLUSH,
           winAmount: sumOfBets
         }
       ]);
@@ -1534,6 +1636,9 @@ describe("players", () => {
           new Card({ suit: "hearts", cardName: "ten" }),
         ],
         winners: [],
+        logGameEvent(gameEvent: string) {
+
+        }
       } as StoreType;
       const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
       // player-1
@@ -1555,8 +1660,8 @@ describe("players", () => {
       expect(winners).toEqual([
         {
           ...winners[0],
-          playerName: "player-1",
-          combinationName: COMBINATIONS.STRAIGHT_FLUSH,
+          name: "player-1",
+          bestCombinationName: COMBINATIONS.STRAIGHT_FLUSH,
           winAmount: sumOfBets
         }
       ]);
@@ -1572,6 +1677,9 @@ describe("players", () => {
           new Card({ suit: "hearts", cardName: "jack" }),
         ],
         winners: [],
+        logGameEvent(gameEvent: string) {
+
+        }
       } as StoreType;
       const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
       // player-1
@@ -1593,8 +1701,8 @@ describe("players", () => {
       expect(winners).toEqual([
         {
           ...winners[0],
-          playerName: "player-1",
-          combinationName: COMBINATIONS.FOUR_OF_KIND,
+          name: "player-1",
+          bestCombinationName: COMBINATIONS.FOUR_OF_KIND,
           winAmount: sumOfBets
         }
       ]);
@@ -1610,6 +1718,9 @@ describe("players", () => {
           new Card({ suit: "hearts", cardName: "king" }),
         ],
         winners: [],
+        logGameEvent(gameEvent: string) {
+
+        }
       } as StoreType;
       const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
       // player-1
@@ -1631,8 +1742,8 @@ describe("players", () => {
       expect(winners).toEqual([
         {
           ...winners[0],
-          playerName: "player-2",
-          combinationName: COMBINATIONS.FULL_HOUSE,
+          name: "player-2",
+          bestCombinationName: COMBINATIONS.FULL_HOUSE,
           winAmount: sumOfBets
         }
       ]);
@@ -1648,6 +1759,9 @@ describe("players", () => {
           new Card({ suit: "hearts", cardName: "king" }),
         ],
         winners: [],
+        logGameEvent(gameEvent: string) {
+
+        }
       } as StoreType;
       const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
       // player-1
@@ -1669,8 +1783,8 @@ describe("players", () => {
       expect(winners).toEqual([
         {
           ...winners[0],
-          playerName: "player-2",
-          combinationName: COMBINATIONS.FLUSH,
+          name: "player-2",
+          bestCombinationName: COMBINATIONS.FLUSH,
           winAmount: sumOfBets
         }
       ]);
@@ -1686,6 +1800,9 @@ describe("players", () => {
           new Card({ suit: "hearts", cardName: "three" }),
         ],
         winners: [],
+        logGameEvent(gameEvent: string) {
+
+        }
       } as StoreType;
       const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
       // player-1
@@ -1707,8 +1824,8 @@ describe("players", () => {
       expect(winners).toEqual([
         {
           ...winners[0],
-          playerName: "player-2",
-          combinationName: COMBINATIONS.STRAIGHT,
+          name: "player-2",
+          bestCombinationName: COMBINATIONS.STRAIGHT,
           winAmount: sumOfBets
         }
       ]);
@@ -1724,6 +1841,9 @@ describe("players", () => {
           new Card({ suit: "hearts", cardName: "three" }),
         ],
         winners: [],
+        logGameEvent(gameEvent: string) {
+
+        }
       } as StoreType;
       const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
       // player-1
@@ -1745,8 +1865,8 @@ describe("players", () => {
       expect(winners).toEqual([
         {
           ...winners[0],
-          playerName: "player-2",
-          combinationName: COMBINATIONS.THREE_OF_KIND,
+          name: "player-2",
+          bestCombinationName: COMBINATIONS.THREE_OF_KIND,
           winAmount: sumOfBets
         }
       ]);
@@ -1762,6 +1882,9 @@ describe("players", () => {
           new Card({ suit: "hearts", cardName: "three" }),
         ],
         winners: [],
+        logGameEvent(gameEvent: string) {
+
+        }
       } as StoreType;
       const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
       // player-1
@@ -1783,8 +1906,8 @@ describe("players", () => {
       expect(winners).toEqual([
         {
           ...winners[0],
-          playerName: "player-2",
-          combinationName: COMBINATIONS.TWO_PAIRS,
+          name: "player-2",
+          bestCombinationName: COMBINATIONS.TWO_PAIRS,
           winAmount: sumOfBets
         }
       ]);
@@ -1800,6 +1923,9 @@ describe("players", () => {
           new Card({ suit: "hearts", cardName: "jack" }),
         ],
         winners: [],
+        logGameEvent(gameEvent: string) {
+
+        }
       } as StoreType;
       const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
       // player-1
@@ -1821,8 +1947,8 @@ describe("players", () => {
       expect(winners).toEqual([
         {
           ...winners[0],
-          playerName: "player-2",
-          combinationName: COMBINATIONS.PAIR,
+          name: "player-2",
+          bestCombinationName: COMBINATIONS.PAIR,
           winAmount: sumOfBets
         }
       ]);
@@ -1840,6 +1966,9 @@ describe("players", () => {
           new Card({ suit: "hearts", cardName: "nine" }),
         ],
         winners: [],
+        logGameEvent(gameEvent: string) {
+
+        }
       } as StoreType;
       const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
       // player-1
@@ -1867,14 +1996,14 @@ describe("players", () => {
       expect(winners).toEqual([
         {
           ...winners[0],
-          playerName: "player-1",
-          combinationName: COMBINATIONS.ROYAL_FLUSH,
+          name: "player-1",
+          bestCombinationName: COMBINATIONS.ROYAL_FLUSH,
           winAmount: sumToWinIfPlayerGoesAllIn_1
         },
         {
           ...winners[1],
-          playerName: "player-2",
-          combinationName: COMBINATIONS.STRAIGHT_FLUSH,
+          name: "player-2",
+          bestCombinationName: COMBINATIONS.STRAIGHT_FLUSH,
           winAmount: sumOfBets - sumToWinIfPlayerGoesAllIn_1
         },
       ]);

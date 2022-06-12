@@ -57,6 +57,7 @@ export interface PlayerType {
   betToPayToContinue: number, // money left to bet to continue playing
   sumToWinIfPlayerGoesAllIn: number, // if player goes all in, he gets all money in the round + his bet + equivalent bets of other players
   allInSum: number;
+  winAmount: number;
 
   hasReacted: boolean,
   isAllIn: boolean,
@@ -73,12 +74,14 @@ export interface CardType {
   cardName: CardName,
   cardNameSymbol: CardNameSymbol,
   isHidden: boolean,
-  cardCost: CardCost
+  cardCost: CardCost,
+
 }
 
 export interface CardConstructorArgs {
   suit: Suit,
   cardName: CardName,
+  // isFaded: boolean
 }
 
 export type PlayersAtCombinations = Partial<Record<COMBINATIONS, Player[]>>;
@@ -104,7 +107,9 @@ export interface GameScreenProps {
 };
 export interface CardProps {
   cardValue: CardNameSymbol,
-  cardSuit: SuitSymbol
+  cardSuit: SuitSymbol,
+  isFaded: boolean,
+  forceRender?: boolean
 }
 export interface GameResultOfPlayerProps {
   player: Winner

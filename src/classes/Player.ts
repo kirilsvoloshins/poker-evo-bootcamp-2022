@@ -1,15 +1,18 @@
-import { StoreType, PlaceBetArguments, PlayerConstructorArgs, PlayerType } from "../types";
+import { StoreType, PlaceBetArguments, PlayerConstructorArgs, PlayerType, Winner } from "../types";
 import { BET_ACTION, COMBINATIONS } from "../consts";
 import { getGameEventText } from "../utils";
 import { Card } from "./Card";
 import { makeAutoObservable } from "mobx";
 
+
+
 export class Player implements PlayerType {
   name = ""; // player name
   id = 0; // player id (used in getting the next player) 
-  cards: [Card, Card] | Card[];
+  cards: [Card, Card] | Card[] = [];
   bestCombinationName = COMBINATIONS.HIGH_CARD;
   bestCombinationCards = [] as Card[];
+  winAmount = 0;
 
   cardsAtCombination = {
     [COMBINATIONS.ROYAL_FLUSH]: {
@@ -176,5 +179,8 @@ export class Player implements PlayerType {
 
   pickCard(cardToTake: Card) {
     this.cards.push(cardToTake);
+  }
+  dropCards() {
+    this.cards = [];
   }
 }

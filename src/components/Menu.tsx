@@ -16,7 +16,6 @@ const GameMenu: React.FC<GameMenuProps> = observer(() => {
       <NavButton btnText="play the game!" screenToOpen="Game" onPress={startTheGame} />
       <NavButton btnText="settings" screenToOpen="Settings" />
       <NavButton btnText="credits" screenToOpen="Credits" />
-
     </div>
   )
 });

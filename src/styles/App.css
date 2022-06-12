@@ -17,6 +17,10 @@ body {
   --transparent: #ffffff00;
 }
 
+.fadedCard {
+  opacity: 0.3;
+}
+
 .bg {
   width: 100vw;
   height: 100vh;
@@ -452,7 +456,7 @@ input[type=number] {
   text-align: left;
 }
 
-.tableSumOfBets {
+.tableInfo {
   font-size: 1.8em;
   font-weight: 600;
 }

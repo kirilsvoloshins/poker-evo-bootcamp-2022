@@ -5,6 +5,7 @@ import { POKER_ROUNDS, BET_ACTION, COMBINATION_NAMES_HUMAN } from "./consts";
 import { Card } from "./classes/Card";
 import { Players } from "./classes/Players";
 import { Deck } from "./classes/Deck";
+import { Player } from "./classes/Player";
 
 const formatGameLog = (arrayOfGameEvents: string[]): any => {
   const amountOfLatestEventsToShow = 14;
@@ -43,10 +44,11 @@ interface StoreType {
   // gameState: GameState = ""; // ???
   activeRound: POKER_ROUNDS;
   // winner: Player | null = null; // if the game ends, show the winner
-  winners: Winner[];
+  winners: Player[];
 
   maxSumOfIndividualBets: number; // maxmimum amount of bets of one person in this round
   sumOfBets: number; // the sum to split between winners of the round
+  gameInfo: string[];
 }
 
 class Store implements StoreType {
@@ -64,7 +66,8 @@ class Store implements StoreType {
   isGameActive = false; // game state, set false on end and true on start
   // gameState: GameState = ""; // ???
   activeRound: POKER_ROUNDS;
-  winners: Winner[];
+  winners: Player[];
+  gameInfo: [];
 
   maxSumOfIndividualBets = 0; // maxmimum amount of bets of one person in this round
   sumOfBets = 0; // the sum to split between winners of the round
@@ -118,7 +121,10 @@ class Store implements StoreType {
       player.sumOfPersonalBetsInThisRound = 0;
       player.sumToWinIfPlayerGoesAllIn = 0;
       player.isAllIn = false;
-    })
+      player.bestCombinationCards = [];
+      player.bestCombinationName = null;
+      player.winAmount = 0;
+    });
 
     const playersWhoCanContinuePlaying = playerList.filter(player => player.moneyLeft >= this.blinds.bigBlind);
     if (playersWhoCanContinuePlaying.length === 1) {
@@ -132,7 +138,7 @@ class Store implements StoreType {
 
     this.deck = new Deck();
     this.cardsOnTheDesk = [];
-    this.gameLog = [];
+    // this.gameLog = [];
 
     this.isGameActive = true;
     this.winners = [];
@@ -258,16 +264,6 @@ class Store implements StoreType {
     const nextActivePlayer = this.players.getNextActivePlayer();
     this.players.activePlayer = nextActivePlayer;
   }
-  endGame() {
-    this.showGameResults();
-
-    // setTimeout(() => {
-    //   this.continueGame();
-    // }, 3000)
-  }
-
-
-
 
   /* pages */
   get getCurrentPage() {
@@ -303,12 +299,77 @@ class Store implements StoreType {
   setAmountOfHumanPlayers(amountOfPlayersToSet: number) {
     this.amountOfHumanPlayers = amountOfPlayersToSet;
   }
+  // private animateWinners() {
+  //   const winners = this.winners;
+  //   for (let winner of winners) {
+  //     winner.showWinningCombination(this);
+  //   }
+  // }
+  private logWinners() {
+    this.winners.forEach(winner => {
+      const { name, winAmount, bestCombinationName } = winner;
+      this.logGameEvent(`${name} wins ${winAmount}€ [${bestCombinationName}]`);
+    });
+  }
+  private payWinners() {
+    this.winners.forEach(winner => {
+      winner.moneyLeft += winner.winAmount;
+      winner.winAmount = 0;
+    });
+  }
+
+  // get allCardsInThisRound(){
+  //   return 
+  //  }
+
+  private fadeAllCards() {
+    this.players.playerList.forEach(player => player.cards.forEach(card => {
+      card.isFaded = true;
+    }));
+    this.cardsOnTheDesk.forEach(card => {
+      card.isFaded = true;
+    });
+  }
+  private unfadeAllCards() {
+    this.players.playerList.forEach(player => player.cards.forEach(card => {
+      card.isFaded = false;
+    }));
+    this.cardsOnTheDesk.forEach(card => {
+      card.isFaded = false
+    });
+  }
+  endGame() {
+    this.showGameResults();
+    // this.continueGame();
+    setTimeout(() => {
+      this.unfadeAllCards();
+      this.payWinners();
+      this.winners = [];
+      this.players.playerList.forEach(player => player.dropCards());
+
+      this.continueGame();
+    }, 3000)
+  }
   private showGameResults() {
     this.players.getWinners({ sumOfBets: this.sumOfBets, store: this });
+    this.logWinners();
+    const { winners, players } = this;
 
 
-    console.warn(this.winners);
+    for (const winner of winners) {
+      this.fadeAllCards();
+      winner.bestCombinationCards.forEach(card => card.isFaded = false);
+      break;
+    }
 
+    // this.unfadeAllCards();
+
+
+    // this.cardsOnTheDesk.forEach(card => card.isFaded = true);
+    // bestCombinationCards.forEach(card => card.isFaded = false);
+    //   break;
+    // }
+    // console.warn(this.cardsOnTheDesk);
   }
 }
 

@@ -6,29 +6,29 @@ import store from "../Store";
 import { observer } from 'mobx-react';
 
 const GameTable: React.FC = observer(() => {
-
   return (
     <div className="gameTable">
       <div className="tableCardsContainer">
-        {store.cardsOnTheDesk?.map(({ suit, cardName }) => {
+        {store.cardsOnTheDesk?.map(({ suit, cardName, isFaded }) => {
           return <Card key={`${suit}_${cardName}`}
             cardValue={cardNameSymbols[cardName]}
             cardSuit={suitSymbols[suit]}
+            isFaded={isFaded}
           />
         })}
         <br />
       </div>
-      <div className='tableSumOfBets'>
+      <div className='tableInfo'>
         {store?.sumOfBets} €
       </div>
-      {/* <div className='winnersInfo'>
-        Winners: {store?.winners?.map(winner => {
-          return (<>{winner.playerName}</>)
-        })}
-      </div> */}
-
+      <div className='winnersInfo'>
+        <ul>
+          {store?.winners?.map(({ name, winAmount, bestCombinationName }) => {
+            return (<li>{name} wins {winAmount}€ [{bestCombinationName}]</li>)
+          })}
+        </ul>
+      </div>
     </div>
   )
 });
-// return (<>{winner.playerName}: {winner.winAmount} ({winner.combinationName}) </>)
 export default GameTable;
