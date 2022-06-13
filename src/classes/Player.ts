@@ -138,6 +138,7 @@ export class Player implements PlayerType {
     this.hasReacted = true;
     this.allInSum = moneyLeft;
     this.sumToWinIfPlayerGoesAllIn = store.sumOfBets + moneyLeft;
+    // this.sumToWinIfPlayerGoesAllIn = moneyLeft;
     this.placeBet({ betAmount: moneyLeft, store, betAction: BET_ACTION.ALL_IN });
   }
 
@@ -161,8 +162,12 @@ export class Player implements PlayerType {
     const playersAllInInThisRound = store.players.playersStillInThisRound.filter(player => player.isAllIn && player !== this);
     if (playersAllInInThisRound.length) {
       playersAllInInThisRound.forEach(player => {
-        const { allInSum } = player;
-        player.sumToWinIfPlayerGoesAllIn += allInSum;
+        const previousBetOfThisPlayer = this.sumOfPersonalBetsInThisRound - betAmount;
+        if (previousBetOfThisPlayer < player.sumToWinIfPlayerGoesAllIn) {
+          const sumToAddToAllIn = this.sumOfPersonalBetsInThisRound - previousBetOfThisPlayer;
+          player.sumToWinIfPlayerGoesAllIn += sumToAddToAllIn;
+          return;
+        }
       });
     }
 

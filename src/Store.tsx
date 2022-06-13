@@ -9,7 +9,7 @@ import { Player } from "./classes/Player";
 import { StoreType } from "./types";
 
 class Store implements StoreType {
-  currentPage = "Game" as ComponentNames; // the page to show
+  currentPage = "Menu" as ComponentNames; // the page to show
   amountOfHumanPlayers = 3; // value for game init
   minimumBet = 10; // players can not bet less that this
   initialDeposit = 100; // value for game init

@@ -21,7 +21,8 @@ export class Players {
       return new Player({
         name: playerName,
         id: i,
-        moneyLeft: initialMoney * (i + 1),
+        moneyLeft: initialMoney,
+        // moneyLeft: initialMoney * (i + 1),
       });
     });
     this.playerList = playerList;
@@ -50,7 +51,10 @@ export class Players {
     const { bigBlindPlayer: prevBigBlindPlayer, playerList: accessiblePlayers } = this;
     const bigBlindPlayer = getNextPlayer(prevBigBlindPlayer.id, accessiblePlayers);
     this.bigBlindPlayer = bigBlindPlayer;
-    const smallBlindPlayer = getNextPlayer(bigBlindPlayer.id, accessiblePlayers);
+    let smallBlindPlayer = getNextPlayer(bigBlindPlayer.id, accessiblePlayers);
+    if (smallBlindPlayer === bigBlindPlayer) {
+      smallBlindPlayer = getNextPlayer(bigBlindPlayer.id + 1, accessiblePlayers);
+    }
     this.smallBlindPlayer = smallBlindPlayer;
   }
 
