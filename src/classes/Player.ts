@@ -173,7 +173,7 @@ export class Player implements PlayerType {
   }
 
   pickCard(cardToTake: Card) {
-    // cardToTake.isHidden = true;
+    cardToTake.isHidden = true;
     this.cards.push(cardToTake);
   }
 

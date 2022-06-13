@@ -195,7 +195,7 @@ class Store implements StoreType {
     }
 
     /* if everyone is allIn, just go to the next round */
-    if (this.players.playersStillInThisRound.every(player => player.isAllIn)) {
+    if (this.players.playersStillInThisRound.filter(player => !player.isAllIn).length <= 1) {
       return this.startNextRound();
     }
 
@@ -213,7 +213,7 @@ class Store implements StoreType {
     this.cardsOnTheDesk.push(randomCard);
 
     /* if everyone is allIn, just go to the next round */
-    if (this.players.playersStillInThisRound.every(player => player.isAllIn)) {
+    if (this.players.playersStillInThisRound.filter(player => !player.isAllIn).length <= 1) {
       return this.startNextRound();
     }
 
@@ -231,7 +231,7 @@ class Store implements StoreType {
     this.cardsOnTheDesk.push(randomCard);
 
     /* if everyone is allIn, just go to the next round */
-    if (this.players.playersStillInThisRound.every(player => player.isAllIn)) {
+    if (this.players.playersStillInThisRound.filter(player => !player.isAllIn).length <= 1) {
       return this.startNextRound();
     }
 

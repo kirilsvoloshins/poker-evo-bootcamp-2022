@@ -64,6 +64,7 @@ export class Players {
 
     this.updatePlayerAbilities(store);
 
+    // const isEveryoneElseAllIn = this.playerList.filter(player => !player.isAllIn).length === 1;
     const areThereAnyPlayersToReact = this.playersLeftToReact.length > 0;
     if (!areThereAnyPlayersToReact) {
       store.startNextRound();

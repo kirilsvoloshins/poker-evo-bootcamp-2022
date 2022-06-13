@@ -37,7 +37,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
         </div>
       </div>
       <div className="playerBet">{playerAtThisSlot?.sumOfPersonalBetsInThisRound} €</div>
-      {/* <span>
+      <span>
         hasReacted: {playerAtThisSlot?.hasReacted === true ? "yes" : "no"}
         <br />
         sumOfPersonalBetsInThisRound: {playerAtThisSlot?.sumOfPersonalBetsInThisRound}
@@ -53,7 +53,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
         isAllIn: {playerAtThisSlot?.isAllIn === true ? "yes" : "no"}
         <br />
         sumToWinIfPlayerGoesAllIn: {playerAtThisSlot?.sumToWinIfPlayerGoesAllIn}
-      </span> */}
+      </span>
     </div>
   )
 });
