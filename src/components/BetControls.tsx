@@ -111,14 +111,13 @@ const BetControls: React.FC = observer(() => {
           }
         </div>
         <div>
-          {store.players.activePlayer?.canRaise && <div id="raiseBtn" onClick={handleRaise} className='raiseBtns noSelect'>
+          {(betValue > store.players?.activePlayer.betToPayToContinue && store.players?.activePlayer?.canRaise) && <div id="raiseBtn" onClick={handleRaise} className='raiseBtns noSelect'>
             raise
             <br />
             {betValue}
           </div>}
         </div>
         <div>
-          {/* {store.players.activePlayer?.canGoAllIn && <div id="allInBtn" onClick={handleAllIn} className='raiseBtns noSelect'>ALL IN</div>} */}
           {store.players?.activePlayer?.moneyLeft > 0 && <div id="allInBtn" onClick={handleAllIn} className='raiseBtns noSelect'>ALL IN</div>}
         </div>
         <div className="peakCardsBtn noSelect" onMouseDown={handlePeakCards} onMouseUp={handleUnpeakCards} onMouseLeave={handleUnpeakCards}>peak cards</div>

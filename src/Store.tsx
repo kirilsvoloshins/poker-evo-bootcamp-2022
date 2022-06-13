@@ -344,6 +344,7 @@ class Store implements StoreType {
 
       if (this.mustGameBeRestarted) {
         this.gameInfo.push(`Game over. Automatic restart incoming.`);
+        this.cardsOnTheDesk = [];
         return setTimeout(() => {
           return this.startInitialGame();
         }, 3000);
