@@ -10,7 +10,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
   const hasGameBeenInitialized = typeof playerList !== "undefined";
   if (!hasGameBeenInitialized) return <></>;
 
-  const playerAtThisSlot = playerList[playerId];
+  const playerAtThisSlot = playerList.find(player => player.id === playerId);
   const isTherePlayerAtThisSlot = typeof playerAtThisSlot !== "undefined";
   if (!isTherePlayerAtThisSlot) return <></>;
 
