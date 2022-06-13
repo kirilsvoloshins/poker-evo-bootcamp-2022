@@ -3,10 +3,11 @@ body {
   margin: 0;
   color: white;
   font-family: Arial, Helvetica, sans-serif;
+  font-size: 17px;
 }
 
 :root {
-  --btn-blue-base: #22507a;
+  --btn-blue-base: #244767;
   --btn-blue-hover: #1b4266;
   --btn-red-base: #702424;
   --btn-red-hover: #571c1c;
@@ -64,24 +65,21 @@ body {
 
 .gameDiv {
   flex: 1;
-  /* display: flex;
-  flex-direction: column; */
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 250px 300px 250px;
-  padding-top: 3%;
+  /* grid-template-columns: 300px 1fr 1fr; */
+  /* grid-template-rows: 250px 300px 250px; */
+  grid-template-rows: 266px 300px 250px;
+  /* padding-top: 3%; */
   gap: 20px;
   align-items: center;
 }
-
-/* .gameDiv div {
-  border: 1px solid red;
-} */
 
 
 .flex-in-col {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 }
 
 .btn {
@@ -118,10 +116,6 @@ body {
   background-color: var(--bg-darkgreen);
   padding: 15px;
   border-radius: 10px;
-  /* position: absolute;
-  bottom: 0;
-  right: 0; */
-
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -133,6 +127,7 @@ body {
   grid-template-columns: repeat(4, 100px);
   gap: 10px;
   grid-auto-rows: 20px 40px 100px 40px;
+  margin-top: 15px;
 }
 
 
@@ -165,7 +160,7 @@ body {
 }
 
 #raiseBtn {
-  background-color: var(--btn-blue-base);
+  background-color: #1d684d;
   box-sizing: border-box;
   height: 100%;
   width: 100px;
@@ -174,14 +169,23 @@ body {
   justify-content: center;
 }
 
+#raiseBtn:hover {
+  background-color: #227a5a;
+}
+
 #allInBtn {
-  background-color: var(--btn-blue-base);
+  background-color: #217c1b;
   box-sizing: border-box;
   height: 100%;
   width: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+#allInBtn:hover {
+  background-color: #2a8923;
+
 }
 
 .peakCardsBtn {
@@ -196,9 +200,7 @@ body {
   cursor: pointer;
 }
 
-#raiseBtn:hover {
-  background-color: var(--btn-blue-hover);
-}
+
 
 #betAmountInput {
   box-sizing: border-box;
@@ -234,13 +236,13 @@ input[type=number] {
   justify-content: center;
 }
 
-#betCheckBtn:hover,
-#allInBtn:hover {
+#betCheckBtn:hover {
   background-color: var(--btn-blue-hover);
 }
 
 #foldBtn {
-  background-color: var(--btn-red-base);
+  background-color: #474747;
+  ;
   height: 100%;
   box-sizing: border-box;
   display: flex;
@@ -250,13 +252,19 @@ input[type=number] {
 }
 
 #foldBtn:hover {
-  background-color: var(--btn-red-hover);
+  background-color: #383838;
 
 }
 
 
 #betAmountInput {
   width: 100px;
+}
+
+.winningPlayerInfo {
+  background-color: rgb(223, 191, 15);
+  color: black;
+  margin-bottom: 8px;
 }
 
 .activePlayerInfo {
@@ -290,8 +298,9 @@ input[type=number] {
 .card {
   width: 71.4px;
   height: 100px;
-  border-radius: 12px;
-  background-color: white;
+  border-radius: 5px;
+  /* background-color: white; */
+  background-color: black;
   /* background-color: #c5c5c5; */
   padding: 7px 9px;
   display: flex;
@@ -380,7 +389,8 @@ input[type=number] {
 .settingsDiv {
   background-color: var(--bg-darkgreen);
   border-radius: 5px;
-  width: 50%;
+  /* width: 50%; */
+  min-width: 500px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -455,7 +465,8 @@ input[type=number] {
 }
 
 .black {
-  color: black;
+  color: rgb(160, 8, 92);
+  /* color: black; */
 }
 
 .gameLogContainer {
@@ -466,13 +477,15 @@ input[type=number] {
 .gameLogDiv {
   background-color: var(--bg-darkgreen);
   color: white;
-  width: 100%;
+  /* width: 100%; */
   height: 100%;
   text-align: left;
   display: flex;
   flex-direction: column;
   padding: 12px;
   border-radius: 12px;
+  min-width: 450px;
+  /* box-sizing: border-box; */
 }
 
 .tableInfo {
@@ -547,4 +560,39 @@ input[type=number] {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
+}
+
+.card-container-topmid {
+  display: flex;
+  margin: auto;
+  margin-bottom: 0;
+  z-index: 9999;
+}
+
+.card-container-midleft {
+  display: flex;
+  margin: auto;
+  margin-right: 0;
+}
+
+.card-container-midright {
+  display: flex;
+  margin: auto;
+  margin-left: 0;
+}
+
+.card-container-botmid {
+  display: flex;
+  margin: auto;
+  margin-top: 0;
+}
+
+.gameName {
+  font-size: 2em;
+  font-family: monospace;
+  margin-bottom: 20px;
+}
+
+.gameInfo {
+  margin-top: -10px;
 }

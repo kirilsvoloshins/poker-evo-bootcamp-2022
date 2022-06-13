@@ -130,7 +130,6 @@ export class Player implements PlayerType {
 
   allIn(store: StoreType) {
     const { moneyLeft } = this;
-    // store.players.playersLeftToReact.filter(player => player !== this && !player.isAllIn && player.moneyLeft > 0).forEach(player => {
     store.players.playersStillInThisRound.filter(player => player !== this && !player.isAllIn && player.moneyLeft > 0).forEach(player => {
       // everyone still playing has to react to the bet raise
       player.hasReacted = false;
@@ -147,7 +146,6 @@ export class Player implements PlayerType {
     const canThePlayerBet = moneyLeft >= betAmount;
     if (!canThePlayerBet) {
       return alert(`Player "${name}" can not bet ${betAmount}! ${betAction} \n Place a proper bet!`);
-      // store.finishGame();
     }
 
     if (![BET_ACTION.SMALL_BLIND, BET_ACTION.BIG_BLIND].includes(betAction)) {

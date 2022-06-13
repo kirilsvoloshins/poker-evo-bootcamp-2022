@@ -8,6 +8,7 @@ import GameLog from "./GameLog";
 import GameTable from "./GameTable";
 import BetControls from "./BetControls";
 import GameResults from "./GameResults";
+// import styles from "../styles/App";
 
 const GameScreen: React.FC<GameScreenProps> = observer(() => {
   useEffect(() => {
@@ -20,25 +21,25 @@ const GameScreen: React.FC<GameScreenProps> = observer(() => {
 
       <div className="gameDiv">
         <div></div>
-        <div style={{ margin: "auto", marginBottom: 0, zIndex: 9999, }}>
+        <div className="card-container-topmid">
           <PlayerInfo playerId={2} />
         </div>
         <div className="gameLogContainer">
           <GameLog />
         </div>
 
-        <div style={{ margin: "auto", marginRight: 0 }}>
+        <div className="card-container-midleft">
           <PlayerInfo playerId={1} />
         </div>
         <div>
           <GameTable />
         </div>
-        <div style={{ margin: "auto", marginLeft: 0 }}>
+        <div className="card-container-midright">
           <PlayerInfo playerId={3} />
         </div>
 
         <div></div>
-        <div style={{ margin: "auto", marginTop: 0 }}>
+        <div className="card-container-botmid">
           <PlayerInfo playerId={0} />
         </div>
         <div className="flex-in-col">

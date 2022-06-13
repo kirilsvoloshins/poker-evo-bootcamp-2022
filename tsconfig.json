@@ -10,7 +10,12 @@
     // "jsx": "react-jsx"
     "jsx": "react-jsx",
     // "jsxImportSource": "preact",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules"
+      }
+    ]
   },
   "files": [
     "src/index.tsx"

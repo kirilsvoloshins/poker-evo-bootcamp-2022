@@ -13,7 +13,8 @@ const GameMenu: React.FC<GameMenuProps> = observer(() => {
 
   return (
     <div className="menuDiv">
-      <NavButton btnText="play the game!" screenToOpen="Game" onPress={startTheGame} />
+      <div className="gameName">Basically Holdem</div>
+      <NavButton btnText="play some poker!" screenToOpen="Game" onPress={startTheGame} />
       <NavButton btnText="settings" screenToOpen="Settings" />
       <NavButton btnText="credits" screenToOpen="Credits" />
     </div>

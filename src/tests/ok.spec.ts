@@ -4,6 +4,8 @@ import { Card } from "../classes/Card";
 import { Players } from "../classes/Players";
 import { COMBINATIONS } from "../consts";
 
+
+
 describe("players", () => {
   describe("player initialisation", () => {
     it("should create a player", () => {
@@ -109,6 +111,7 @@ describe("players", () => {
       });
 
       it("2 players have the different pair - two players win, because the one with highest card pair is all in", () => {
+        console.warn("tests incoming!");
         const store = {
           cardsOnTheDesk: [
             new Card({ suit: "spades", cardName: "jack" }),
@@ -122,7 +125,7 @@ describe("players", () => {
 
           }
         } as StoreType;
-        const players = new Players({ amountOfHumanPlayers: 3, initialMoney: 1000 });
+        const players = new Players({ amountOfHumanPlayers: 2, initialMoney: 1000 });
         // player-1
         const player1 = players.playerList[0];
         player1.cards = [

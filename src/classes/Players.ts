@@ -36,12 +36,22 @@ export class Players {
   }
 
   passBlinds() {
+    const getNextPlayer = (id: number, accessiblePlayers: Player[]) => {
+      // const accessiblePlayerIds = accessiblePlayers.map(({ id }) => id);
+      const potentialNextPlayerId = id + 1;
+      const potentialNextPlayer = accessiblePlayers.find(player => player.id === potentialNextPlayerId);
+      if (potentialNextPlayer) {
+        return potentialNextPlayer;
+      }
+      return accessiblePlayers[0];
+    }
+
     /* breaks if the player leaves game */
-    const { smallBlindPlayer: prevSmallBlindPlayer, playerList } = this;
-    this.bigBlindPlayer = prevSmallBlindPlayer;
-    const consecutivePlayer = playerList.find(({ id }) => id > prevSmallBlindPlayer.id);
-    const newSmallBlindPlayer = consecutivePlayer ? consecutivePlayer : playerList[0];
-    this.smallBlindPlayer = newSmallBlindPlayer;
+    const { bigBlindPlayer: prevBigBlindPlayer, playerList: accessiblePlayers } = this;
+    const bigBlindPlayer = getNextPlayer(prevBigBlindPlayer.id, accessiblePlayers);
+    this.bigBlindPlayer = bigBlindPlayer;
+    const smallBlindPlayer = getNextPlayer(bigBlindPlayer.id, accessiblePlayers);
+    this.smallBlindPlayer = smallBlindPlayer;
   }
 
   passMove(store: StoreType) {

@@ -88,12 +88,8 @@ class Store implements StoreType {
       player.canGoAllIn = playerList.filter(ePlayer => ePlayer !== player).every(ePlayer => ePlayer.moneyLeft >= player.moneyLeft);
     });
 
+    /* GAME MUST END HERE */
     const playersWhoCanContinuePlaying = playerList.filter(player => player.moneyLeft >= this.blinds.bigBlind);
-    if (playersWhoCanContinuePlaying.length === 1) {
-      const { name, moneyLeft } = playersWhoCanContinuePlaying[0];
-      this.gameInfo.push(`${name} won with ${moneyLeft}€! Refresh to restart.`);
-      return this.finishGame();
-    }
 
     this.players.playerList = playersWhoCanContinuePlaying;
     this.isEveryoneAllIn = false;
@@ -171,7 +167,6 @@ class Store implements StoreType {
     /* big and small blinds */
     const { smallBlind, bigBlind } = this.blinds;
     const { smallBlindPlayer, bigBlindPlayer } = this.players;
-    console.log("blinds let's go!");
     bigBlindPlayer.placeBet({ betAmount: bigBlind, store: this, betAction: BET_ACTION.BIG_BLIND });
     smallBlindPlayer.placeBet({ betAmount: smallBlind, store: this, betAction: BET_ACTION.SMALL_BLIND });
 
@@ -286,15 +281,6 @@ class Store implements StoreType {
     this.amountOfHumanPlayers = amountOfPlayersToSet;
   }
 
-  private logWinners() {
-    this.winners.forEach(winner => {
-      const { name, winAmount, bestCombinationName } = winner;
-      const message = `${name} wins ${winAmount}€ [${COMBINATION_NAMES_HUMAN[bestCombinationName]}]`;
-      this.logGameEvent(message);
-      this.gameInfo.push(message);
-    });
-  }
-
   private payWinners() {
     this.winners.forEach(winner => {
       winner.moneyLeft += winner.winAmount;
@@ -307,9 +293,7 @@ class Store implements StoreType {
   }
 
   get allCards() {
-    // const allPlayerCards = this.players.playerList.map(player => player.cards).flat();
     const cardsOnTheDesk = this.cardsOnTheDesk;
-    // return [...allPlayerCards, ...cardsOnTheDesk];
     return [...this.allPlayerCards, ...cardsOnTheDesk];
   }
 
@@ -325,22 +309,21 @@ class Store implements StoreType {
     this.allCards.forEach(card => card.unfade());
   }
 
-  endGame() {
-    this.showGameResults();
-    setTimeout(() => {
-      this.unfadeAllCards();
-      this.payWinners();
-
-      console.warn("continuing!");
-      this.continueGame();
-    }, 3000)
+  private logWinners() {
+    this.winners.forEach(winner => {
+      const { name, winAmount, bestCombinationName } = winner;
+      const message = `${name} wins ${winAmount}€ [${COMBINATION_NAMES_HUMAN[bestCombinationName]}]`;
+      this.logGameEvent(message);
+      this.gameInfo.push(message);
+    });
   }
 
   private showGameResults() {
     this.players.showAllCards();
     this.players.getWinners({ sumOfBets: this.sumOfBets, store: this });
+    this.winners = this.winners.filter(player => player.winAmount);
     this.logWinners();
-    const { winners, players } = this;
+    const { winners } = this;
 
     for (const winner of winners) {
       this.fadeAllCards();
@@ -349,12 +332,28 @@ class Store implements StoreType {
     }
   }
 
-  finishGame() {
+  get mustGameBeRestarted() {
+    const playersWhoCanContinuePlaying = this.players.playerList.filter(player => player.moneyLeft >= this.blinds.bigBlind);
+    return playersWhoCanContinuePlaying.length === 1;
+  }
+
+  endGame() {
+    this.showGameResults();
     setTimeout(() => {
       this.unfadeAllCards();
+      this.payWinners();
+      console.warn(this.winners);
 
-      console.warn("restarting!");
-      this.startInitialGame();
+      if (this.mustGameBeRestarted) {
+        console.log('game must be restarted!');
+        this.gameInfo.push(`Game over. Automatic restart incoming.`);
+        return setTimeout(() => {
+          return this.startInitialGame();
+        }, 2000);
+      }
+
+      console.warn("continuing!");
+      this.continueGame();
     }, 3000)
   }
 }

@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 
 const GameTable: React.FC = observer(() => {
   return (
-    <div className="gameTable">
+    <div className="gameTable noSelect">
       <div className="tableCardsContainer">
         {store.cardsOnTheDesk?.map(({ suit, cardName, isFaded, isHidden }) => {
           return <Card key={`${suit}_${cardName}`}

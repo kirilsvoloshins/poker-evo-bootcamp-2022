@@ -19,8 +19,8 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
 
   // console.log(playerAtThisSlot.name + ", isAllIn" + playerAtThisSlot.isAllIn);
   return (
-    <div className={`playerDiv ${playerAtThisSlot?.hasFolded ? "foldedPlayer" : ""}`}>
-      <div className={`playerInfo ${store.players?.activePlayer === playerAtThisSlot ? "activePlayerInfo" : ""}`}>
+    <div className={`playerDiv noSelect ${playerAtThisSlot?.hasFolded ? "foldedPlayer" : ""}`}>
+      <div className={`playerInfo ${store?.winners?.includes(store.players?.activePlayer) ? "winningPlayerInfo" : ""} ${store?.isGameActive && store.players?.activePlayer === playerAtThisSlot ? "activePlayerInfo" : ""}`}>
         <div className="playerInfoText">
           {store.players?.bigBlindPlayer === playerAtThisSlot && "big blind"}
           {store.players?.smallBlindPlayer === playerAtThisSlot && "small blind"}
@@ -46,9 +46,9 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
         <br />
         canRaise: {playerAtThisSlot?.canRaise === true ? "yes" : "no"}
         <br />
-        canGoAllIn: {playerAtThisSlot?.canGoAllIn === true ? "yes" : "no"}
-        <br />
         isAllIn: {playerAtThisSlot?.isAllIn === true ? "yes" : "no"}
+        <br />
+        sumToWinIfPlayerGoesAllIn: {playerAtThisSlot?.sumToWinIfPlayerGoesAllIn}
       </span>
     </div>
   )

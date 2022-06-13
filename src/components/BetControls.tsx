@@ -11,11 +11,7 @@ const BetControls: React.FC = observer(() => {
   useEffect(() => {
     if (typeof store.players.activePlayer === "undefined") { return };
 
-    const { activePlayer } = store.players;
-    const { betToPayToContinue, moneyLeft } = activePlayer;
-    const doesPlayerHaveEnoughMoney = betToPayToContinue >= moneyLeft;
-
-    // const minimumBetAmount = betToPayToContinue >= moneyLeft ? betToPayToContinue : moneyLeft;
+    const { betToPayToContinue } = store.players.activePlayer;
     const minimumBetAmount = betToPayToContinue;
     setMinBetValue(minimumBetAmount);
     setBetValue(minimumBetAmount);
@@ -87,7 +83,7 @@ const BetControls: React.FC = observer(() => {
 
 
   return (
-    store.isGameActive && <div className='betDiv'>
+    store.isGameActive && <div className='betDiv noSelect'>
       <div>{store.players.activePlayer?.name}</div>
       <div className="buttonsDiv">
         <div className="bet-c-min-text">min</div>
@@ -124,7 +120,8 @@ const BetControls: React.FC = observer(() => {
           </div>}
         </div>
         <div>
-          {store.players.activePlayer?.canGoAllIn && <div id="allInBtn" onClick={handleAllIn} className='raiseBtns noSelect'>ALL IN</div>}
+          {/* {store.players.activePlayer?.canGoAllIn && <div id="allInBtn" onClick={handleAllIn} className='raiseBtns noSelect'>ALL IN</div>} */}
+          <div id="allInBtn" onClick={handleAllIn} className='raiseBtns noSelect'>ALL IN</div>
         </div>
         <div className="peakCardsBtn noSelect" onMouseDown={handlePeakCards} onMouseUp={handleUnpeakCards} onMouseLeave={handleUnpeakCards}>peak cards</div>
       </div>
