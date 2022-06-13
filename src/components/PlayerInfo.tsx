@@ -20,7 +20,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
   // console.log(playerAtThisSlot.name + ", isAllIn" + playerAtThisSlot.isAllIn);
   return (
     <div className={`playerDiv noSelect ${playerAtThisSlot?.hasFolded ? "foldedPlayer" : ""}`}>
-      <div className={`playerInfo ${store?.winners?.includes(store.players?.activePlayer) ? "winningPlayerInfo" : ""} ${store?.isGameActive && store.players?.activePlayer === playerAtThisSlot ? "activePlayerInfo" : ""}`}>
+      <div className={`playerInfo ${store?.winners?.includes(playerAtThisSlot) ? "winningPlayerInfo" : ""} ${store?.isGameActive && store.players?.activePlayer === playerAtThisSlot ? "activePlayerInfo" : ""}`}>
         <div className="playerInfoText">
           {store.players?.bigBlindPlayer === playerAtThisSlot && "big blind"}
           {store.players?.smallBlindPlayer === playerAtThisSlot && "small blind"}
@@ -37,8 +37,12 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
         </div>
       </div>
       <div className="playerBet">{playerAtThisSlot?.sumOfPersonalBetsInThisRound} €</div>
-      <span>
+      {/* <span>
         hasReacted: {playerAtThisSlot?.hasReacted === true ? "yes" : "no"}
+        <br />
+        sumOfPersonalBetsInThisRound: {playerAtThisSlot?.sumOfPersonalBetsInThisRound}
+        <br />
+        maxSumOfIndividualBets: {store?.maxSumOfIndividualBets}
         <br />
         canCheck: {playerAtThisSlot?.canCheck === true ? "yes" : "no"}
         <br />
@@ -49,7 +53,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
         isAllIn: {playerAtThisSlot?.isAllIn === true ? "yes" : "no"}
         <br />
         sumToWinIfPlayerGoesAllIn: {playerAtThisSlot?.sumToWinIfPlayerGoesAllIn}
-      </span>
+      </span> */}
     </div>
   )
 });

@@ -321,6 +321,8 @@ class Store implements StoreType {
   private showGameResults() {
     this.players.showAllCards();
     this.players.getWinners({ sumOfBets: this.sumOfBets, store: this });
+    console.log(this.winners);
+
     this.winners = this.winners.filter(player => player.winAmount);
     this.logWinners();
     const { winners } = this;

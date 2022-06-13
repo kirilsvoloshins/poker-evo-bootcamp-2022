@@ -82,8 +82,9 @@ export class Players {
     }
 
     // player can react to the bet if: !isAllIn && !hasFolded
-    this.playersLeftToReact = this.playersStillInThisRound.filter(player => !player.isAllIn && !player.hasReacted);
+    this.playersLeftToReact = this.playersStillInThisRound.filter(player => !player.isAllIn).filter(player => !player.hasReacted || player.hasReacted && player.sumOfPersonalBetsInThisRound < store.maxSumOfIndividualBets);
     this.playersLeftToReact.forEach(player => {
+      player.hasReacted = false;
       player.canCheck = player.sumOfPersonalBetsInThisRound === store.maxSumOfIndividualBets;
       player.canSupportBet = (player.sumOfPersonalBetsInThisRound + player.moneyLeft) >= store.maxSumOfIndividualBets;
       const canPlayerRaise = (player.sumOfPersonalBetsInThisRound + player.moneyLeft) > store.maxSumOfIndividualBets;
@@ -321,6 +322,7 @@ export class Players {
           uniqueHighCardCombinations.push([highestCardCostInCombination, highestCardCostOutsideCombination])
         }
       });
+
       for (const [uniqueHighCombinationCardCost, uniqueHighOutsideCombinationCardCost] of uniqueHighCardCombinations) {
         const playersWithTheseHighCards = sortedPlayersWithThisCombination.filter(player => {
           const highCombinationCardCost = player.cardsAtCombination[combinationName].highestCardInCombination.cardCost;
@@ -330,6 +332,11 @@ export class Players {
         });
         let amountOfPlayersLeftWithThisCombination = playersWithTheseHighCards.length;
         for (const player of playersWithTheseHighCards) {
+          /* since we rounded the sum which is split between multiple winners, we can not give the rest out */
+          if (winMoneyLeft < 2) {
+            return
+          }
+
           const approxSumToWin = Math.floor(winMoneyLeft / amountOfPlayersLeftWithThisCombination);
           const { isAllIn, sumToWinIfPlayerGoesAllIn } = player;
           if (isAllIn) {
@@ -346,10 +353,6 @@ export class Players {
           player.winAmount = approxSumToWin;
           store.winners.push(player);
           amountOfPlayersLeftWithThisCombination--;
-          /* since we rounded the sum which is split between multiple winners, we can not give the rest out */
-          if (winMoneyLeft < 2) {
-            return
-          }
         }
       }
     }
