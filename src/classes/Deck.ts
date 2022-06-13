@@ -24,7 +24,6 @@ export class Deck implements DeckType {
     const randomCard = allCards[randomCardIndex];
     const cardsLeft = allCards.filter((_, id) => id !== randomCardIndex);
     this.cards = cardsLeft;
-    // randomCard.isHidden = true;
     return randomCard;
   }
 }

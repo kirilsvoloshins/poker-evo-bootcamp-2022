@@ -11,11 +11,6 @@
     "jsx": "react-jsx",
     // "jsxImportSource": "preact",
     "moduleResolution": "node",
-    "plugins": [
-      {
-        "name": "typescript-plugin-css-modules"
-      }
-    ]
   },
   "files": [
     "src/index.tsx"

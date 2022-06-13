@@ -88,7 +88,6 @@ class Store implements StoreType {
       player.canGoAllIn = playerList.filter(ePlayer => ePlayer !== player).every(ePlayer => ePlayer.moneyLeft >= player.moneyLeft);
     });
 
-    /* GAME MUST END HERE */
     const playersWhoCanContinuePlaying = playerList.filter(player => player.moneyLeft >= this.blinds.bigBlind);
 
     this.players.playerList = playersWhoCanContinuePlaying;
@@ -239,7 +238,6 @@ class Store implements StoreType {
     this.players.activePlayer = nextActivePlayer;
   }
 
-  /* pages */
   get getCurrentPage() {
     return this.currentPage;
   }
@@ -247,7 +245,7 @@ class Store implements StoreType {
     this.currentPage = pageToShow;
   }
 
-  /* game settings */
+
   setInitialDeposit(initialDeposit: number) {
     this.initialDeposit = initialDeposit;
   }
@@ -273,7 +271,7 @@ class Store implements StoreType {
     this.gameLog.push(gameEvent);
   }
 
-  get formattedGameLog() {
+  get formattedGameLog(): JSX.Element {
     return formatGameLog(this.gameLog);
   }
 
@@ -321,7 +319,6 @@ class Store implements StoreType {
   private showGameResults() {
     this.players.showAllCards();
     this.players.getWinners({ sumOfBets: this.sumOfBets, store: this });
-    console.log(this.winners);
 
     this.winners = this.winners.filter(player => player.winAmount);
     this.logWinners();
@@ -344,19 +341,16 @@ class Store implements StoreType {
     setTimeout(() => {
       this.unfadeAllCards();
       this.payWinners();
-      console.warn(this.winners);
 
       if (this.mustGameBeRestarted) {
-        console.log('game must be restarted!');
         this.gameInfo.push(`Game over. Automatic restart incoming.`);
         return setTimeout(() => {
           return this.startInitialGame();
-        }, 2000);
+        }, 3000);
       }
 
-      console.warn("continuing!");
-      this.continueGame();
-    }, 3000)
+      return this.continueGame();
+    }, 5000)
   }
 }
 

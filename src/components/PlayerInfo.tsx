@@ -4,6 +4,7 @@ import Card from "./Card";
 import { observer } from 'mobx-react';
 import store from "../Store";
 import { PlayerInfoProps } from '../types';
+import { getKeyFromCard } from '../utils';
 
 const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
   const { playerList } = store.players;
@@ -17,7 +18,6 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
   const cards = playerAtThisSlot.cards;
   const card1 = cards[0], card2 = cards[1];
 
-  // console.log(playerAtThisSlot.name + ", isAllIn" + playerAtThisSlot.isAllIn);
   return (
     <div className={`playerDiv noSelect ${playerAtThisSlot?.hasFolded ? "foldedPlayer" : ""}`}>
       <div className={`playerInfo ${store?.winners?.includes(playerAtThisSlot) ? "winningPlayerInfo" : ""} ${store?.isGameActive && store.players?.activePlayer === playerAtThisSlot ? "activePlayerInfo" : ""}`}>
@@ -27,8 +27,8 @@ const PlayerInfo: React.FC<PlayerInfoProps> = observer(({ playerId }) => {
         </div>
         <div className="playerInfoBody">
           <div className="playerCards">
-            {card1 && <Card cardValue={card1.cardNameSymbol} cardSuit={card1.suitSymbol} isFaded={card1.isFaded} isHidden={card1.isHidden} />}
-            {card2 && <Card cardValue={card2.cardNameSymbol} cardSuit={card2.suitSymbol} isFaded={card2.isFaded} isHidden={card2.isHidden} />}
+            {card1 && <Card key={getKeyFromCard(card1)} cardValue={card1.cardNameSymbol} cardSuit={card1.suitSymbol} isFaded={card1.isFaded} isHidden={card1.isHidden} />}
+            {card2 && <Card key={getKeyFromCard(card2)} cardValue={card2.cardNameSymbol} cardSuit={card2.suitSymbol} isFaded={card2.isFaded} isHidden={card2.isHidden} />}
           </div>
           <div className="playerName">
             {playerAtThisSlot?.name}

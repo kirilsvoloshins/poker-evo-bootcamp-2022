@@ -21,8 +21,7 @@ export class Players {
       return new Player({
         name: playerName,
         id: i,
-        moneyLeft: initialMoney,
-        // moneyLeft: initialMoney * (i + 1),
+        moneyLeft: initialMoney
       });
     });
     this.playerList = playerList;
@@ -38,7 +37,6 @@ export class Players {
 
   passBlinds() {
     const getNextPlayer = (id: number, accessiblePlayers: Player[]) => {
-      // const accessiblePlayerIds = accessiblePlayers.map(({ id }) => id);
       const potentialNextPlayerId = id + 1;
       const potentialNextPlayer = accessiblePlayers.find(player => player.id === potentialNextPlayerId);
       if (potentialNextPlayer) {
@@ -47,7 +45,6 @@ export class Players {
       return accessiblePlayers[0];
     }
 
-    /* breaks if the player leaves game */
     const { bigBlindPlayer: prevBigBlindPlayer, playerList: accessiblePlayers } = this;
     const bigBlindPlayer = getNextPlayer(prevBigBlindPlayer.id, accessiblePlayers);
     this.bigBlindPlayer = bigBlindPlayer;
@@ -68,7 +65,6 @@ export class Players {
 
     this.updatePlayerAbilities(store);
 
-    // const isEveryoneElseAllIn = this.playerList.filter(player => !player.isAllIn).length === 1;
     const areThereAnyPlayersToReact = this.playersLeftToReact.length > 0;
     if (!areThereAnyPlayersToReact) {
       store.startNextRound();
@@ -315,7 +311,6 @@ export class Players {
       if (isFiveCardCombination) {
         playersWithThisCombination.forEach(player => {
           player.cardsAtCombination[combinationName].highestCardOutsideCombination.cardCost = 0;
-          // player.cardsAtCombination[combinationName].highestCardOutsideCombination = { ...player.cardsAtCombination[combinationName].highestCardOutsideCombination, cardCost: 0 };
         });
       }
       const sortedPlayersWithThisCombination = getPlayersDescSortedByHighestCards({ playersWithThisCombination, combinationName });

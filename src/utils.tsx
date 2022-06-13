@@ -1,4 +1,4 @@
-import { BET_ACTION, COMBINATIONS } from "./consts";
+import { BET_ACTION, cardCosts, COMBINATIONS } from "./consts";
 import { CardCost, SuitSymbol } from "./types";
 import { Player } from "./classes/Player";
 import { Card } from "./classes/Card";
@@ -34,20 +34,11 @@ export function getGameEventText({ name, betAmount, betAction }: { name: string,
     case BET_ACTION.SMALL_BLIND: {
       return `${name}: small blind (+${betAmount})`
     }
-
     default:
       console.error(`unsupported betAction: "${betAction}"`);
       return `unsupported betAction: "${betAction}"`;
   }
 }
-
-// export const
-// STRAIGHT = "STRAIGHT",
-// FLUSH = "FLUSH",
-// FULL_HOUSE = "FULL_HOUSE",
-// FOUR_OF_KIND = "FOUR_OF_KIND",
-// STRAIGHT_FLUSH = "STRAIGHT_FLUSH",
-// ROYAL_FLUSH = "ROYAL_FLUSH"
 
 export const getPlayersDescSortedByHighestCards = ({ playersWithThisCombination, combinationName }: { playersWithThisCombination: Player[], combinationName: COMBINATIONS }): Player[] => {
   const sortedPlayersWithThisCombination = playersWithThisCombination.sort((player1, player2) => {
@@ -124,7 +115,7 @@ export const getCardsInStraightIfThereIsAny = (rawCardsToCheck: Card[]): Card[] 
 
 
 
-export const formatGameLog = (arrayOfGameEvents: string[]): any => {
+export const formatGameLog = (arrayOfGameEvents: string[]): JSX.Element => {
   const amountOfLatestEventsToShow = 13;
   const latestGameEventIndex = arrayOfGameEvents.length - 1;
   const rangeOfGameEventIndexesToShow = latestGameEventIndex - amountOfLatestEventsToShow;
@@ -136,11 +127,14 @@ export const formatGameLog = (arrayOfGameEvents: string[]): any => {
     <>
       {
         latestEventRecords.map(x =>
-          <>
-            <span >{x} </span>
-          </>
+          <span key={Math.random()}>{x} </span>
         )
       }
     </>);
   return formattedEventString;
+}
+
+export const getKeyFromCard = (card: Card): string => {
+  const { cardNameSymbol, suitSymbol } = card;
+  return `${cardNameSymbol}_${suitSymbol}`;
 }

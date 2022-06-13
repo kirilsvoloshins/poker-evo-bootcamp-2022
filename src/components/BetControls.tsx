@@ -19,7 +19,6 @@ const BetControls: React.FC = observer(() => {
   }, [store.players.activePlayer]);
 
   const updateBetValue = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    // console.log('yaaaaaaaa')
     const target = e.target as HTMLInputElement;
     let sNewValue = target.value;
     let value = parseInt(sNewValue);
@@ -27,7 +26,6 @@ const BetControls: React.FC = observer(() => {
       value = 0;
       sNewValue = "0";
     }
-    // console.log({ value });
     setBetValue(value);
     setSBetValue(sNewValue);
   }, []);
@@ -121,7 +119,7 @@ const BetControls: React.FC = observer(() => {
         </div>
         <div>
           {/* {store.players.activePlayer?.canGoAllIn && <div id="allInBtn" onClick={handleAllIn} className='raiseBtns noSelect'>ALL IN</div>} */}
-          <div id="allInBtn" onClick={handleAllIn} className='raiseBtns noSelect'>ALL IN</div>
+          {store.players?.activePlayer?.moneyLeft > 0 && <div id="allInBtn" onClick={handleAllIn} className='raiseBtns noSelect'>ALL IN</div>}
         </div>
         <div className="peakCardsBtn noSelect" onMouseDown={handlePeakCards} onMouseUp={handleUnpeakCards} onMouseLeave={handleUnpeakCards}>peak cards</div>
       </div>

@@ -470,6 +470,10 @@ input[type=number] {
 .tableInfo {
   font-size: 1.8em;
   font-weight: 600;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 .bet-c-min-text {
@@ -574,4 +578,18 @@ input[type=number] {
 
 .gameInfo {
   margin-top: -10px;
+}
+
+.gameContinueBtn {
+  font-size: 0.7em;
+  padding: 4px 8px;
+  background-color: rgb(34, 110, 50);
+  border-radius: 3px;
+  margin-left: 10px;
+}
+
+.gameContinueBtn:hover {
+  background-color: rgb(33, 138, 47);
+  cursor: pointer;
+
 }

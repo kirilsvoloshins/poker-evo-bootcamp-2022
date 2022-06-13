@@ -1,7 +1,5 @@
 import { Card } from "./classes/Card";
 import { Player } from "./classes/Player";
-import { Players } from "./classes/Players";
-import { Deck } from "./classes/Deck";
 import Store from "./Store";
 import { BET_ACTION, COMBINATIONS, POKER_ROUNDS } from "./consts";
 
@@ -19,54 +17,6 @@ export interface GameEvent {
 }
 
 export type StoreType = typeof Store;
-
-// export interface StoreType {
-//   currentPage: ComponentNames; // the page to show
-//   amountOfHumanPlayers: number; // value for game init
-//   minimumBet: number; // players can not bet less that this
-//   initialDeposit: number; // value for game init
-
-//   players: Players; // ???
-//   isEveryoneAllIn: boolean;
-//   deck: Deck; // array of cards to pick from
-//   cardsOnTheDesk: Card[];
-//   gameLog: string[];
-
-//   isGameActive: boolean; // game state, set false on end and true on start
-//   // gameState: GameState = ""; // ???
-//   activeRound: POKER_ROUNDS;
-//   winners: Player[];
-//   gameInfo: string[];
-
-//   maxSumOfIndividualBets: number; // maxmimum amount of bets of one person in this round
-//   sumOfBets: number; // the sum to split between winners of the round
-
-//   startInitialGame: () => void;
-//   continueGame: () => void;
-//   startNextRound: () => any;
-//   startRound_BlindCall: () => void;
-//   startRound_Flop: () => any;
-//   startRound_Turn: () => void;
-//   startRound_River: () => void;
-//   getCurrentPage: ComponentNames;
-//   setCurrentPage: (pageToShow: ComponentNames) => void;
-//   setInitialDeposit: (initialDeposit: number) => void;
-//   setMinimumBet: (minimumBet: number) => void;
-//   addToSumOfBets: (amountToAdd: number) => void;
-//   blinds: { smallBlind: number, bigBlind: number };
-//   logGameEvent: (event: string) => void;
-//   formattedGameLog: any;
-//   setAmountOfHumanPlayers: (amountOfPlayersToSet: number) => void;
-//   private logWinners: () => void;
-//   private payWinners: () => void;
-//   allPlayerCards: Card[];
-//   allCards: Card[];
-//   private hideAllPlayerCards: () => void;
-//   private fadeAllCards: () => void;
-//   private unfadeAllCards: () => void;
-//   endGame: () => void;
-//   private showGameResults: () => void;
-// }
 
 export interface PlaceBetArguments {
   betAmount: number,
@@ -173,12 +123,8 @@ export interface DeckType {
   pickRandomCard: () => Card;
 }
 
-
 export type PlayersAtCombinations = Partial<Record<COMBINATIONS, Player[]>>;
 
-
-
-// --- props ---
 export interface NavButtonProps {
   btnText: string,
   screenToOpen: ComponentNames,

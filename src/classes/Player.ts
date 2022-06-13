@@ -101,7 +101,6 @@ export class Player implements PlayerType {
     makeAutoObservable(this);
   }
 
-  /* player actions! */
   fold(store: StoreType) {
     this.hasFolded = true;
     store.logGameEvent(`${this.name}: folds`);
@@ -138,7 +137,6 @@ export class Player implements PlayerType {
     this.hasReacted = true;
     this.allInSum = moneyLeft;
     this.sumToWinIfPlayerGoesAllIn = store.sumOfBets + moneyLeft;
-    // this.sumToWinIfPlayerGoesAllIn = moneyLeft;
     this.placeBet({ betAmount: moneyLeft, store, betAction: BET_ACTION.ALL_IN });
   }
 

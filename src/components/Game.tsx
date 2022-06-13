@@ -7,8 +7,6 @@ import PlayerInfo from "./PlayerInfo";
 import GameLog from "./GameLog";
 import GameTable from "./GameTable";
 import BetControls from "./BetControls";
-import GameResults from "./GameResults";
-// import styles from "../styles/App";
 
 const GameScreen: React.FC<GameScreenProps> = observer(() => {
   useEffect(() => {
@@ -17,8 +15,6 @@ const GameScreen: React.FC<GameScreenProps> = observer(() => {
 
   return (
     <>
-      {/* <GameResults /> */}
-
       <div className="gameDiv">
         <div></div>
         <div className="card-container-topmid">
@@ -45,8 +41,6 @@ const GameScreen: React.FC<GameScreenProps> = observer(() => {
         <div className="flex-in-col">
           <BetControls />
         </div>
-
-
 
       </div>
     </>
